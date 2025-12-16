@@ -1,0 +1,21 @@
+:root {
+  --customBrown-light: rgb(243, 244, 246);
+  --customBrown: #845333;
+  --customBrown-dark: #845333;
+  --customGreen-superLight: rgb(252, 255, 244);
+  --customGreen-light: rgb(244, 252, 223);
+  --customGreen: #3c6d16;
+  --customGreen-dark: #2c510f;
+  --customGreen-leaf: #afdc34;
+  --mainColor-superLight: #f9f6ee;
+  --mainColor-light: #f7f2cd;
+  --mainColor: #ffde16;
+  --mainColor-dark: #c09c0f;
+  --mainColor-superDark: #735d09;
+  --mainColor-leaf: #fff49e;
+  --customRed-superLight: #ffd6d6;
+  --customRed-light: #ffa1a1;
+  --customRed: #ff4d4d;
+  --customRed-darker: #e04646;
+  --customRed-dark: #470000;
+}

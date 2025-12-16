@@ -1,0 +1,220 @@
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { IoAdd, IoBagAddSharp, IoRemove } from 'react-icons/io5';
+import { notifyError } from "@utils/toast";
+import useAddToCart from "@hooks/useAddToCart";
+import useGetSetting from "@hooks/useGetSetting";
+import ProductModal from "@component/modal/ProductModal";
+import useTranslation from "next-translate/useTranslation";
+import useUtilsFunction from "@hooks/useUtilsFunction";
+import Link from 'next/link';
+import Price from '@component/common/Price';
+import Image from 'next/image';
+import Discount from '@component/common/Discount';
+import useCart from '@hooks/useCart';
+import getOfferNames from '@component/offer/getOfferNames';
+import { SidebarContext } from '@context/SidebarContext';
+import { LiaCartPlusSolid } from 'react-icons/lia';
+import ImageWithFallback from '@component/common/ImageWithFallBack';
+
+export default function ResultWindow({ products = [], attributes, clearInput, closeResultWindow }) {
+    // console.log('products: ', products)
+    const resultRef = useRef(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const { items, addItem, updateItemQuantity, inCart } = useCart();
+    const { handleIncreaseQuantity } = useAddToCart();
+    const { globalSetting } = useGetSetting();
+    const { showingTranslateValue } = useUtilsFunction();
+    const { t } = useTranslation();
+    const { offers } = useContext(SidebarContext);
+
+    const currency = globalSetting?.default_currency || "₪";
+
+    // בלחיצה מחוץ לחלון התוצאות הוא נסגר אם הפופאפ מוצר לא פתוח
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                resultRef.current &&
+                !resultRef.current.contains(event.target) &&
+                !modalOpen
+            ) {
+                closeResultWindow();
+            }
+        };
+
+        window.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            window.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [products, clearInput, closeResultWindow, modalOpen]);
+
+    const handleAddToCart = (product) => {
+        if (product.stock < 1) return notifyError(t("common:productStockOut"));
+
+        const { slug, variants, categories, description, ...updatedProduct } = product;
+        const newItem = {
+            ...updatedProduct,
+            id: product._id,
+            title: product.title,
+            price: product.prices.price,
+            originalPrice: product.prices?.originalPrice,
+            image: product.image[0],
+            slug: product.slug,  // Ensure slug is included
+        };
+
+        addItem(newItem);
+    };
+
+    const handleModalOpen = (product) => {
+        setSelectedProduct(product);
+        setModalOpen(true);
+    };
+
+    // console.log('search Product: ', selectedProduct);
+
+    const isProductWithDiscount = (product) => {
+        const offerName = getOfferNames(offers, product);
+        return <Discount search product={product} title={offerName} />
+    }
+
+
+    return (
+        <>
+            {/* פופאפ מוצר בלחיצה על מוצר עם אפשרויות */}
+            {modalOpen && selectedProduct && (
+                <ProductModal
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                    product={selectedProduct}
+                    currency={currency}
+                    attributes={attributes}
+                    clearInput={clearInput}
+                />
+            )}
+
+            <div
+                ref={resultRef}
+                className='fixed sm:absolute sm:top-10 top-16 left-1/2 sm:left-0 -translate-x-1/2 sm:translate-x-0 bg-white w-[90vw] sm:w-full lg:min-w-[585px] max-w-full shadow-xl overflow-hidden rounded-bl-lg rounded-br-lg z-10'
+            >
+                <div className="p-1">
+                    <h2 className="text-right text-xl p-4">{products.length} {t("common:itemsFound")}</h2>
+                    <div className="overflow-y-auto sm:max-h-[570px] max-h-[450px]">
+                        {products.slice(0, 10).map((product) => (
+                            <Link
+                                href={`/product/${product.slug}`} onClick={() => clearInput()}
+                                key={product._id}>
+                                <div className="flex items-center justify-between border-t px-4 py-3 hover:bg-gray-100">
+                                    {/* תמונה כותרת ומחיר */}
+                                    <div className="flex items-center gap-2">
+                                        <div className="relative w-16 h-16 min-w-[64px] min-h-[64px]">
+                                            <ImageWithFallback
+                                                src={product.image[0]}
+                                                alt="product"
+                                                outOfStock={product.stock <= 0}
+                                                noPadding={true}
+                                                search
+                                            />
+                                        </div>
+                                        <div className="text-right ml-4">
+                                            <h3 className="font-bold">{showingTranslateValue(product?.title)}</h3>
+                                            <Price
+                                                product={product}
+                                                price={product.prices.price}
+                                                originalPrice={product.prices.originalPrice}
+                                                currency={currency}
+                                                card={true}
+                                            />
+                                            {isProductWithDiscount(product)}
+                                        </div>
+                                    </div>
+                                    {/* ProductCard-כפתורים דינאמיים כמו ב */}
+                                    <div className="flex items-center"
+                                        onClick={e => { e.preventDefault(), e.stopPropagation() }}>
+                                        {inCart(product._id) ? (
+                                            items.map(
+                                                (item) =>
+                                                    // כפתורי פלוס ומינוס
+                                                    item.id === product._id && (
+                                                        <div
+                                                            key={item.id}
+                                                            className="sm:h-9 w-auto flex flex-col sm:flex-row items-center sm:justify-evenly justify-center py-1 px-2 bg-mainColor-dark text-white rounded gap-1 sm:gap-0"
+                                                        >
+                                                            <button
+                                                                type='button'
+                                                                className="sm:pl-1"
+                                                                onClick={() =>
+                                                                    updateItemQuantity(item.id, item.quantity - 1)
+                                                                }
+                                                            >
+                                                                <span className="text-dark text-base">
+                                                                    <IoRemove />
+                                                                </span>
+                                                            </button>
+                                                            <p className="text-sm text-dark px-1 font-serif font-semibold">
+                                                                {item.quantity}
+                                                            </p>
+                                                            <button
+                                                                type='button'
+                                                                className="sm:pr-1"
+                                                                onClick={() =>
+                                                                    item?.variants?.length > 0
+                                                                        ? handleModalOpen(product)
+                                                                        : handleIncreaseQuantity(item)
+                                                                }
+                                                            >
+                                                                <span className="text-dark text-base">
+                                                                    <IoAdd />
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    )
+                                            )
+                                        ) : (
+                                            // כפתורי אפשרויות או הוספה ישירה
+                                            product?.variants?.length > 0 ? (
+                                                <button
+                                                    type='button'
+                                                    onClick={() => handleModalOpen(product)}
+                                                    aria-label="options"
+                                                    className={product?.stock <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
+                                                >
+                                                    <span className="text-[10px]">
+                                                        {t("common:options")}
+                                                    </span>
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    type='button'
+                                                    onClick={() => handleAddToCart(product)}
+                                                    aria-label="cart"
+                                                    className={product?.stock <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
+                                                >
+                                                    <span className="text-2xl">
+                                                        <LiaCartPlusSolid />
+                                                    </span>
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    {/* כפתור צפייה בכל התוצאות */}
+                    {products.length > 10 && (
+                        <div className="text-center">
+                            <button
+                                className="text-blackhover:underline"
+                                type='submit'
+                            >
+                                {t("common:showAll")} ({products.length})
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
+    );
+}

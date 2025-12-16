@@ -1,0 +1,148 @@
+// src/pages/success/index.jsx
+import React, { useContext, useEffect, useState } from "react";
+import useTranslation from "next-translate/useTranslation";
+import { IoHome } from "react-icons/io5";
+import { PiListMagnifyingGlassBold } from "react-icons/pi";
+import { useRouter } from "next/router";
+
+// Internal import
+import cartSuccess from "public/cart success2.svg"
+import leaf from "public/leaf.svg"
+import Link from "next/link";
+import Layout from "@layout/Layout";
+import Loading from "@component/preloader/Loading";
+import { SidebarContext } from "@context/SidebarContext";
+import Cookies from "js-cookie";
+import useCart from "@hooks/useCart";
+import scrollUp from "src/functions/scrollUp";
+import MainBT from "@component/button/MainBT";
+import { trackPurchase as trackFlashyPurchase } from "@services/flashy";
+import googleAnalytics, { trackPurchase } from "@services/googleAnalytics";
+import { trackFbPurchase } from "@services/facebookPixel";
+import OrderServices from "@services/OrderServices";
+import { UserContext } from "@context/UserContext";
+
+const Success = () => {
+  const { isLoading, setIsLoading } = useContext(SidebarContext);
+  const { state: { userInfo }, dispatch } = useContext(UserContext);
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [order, setOrder] = useState(null);
+  const [purchaseTracked, setPurchaseTracked] = useState(false);
+
+  const { emptyCart } = useCart();
+
+  // קבלת פרטי ההזמנה מ-URL parameters או sessionStorage
+  useEffect(() => {
+    const getOrderInfo = async () => {
+      try {
+        // בדיקה אם יש order_id ב-URL
+        const orderId = router.query.orderId;
+
+        if (orderId) {
+          // קבלת פרטי ההזמנה מהשרת
+          const orderData = await OrderServices.getOrderById(orderId);
+          setOrder(orderData);
+        }
+      } catch (error) {
+        console.error('Error fetching order:', error);
+      }
+    };
+
+    getOrderInfo();
+  }, [router.query]);
+
+  // Flashy Purchase Tracking
+  useEffect(() => {
+    if (order && !purchaseTracked && typeof window !== 'undefined') {
+      // מניעת שליחה כפולה
+      if (window.__flashyPurchaseSent) return;
+
+      trackFlashyPurchase(order);
+      setPurchaseTracked(true);
+      window.__flashyPurchaseSent = true;
+    }
+  }, [order, purchaseTracked]);
+
+  // GA4 Purchase Tracking
+  useEffect(() => {
+    if (
+      order &&                      // יש הזמנה
+      googleAnalytics.isDataLayerAvailable() &&     // dataLayer זמין
+      !window.__gaPurchaseSent      // לא נשלח כבר
+    ) {
+      trackPurchase(order);
+      // למנוע דאבל-פייר
+      window.__gaPurchaseSent = true;
+    }
+  }, [order]);
+
+  // Meta Pixel Purchase Tracking
+  useEffect(() => {
+    if (
+      order &&
+      typeof window !== "undefined" &&
+      !window.__fbPurchaseSent
+    ) {
+      trackFbPurchase(order);
+      window.__fbPurchaseSent = true; // למנוע כפילות
+    }
+  }, [order]);
+
+  // ריקון העגלה
+  useEffect(() => {
+    scrollUp();
+    Cookies.remove("couponInfo");
+    sessionStorage.removeItem("products");
+    sessionStorage.removeItem("customerNote");
+    emptyCart();
+
+    return () => {
+      Cookies.remove("couponInfo");
+      sessionStorage.removeItem("products");
+      sessionStorage.removeItem("customerNote");
+      emptyCart();
+    }
+  }, [])
+
+  return (
+    <>
+      <Layout title={t("common:orderCompletedSuccessfully")} description={t("common:orderCompletedDescription")}>
+        {isLoading ? (
+          <Loading loading={isLoading} />
+        ) : (
+          <div className='w-full mx-auto flex flex-col justify-center items-center gap-5 py-20 px-10 lg:px-0'>
+            <img className="md:w-1/5 w-2/3 mr-8" src={cartSuccess.src} alt="הרכישה הושלמה בהצלחה" />
+            <h1 className="text-4xl text-center font-bold">{t("common:thankYouForPurchase")}</h1>
+            {/* <h3 className="text-xl font-bold text-center">{t("common:orsderInProcess")}</h3> */}
+            <div className="flex items-center justify-center flex-wrap gap-5 mt-3 h-11">
+              <Link href="/" target="_top">
+                <MainBT className='!w-fit px-6'>
+                  <div className="flex items-center gap-2">
+                    <IoHome /> {t("common:backToHome")}
+                  </div>
+                </MainBT>
+              </Link>
+              <Link href="/user/my-orders" target="_top">
+                <MainBT className='!w-fit px-6'>
+                  <div className="flex items-center gap-2">
+                    <PiListMagnifyingGlassBold size={20} /> {t("common:viewOrder")}
+                  </div>
+                </MainBT>
+              </Link>
+            </div>
+          </div>
+        )}
+        <style>
+          {`
+          #enable-toolbar-trigger {
+            display: none;
+            }
+            `}
+        </style>
+      </Layout>
+    </>
+  );
+};
+
+export default Success;

@@ -1,0 +1,30 @@
+// src/services/OrderServices.js
+import requests from "./httpServices";
+
+const OrderServices = {
+  addOrder: async (body, headers) => {
+    return requests.post("/order/add", body, headers);
+  },
+
+  addGuestOrder: async (body, headers) => {
+    return requests.post("/order/add-guest", body, headers);
+  },
+
+  createPaymentIntent: async (body) => {
+    return requests.post("/order/create-payment-intent", body);
+  },
+
+  getOrderCustomer: async ({ page = 1, limit = 8 }) => {
+    return requests.get(`/order?limit=${limit}&page=${page}`);
+  },
+
+  getOrderById: async (id, body) => {
+    return requests.get(`/order/${id}`, body);
+  },
+
+  addCashierOrder: async (body, headers) => {
+    return requests.post("/cashier-orders", body, headers);
+  },
+};
+
+export default OrderServices;

@@ -1,0 +1,7 @@
+{
+  "locales": ["he"],
+  "defaultLocale": "he",
+  "pages": {
+    "*": ["common"]
+  }
+}
