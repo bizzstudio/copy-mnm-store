@@ -35,7 +35,7 @@ const ProductModal = ({
   clearInput = () => { },
   title = ''
 }) => {
-  // console.log('ProductModal product: ', product);
+  console.log('ProductModal product: ', product);
   const router = useRouter();
   const { setIsLoading, isLoading } = useContext(SidebarContext);
   const { t } = useTranslation("ns1");
@@ -164,12 +164,17 @@ const ProductModal = ({
   ]);
 
   useEffect(() => {
-    const res = Object.keys(Object.assign({}, ...product?.variants));
+    if (!product?.variants || !Array.isArray(product.variants) || product.variants.length === 0) {
+      setVariantTitle([]);
+      return;
+    }
+
+    const res = Object.keys(Object.assign({}, ...product.variants));
 
     const varTitle = attributes?.filter((att) => res.includes(att?._id));
 
     setVariantTitle(varTitle?.sort());
-  }, [variants, attributes]);
+  }, [variants, attributes, product?.variants]);
 
   // Flashy Product Modal View Tracking
   useEffect(() => {

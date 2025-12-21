@@ -3,6 +3,8 @@ import { SidebarContext } from "@context/SidebarContext";
 import { Suspense, useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from "swiper";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -101,7 +103,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
         ) : (
           <Layout>
             <div className="min-h-screen w-full max-w-full overflow-hidden">
-              <div className="bg-white">
+              <div className="3xl:bg-mainColor-superLight bg-white">
                 <div className="mx-auto sm:py-5 max-w-screen-2x1 px-3 sm:px-10">
                   <div className="flex flex-col lg:flex-row gap-6 mx-auto py-5 max-w-screen-2xl px-3 sm:px-10">
                     <div ref={carouselRef} className="flex-shrink-0 lg:block w-full lg:w-3/5 h-fit">
@@ -161,6 +163,44 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                 </div>
               )}
 
+                {/* logos_carousel */}
+                {storeCustomizationSetting?.home?.logos_carousel_status && (
+                <div className="bg-white lg:py-10 py-3 select-none border-y border-mainColor/20">
+                  <div className="mx-auto px-3 sm:px-24">
+                    <Swiper
+                      modules={[Autoplay]}
+                      spaceBetween={30}
+                      slidesPerView="auto"
+                      loop={true}
+                      speed={4000}
+                      autoplay={{
+                        delay: 0,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: true,
+                        waitForTransition: false,
+                      }}
+                      allowTouchMove={false}
+                      className="flex items-center"
+                    >
+                      {storeCustomizationSetting?.home?.logos_carousel?.map((logo, index) => (
+                        <SwiperSlide
+                          key={index}
+                          className="w-auto flex items-center justify-center"
+                          style={{ width: "clamp(80px, 10vw, 180px)" }}
+                        >
+                          <img
+                            src={logo}
+                            alt={`Logo ${index}`}
+                            className="object-contain transition duration-300 select-none"
+                            style={{ height: "clamp(40px, 7vw, 70px)" }}
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                </div>
+              )}
+
               {/* popular products */}
               {storeCustomizationSetting?.home?.popular_products_status && (
                 <div className="bg-mainColor-superLight lg:pt-10 lg:pb-4 py-4 mx-auto max-w-screen-2xl px-3 sm:px-10">
@@ -188,7 +228,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                           loading={loading}
                         />
                       ) : (
-                        <div className="grid grid-cols-1 xss:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
                           {sortedPopularProducts
                             ?.slice(
                               0,
@@ -252,7 +292,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                             loading={loading}
                           />
                         ) : (
-                          <div className="grid grid-cols-1 xss:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
                             {sortedDiscountProducts
                               ?.slice(
                                 0,

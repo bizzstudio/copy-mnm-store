@@ -58,7 +58,7 @@ const StyledWrapper = styled.div`
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke: #c09c0f;
+    stroke: #1f3573;
     stroke-width: 1.5;
     transform: translate3d(0, 0, 0);
     transition: all 0.2s ease;
@@ -79,11 +79,11 @@ const StyledWrapper = styled.div`
   }
 
   .check:hover svg {
-    stroke: var(--accent-color, #ffde16);
+    stroke: var(--accent-color, #3961ce);
   }
 
   input:checked + .check svg {
-    stroke: var(--accent-color, #c09c0f);
+    stroke: var(--accent-color, #1f3573);
   }
 
   input:checked + .check svg path {

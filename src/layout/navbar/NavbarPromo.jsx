@@ -15,7 +15,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import Image from "next/image";
 import LoginModal from "@component/modal/LoginModal";
 
-const NavbarPromo = ({ logoHeight }) => {
+const NavbarPromo = () => {
   const [LoginModalOpen, setLoginModalOpen] = useState(false);
   const [activePopover, setActivePopover] = useState(null);
   const { storeCustomizationSetting } = useGetSetting();
@@ -135,7 +135,7 @@ const NavbarPromo = ({ logoHeight }) => {
     };
   }, [categories, categoriesLoading]);
 
-  const SCROLL_AMOUNT = 200;
+  const SCROLL_AMOUNT = 300;
 
   const scrollRight = () => {
     const el = scrollContainerRef.current;
@@ -155,11 +155,10 @@ const NavbarPromo = ({ logoHeight }) => {
         <LoginModal modalOpen={LoginModalOpen} setModalOpen={setLoginModalOpen} />
       )}
 
-      <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 2xl:bg-transparent w-full relative`}>
-        <div className="relative w-full sm:ps-20 2xl:!ps-0 md:pe-3 md:pt-2 2xl:pt-0 md:pb-1 2xl:pb-0 flex justify-center lg:justify-between items-center"
-        style={{ paddingRight: logoHeight > 0 ? `${logoHeight}px` : '180px' }}>
+      <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 3xl:bg-transparent w-full relative`}>
+        <div className="relative w-full sm:ps-20 3xl:!ps-0 md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
           {/* קונטיינר גלילה אמיתי */}
-          <div className="w-full relative md:pt-2 pt-3 pb-1">
+          <div className="w-full relative py-2">
             {/* חץ שמאלה (צד שמאל של המסך) – גולל שמאלה */}
             {showLeftArrow && (
             <button
@@ -185,7 +184,7 @@ const NavbarPromo = ({ logoHeight }) => {
             <div
               dir="ltr"
               ref={scrollContainerRef}
-              className="flex flex-row-reverse justify-between lg:justify-center w-full scrollbar-hide 2xl:gap-8 xl:gap-6 lg:gap-4 gap-3 sm:overflow-visible overflow-x-auto"
+              className="flex flex-row-reverse justify-between lg:justify-center w-full scrollbar-hide 3xl:gap-8 xl:gap-6 lg:gap-4 gap-3 md:overflow-visible overflow-x-auto"
               style={{
                 scrollbarWidth: "none", // Firefox
                 msOverflowStyle: "none", // IE/Edge
@@ -212,7 +211,7 @@ const NavbarPromo = ({ logoHeight }) => {
                         onMouseEnter={() => setIsHover(index)}
                         onMouseLeave={() => setIsHover(null)}
                         href={"/product-category/" + categorySlug}
-                        className={`px-2 flex flex-col items-center xl:gap-2 md:gap-1 gap-0 rounded-md transform transition duration-300 hover:scale-105 hover:text-mainColor-dark ${selectedCategory == index ? "scale-105" : ""
+                        className={`px-2 flex flex-col items-center rounded-md transform transition duration-300 hover:scale-105 hover:text-mainColor-dark ${selectedCategory == index ? "scale-105" : ""
                           }`}
                         role="button"
                       >
@@ -223,7 +222,7 @@ const NavbarPromo = ({ logoHeight }) => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible 2xl:w-[67px] 2xl:h-[67px] xl:w-[50px] xl:h-[50px] lg:w-[45px] lg:h-[45px] md:w-[40px] md:h-[40px] sm:w-[35px] sm:h-[35px] w-[35px] h-[35px]"
+                              className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
                             />
                           ) : (
                             <Image
@@ -231,7 +230,7 @@ const NavbarPromo = ({ logoHeight }) => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible 2xl:w-[67px] 2xl:h-[67px] xl:w-[50px] xl:h-[50px] lg:w-[45px] lg:h-[45px] md:w-[40px] md:h-[40px] sm:w-[35px] sm:h-[35px] w-[35px] h-[35px] opacity-90"
+                              className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] opacity-90 -mb-[7px]"
                             />
                           )
                         ) : (
@@ -240,12 +239,12 @@ const NavbarPromo = ({ logoHeight }) => {
                             width={400}
                             height={400}
                             alt="category"
-                            className="object-cover overflow-visible 2xl:w-[67px] 2xl:h-[67px] xl:w-[50px] xl:h-[50px] lg:w-[45px] lg:h-[45px] md:w-[40px] md:h-[40px] sm:w-[35px] sm:h-[35px] w-[35px] h-[35px]"
+                            className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
                           />
                         )}
 
                         <div
-                          className={`inline-flex items-center justify-center text-center 2xl:text-[20px] xl:text-[18px] lg:text-[18px] md:text-[16px] sm:text-[16px] text-[15px] font-light w-full whitespace-nowrap ${selectedCategory == index ? "text-mainColor-dark" : ""
+                          className={`inline-flex items-center justify-center text-center 3xl:text-[20px] xl:text-[18px] lg:text-[18px] md:text-[16px] sm:text-[16px] text-[15px] font-light w-full whitespace-nowrap pb-1.5 ${selectedCategory == index ? "text-mainColor-dark" : ""
                             }`}
                         >
                           {title}

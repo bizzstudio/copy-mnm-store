@@ -96,7 +96,7 @@ const SubCategoryPage = ({ products, attributes }) => {
                             ) : (
                                 <>
                                     <div
-                                        className={`grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3 ${productData?.length < 6 ? 'justify-center' : ''}`}
+                                        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3 ${productData?.length < 6 ? 'justify-center' : ''}`}
                                         style={{
                                             gridTemplateColumns:
                                                 window.innerWidth < 350 ?

@@ -9,21 +9,6 @@ module.exports = {
   ],
 
   theme: {
-    fontSize: {
-      'xs': ['0.75rem', { lineHeight: '1rem' }],
-      'sm': ['0.875rem', { lineHeight: '1.25rem' }],
-      'base': ['1rem', { lineHeight: '1.5rem' }],
-      'lg': ['1.125rem', { lineHeight: '1.75rem' }],
-      'xl': ['1.25rem', { lineHeight: '1.75rem' }],
-      '2xl': ['1.5rem', { lineHeight: '2rem' }],
-      '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-      '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-      '5xl': ['3rem', { lineHeight: '1' }],
-      '6xl': ['3.75rem', { lineHeight: '1' }],
-      '7xl': ['4.5rem', { lineHeight: '1' }],
-      '8xl': ['6rem', { lineHeight: '1' }],
-      '9xl': ['8rem', { lineHeight: '1' }],
-    },
     fontFamily: {
       sans: ["Assistant", "Arial", "sans-serif"],
       serif: ["Assistant", "sans-serif"],
@@ -57,13 +42,24 @@ module.exports = {
           leaf: '#afdc34'
         },
         mainColor: {
-          superLight: '#f9f6ee',
-          light: '#f7f2cd',
-          DEFAULT: '#ffde16',
-          dark: '#c09c0f',
-          superDark: '#735d09',
-          leaf: '#fff49e'
+          superLight: '#f7f9ff',
+          light: '#d0daf5',
+          DEFAULT: '#3961ce',
+          dark: '#3961ce',
+          superDark: '#1f3573',
+          leaf: '#f21e27'
         },
+
+        // old
+        // mainColor: {
+        //   superLight: '#f9f6ee',
+        //   light: '#f7f2cd',
+        //   DEFAULT: '#ffde16',
+        //   dark: '#c09c0f',
+        //   superDark: '#735d09',
+        //   leaf: '#fff49e'
+        // },
+
         customRed: {
           superLight: '#ffd6d6',
           light: '#ffa1a1',
@@ -87,11 +83,12 @@ module.exports = {
         fadeOut: 'fadeOut 1s ease-out forwards',
       },
       boxShadow: {
-        popup: "#ffde16 0 3px 0, #ffde16 3px 0px 0, #ffde16 3px 3px 0, rgba(0, 0, 0, 0.432) 3px 3px 3px",
+        popup: "#3961ce 0 3px 0, #3961ce 3px 0px 0, #3961ce 3px 3px 0, rgba(0, 0, 0, 0.432) 3px 3px 3px",
       },
       screens: {
         xs: "420px",
         xss: "320px",
+        '3xl': "1670px",
       },
     },
   },

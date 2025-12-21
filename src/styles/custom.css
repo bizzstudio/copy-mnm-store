@@ -15,18 +15,11 @@
 html {
   @apply font-sans;
   /* overflow-x: hidden; */
-  font-size: 1.2rem;
-  /* הגדלת הפונט ב-20% */
 }
 
 /* הגדלת פונט גלובלית לכל האלמנטים */
 * {
   font-size: inherit;
-}
-
-/* הגדלת פונט ספציפית לאלמנטים שונים */
-body {
-  font-size: 1.2rem;
 }
 
 h1,
@@ -339,15 +332,15 @@ select {
 }
 
 .custom-select:focus {
-  box-shadow: 0 0 0 1px #ffde16 !important;
-  border: 1px solid #ffde16 !important;
-  box-shadow: 0 0 0 1px #ffde16 !important;
-  border: 1px solid #ffde16 !important;
+  box-shadow: 0 0 0 1px #3961ce !important;
+  border: 1px solid #3961ce !important;
+  box-shadow: 0 0 0 1px #3961ce !important;
+  border: 1px solid #3961ce !important;
 }
 
 .option:hover {
-  background-color: #ffde16 !important;
-  background-color: #ffde16 !important;
+  background-color: #3961ce !important;
+  background-color: #3961ce !important;
   /* צבע ירוק לרקע כאשר מרחפים מעליו */
 }
 
@@ -359,15 +352,15 @@ select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #ffde16;
-  background-color: #ffde16;
+  background-color: #3961ce;
+  background-color: #3961ce;
   /* color of the scrollbar thumb */
   border-radius: 4px;
   /* radius of the scrollbar thumb */
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #f7f2cd;
+  background-color: #d0daf5;
   /* color of the scrollbar track */
   border-radius: 4px;
 }
@@ -752,8 +745,8 @@ p:not(:last-of-type) {
 .category-slider button.prev,
 .category-slider button.next {
   text-align: center;
-  background-color: #ffde16;
-  background-color: #ffde16;
+  background-color: #3961ce;
+  background-color: #3961ce;
   color: #ffffff;
   margin: 15px 2px 0 2px;
   position: absolute;
@@ -774,8 +767,8 @@ p:not(:last-of-type) {
 
 .category-slider button.next:hover,
 .category-slider button.prev {
-  background-color: #ffde16;
-  background-color: #ffde16;
+  background-color: #3961ce;
+  background-color: #3961ce;
 }
 
 .category-slider button.prev svg,
@@ -820,10 +813,10 @@ p:not(:last-of-type) {
 }
 
 .page-previous-link:hover {
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
   color: #fff;
 }
 
@@ -835,10 +828,10 @@ p:not(:last-of-type) {
 }
 
 .page-next-link:hover {
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
   color: #fff;
 }
 
@@ -849,10 +842,10 @@ p:not(:last-of-type) {
 .activePagination {
   text-align: center;
   border-radius: 3px;
-  background: #ffde16;
-  border: 1px solid #ffde16;
-  background: #ffde16;
-  border: 1px solid #ffde16;
+  background: #3961ce;
+  border: 1px solid #3961ce;
+  background: #3961ce;
+  border: 1px solid #3961ce;
   color: #fff;
 }
 
@@ -1024,8 +1017,8 @@ p:not(:last-of-type) {
 }
 
 .carousel .control-dots .dot {
-  background: #ffde16 !important;
-  background: #ffde16 !important;
+  background: #3961ce !important;
+  background: #3961ce !important;
 }
 
 .invoice-address-width {
@@ -1070,10 +1063,10 @@ p:not(:last-of-type) {
 }
 
 .page-previous-link:hover {
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
   color: #fff;
 }
 
@@ -1085,10 +1078,10 @@ p:not(:last-of-type) {
 }
 
 .page-next-link:hover {
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
-  border: 1px solid #ffde16;
-  background-color: #ffde16;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
+  border: 1px solid #3961ce;
+  background-color: #3961ce;
   color: #fff;
 }
 
@@ -1099,10 +1092,10 @@ p:not(:last-of-type) {
 .activePagination {
   text-align: center;
   border-radius: 3px;
-  background: #ffde16;
-  border: 1px solid #ffde16;
-  background: #ffde16;
-  border: 1px solid #ffde16;
+  background: #3961ce;
+  border: 1px solid #3961ce;
+  background: #3961ce;
+  border: 1px solid #3961ce;
   color: #fff;
 }
 
@@ -2085,8 +2078,8 @@ p:not(:last-of-type) {
 }
 
 .nsm7Bb-HzV7m-LgbsSe:hover {
-  background: #ffde16 !important;
-  background: #ffde16 !important;
+  background: #3961ce !important;
+  background: #3961ce !important;
   color: #e2e8f0;
 }
 

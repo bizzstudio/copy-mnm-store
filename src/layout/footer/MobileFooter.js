@@ -95,7 +95,7 @@ const MobileFooter = () => {
               style={{ marginTop: 'calc(-1 * (15vw + 12px))' }}
             >
               <div
-                className="rounded-full bg-mainColor text-[#2a2100] ring-[0px] ring-[#2a2100] shadow-md flex items-center justify-center"
+                className="rounded-full bg-mainColor text-white ring-[0px] ring-[#2a2100] shadow-md flex items-center justify-center"
                 style={{
                   width: 'clamp(55px, 15vw, 75px)',
                   height: 'clamp(55px, 15vw, 75px)',

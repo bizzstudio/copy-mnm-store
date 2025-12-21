@@ -11,8 +11,8 @@ export default async function handler(req, res) {
         description: seo.meta_description || "",
         start_url: "/",
         display: "standalone",
-        background_color: "#f7f2cd",
-        theme_color: "#f7f2cd",
+        background_color: "#d0daf5",
+        theme_color: "#d0daf5",
         icons: [
             ...(seo.favicon
                 ? [{ src: seo.favicon, sizes: "any", type: "image/png" }]
