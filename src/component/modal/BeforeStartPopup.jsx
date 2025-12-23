@@ -57,7 +57,7 @@ const BeforeStartPopup = ({ onClose }) => {
     return (
         <div className="px-3 sm:px-11 py-8 max-w-md">
             {/* כותרת */}
-            <div className="flex justify-between items-center mt-5 mb-4 bg-mainColor-superLight rounded-lg p-3">
+            <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                 <MinimalTitle title={t("common:beforeStartTitle")} />
             </div>
 

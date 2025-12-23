@@ -21,7 +21,7 @@ import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
 
-const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
+const ScrollOfferCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { toggleCartDrawer, closeCartDrawer } = useContext(SidebarContext)
   const { items, addItem, updateItemQuantity, inCart } = useCart();
@@ -34,30 +34,32 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
 
   // console.log('attributes in product cart',attributes)
 
-  const handleAddItem = (p) => {
-    if (p.stock < 1) return notifyError(t("common:productStockOut"));
-
-    if (p?.variants?.length > 0) {
-      setModalOpen(!modalOpen);
-      return;
+  // חישוב מלאי המוצר
+  const getProductStock = (p) => {
+    if (p?.manageStock === false) {
+      return 9999;
+    } else if (p?.stocks && Array.isArray(p.stocks) && p.stocks.length > 0) {
+      return p.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
     }
-    const { slug, variants, categories, description, ...updatedProduct } =
-      product;
+    return 0;
+  };
+
+  const handleAddItem = (p) => {
+    const stock = getProductStock(p);
+    if (stock < 1) return notifyError(t("common:productStockOut"));
+
+    const { slug, categories, description, ...updatedProduct } = product;
+    const productPrice = p?.prices?.[0];
     const newItem = {
       ...updatedProduct,
       title: p.title,
       id: p._id,
-      variant: p.prices,
-      price: p.prices.price,
-      originalPrice: product.prices?.originalPrice,
+      price: productPrice?.salePrice || productPrice?.price || 0,
+      originalPrice: productPrice?.price || 0,
       slug: p.slug,
+      image: p?.image?.[0],
     };
     addItem(newItem);
-    // פתיחת העגלה לשתי שניות באופן אוטומטי
-    // toggleCartDrawer()
-    // setTimeout(()=>{
-    //   closeCartDrawer()
-    // },2000)
   };
 
   const handleModalOpen = (event, id) => {
@@ -94,7 +96,6 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
           setModalOpen={setModalOpen}
           product={product}
           currency={currency}
-          attributes={attributes}
           title={offerName}
         />
       )}
@@ -112,11 +113,11 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
           className="relative flex justify-center cursor-pointer h-full"
         >
           <div className="relative w-28 h-full">
-            <ImageWithFallback 
-              src={product?.image?.[0]} 
-              outOfStock={product.stock <= 0} 
-              alt="product" 
-              noPadding={true} 
+            <ImageWithFallback
+              src={product?.image?.[0]}
+              outOfStock={getProductStock(product) <= 0}
+              alt="product"
+              noPadding={true}
               scroll
             />
           </div>
@@ -144,16 +145,8 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
                 card
                 product={product}
                 currency={currency}
-                price={
-                  product?.isCombination
-                    ? product?.variants[0]?.price
-                    : product?.prices?.price
-                }
-                originalPrice={
-                  product?.isCombination
-                    ? product?.variants[0]?.originalPrice
-                    : product?.prices?.originalPrice
-                }
+                price={product?.prices?.[0]?.salePrice || product?.prices?.[0]?.price || 0}
+                originalPrice={product?.prices?.[0]?.price || 0}
               />
 
               <div className="w-full mb-2">
@@ -188,11 +181,7 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
                         </p>
                         <button
                           className="pr-1"
-                          onClick={() =>
-                            item?.variants?.length > 0
-                              ? handleAddItem(item)
-                              : handleIncreaseQuantity(item)
-                          }
+                          onClick={() => handleIncreaseQuantity(item)}
                         >
                           <span className="text-dark text-base">
                             <IoAdd />
@@ -204,20 +193,14 @@ const ScrollOfferCard = ({ product, attributes, offers = [] }) => {
               </div>
             ) : (
               <button
-                // disabled={product?.stock <= 0}
+                disabled={getProductStock(product) <= 0}
                 onClick={() => handleAddItem(product)}
                 aria-label="cart"
-                className={product?.stock <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
+                className={getProductStock(product) <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
               >
-                {" "}
-                {product?.variants?.length > 0 ?
-                  <span className="text-[10px]">
-                    {t("common:options")}
-                  </span>
-                  :
-                  <span className="text-2xl">
-                    <LiaCartPlusSolid />
-                  </span>}
+                <span className="text-2xl">
+                  <LiaCartPlusSolid />
+                </span>
               </button>
             )}
           </div>

@@ -127,35 +127,6 @@ select {
   -moz-appearance: textfield;
 }
 
-.glow-btn {
-  width: 100%;
-  position: relative;
-  min-height: 48px;
-  border: 2px solid #f1c61a;
-  outline: none;
-  background: #fffbec;
-  color: rgb(41, 41, 41);
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  position: relative;
-  /* transform: translateY(-2px); */
-  /* box-shadow: 0 3px 20px rgba(255, 222, 22, 0.4); */
-}
-
-.glow-btn:hover::before {
-  opacity: 0;
-  transform: scale(1.05);
-}
-
-.glow-btn:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-  /* box-shadow: 0 3px 20px rgba(255, 222, 22, 0.6); */
-}
-
 @keyframes fadeInSlide {
   0% {
     opacity: 0;

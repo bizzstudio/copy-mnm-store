@@ -28,9 +28,7 @@ import { notifyError } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import Loading from "@component/preloader/Loading";
 import ProductCard from "@component/product/ProductCard";
-import VariantList from "@component/variants/VariantList";
 import { SidebarContext } from "@context/SidebarContext";
-import AttributeServices from "@services/AttributeServices";
 import ProductServices from "@services/ProductServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Discount from "@component/common/Discount";
@@ -42,27 +40,21 @@ import MinimalTitle from "@component/common/MinimalTitle";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { trackFbViewContent } from "@services/facebookPixel";
 
-const ProductScreen = ({ product, attributes, relatedProducts }) => {
-  // console.log('ProductScreen product: ', product);
+const ProductScreen = ({ product, relatedProducts }) => {
   const router = useRouter();
 
-  const { lang, showingTranslateValue, getNumber, currency } = useUtilsFunction();
+  const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();
 
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { handleAddItem, item, setItem } = useAddToCart();
 
-  const [value, setValue] = useState("");
   const [price, setPrice] = useState(0);
   const [img, setImg] = useState("");
   const [originalPrice, setOriginalPrice] = useState(0);
   const [stock, setStock] = useState(0);
   const [stockLoaded, setStockLoaded] = useState(false);
   const [discount, setDiscount] = useState(0);
-  const [selectVariant, setSelectVariant] = useState({});
   const [isReadMore, setIsReadMore] = useState(true);
-  const [selectVa, setSelectVa] = useState({});
-  const [variantTitle, setVariantTitle] = useState([]);
-  const [variants, setVariants] = useState([]);
 
   const { items } = useCart();
   const [offerTitle, setOfferTitle] = useState();
@@ -84,120 +76,66 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
       trackFbViewContent({
         ...product,
         // לוודא שיש price בסיסי
-        price: product?.prices?.price,
+        price: product?.prices?.[0]?.price || product?.prices?.[0]?.salePrice || 0,
       });
     }
   }, [product?._id]);
 
   useEffect(() => {
-    // console.log('value', value, product);
-    if (value) {
-      const result = product?.variants?.filter((variant) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
+    if (!product) return;
 
-      const res = result?.map(
-        ({
-          originalPrice,
-          price,
-          discount,
-          quantity,
-          barcode,
-          sku,
-          productId,
-          image,
-          ...rest
-        }) => ({
-          ...rest,
-        })
-      );
+    // הגדרת תמונה
+    setImg(product?.image?.[0] || "");
 
-      const filterKey = Object.keys(Object.assign({}, ...res));
-      const selectVar = filterKey?.reduce(
-        (obj, key) => ({ ...obj, [key]: selectVariant[key] }),
-        {}
-      );
-      const newObj = Object.entries(selectVar).reduce(
-        (a, [k, v]) => (v ? ((a[k] = v), a) : a),
-        {}
-      );
-
-      // const result2 = result?.find((v) =>
-      //   Object.keys(newObj).every((k) => newObj[k] === v[k])
-      // );
-      const result2 = result[0];
-
-      // console.log("result2", result2);
-
-      if (result.length <= 0 || result2 === undefined) {
-        setStock(0);
-        setStockLoaded(true);
-        return;
-      }
-
-      setVariants(result);
-      setSelectVariant(result2);
-      setSelectVa(result2);
-      setImg(result2?.image);
-      setStock(result2?.quantity);
-      const price = getNumber(result2?.price);
-      const originalPrice = getNumber(result2?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
+    // הגדרת מלאי - אם manageStock הוא false, נחשב שיש מלאי
+    if (product?.manageStock === false) {
+      setStock(9999); // מלאי בלתי מוגבל
       setStockLoaded(true);
-    } else if (product?.variants?.length > 0) {
-      const result = product?.variants?.filter((variant) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
-
-      setVariants(result);
-      setStock(product.variants[0]?.quantity);
-      setSelectVariant(product.variants[0]);
-      setSelectVa(product.variants[0]);
-      setImg(product.variants[0]?.image);
-      const price = getNumber(product.variants[0]?.price);
-      const originalPrice = getNumber(product.variants[0]?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
+    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
+      // אם יש מערך stocks, נחשב את הסכום הכולל
+      const totalStock = product.stocks.reduce((sum, stockItem) => {
+        return sum + (stockItem?.quantity || 0);
+      }, 0);
+      setStock(totalStock);
       setStockLoaded(true);
     } else {
-      setStock(product?.stock);
-      setImg(product?.image[0]);
-      const price = getNumber(product?.prices?.price);
-      const originalPrice = getNumber(product?.prices?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
+      setStock(0);
       setStockLoaded(true);
     }
+
+    // הגדרת מחירים - לוקח את המחיר הראשון מהמערך prices
+    const productPrice = product?.prices?.[0];
+    if (productPrice) {
+      // אם יש salePrice, זה המחיר המחוק, אחרת price הוא המחיר הרגיל
+      const currentPrice = getNumber(productPrice?.salePrice || productPrice?.price);
+      const originalPriceValue = productPrice?.salePrice
+        ? getNumber(productPrice?.price)
+        : getNumber(productPrice?.price);
+
+      setPrice(currentPrice);
+      setOriginalPrice(originalPriceValue);
+
+      // חישוב הנחה
+      if (productPrice?.salePrice && productPrice?.salePrice < productPrice?.price) {
+        const discountPercentage = getNumber(
+          ((originalPriceValue - currentPrice) / originalPriceValue) * 100
+        );
+        setDiscount(discountPercentage);
+      } else {
+        setDiscount(0);
+      }
+    } else {
+      setPrice(0);
+      setOriginalPrice(0);
+      setDiscount(0);
+    }
   }, [
-    product?.prices?.discount,
-    product?.prices?.originalPrice,
-    product?.prices?.price,
-    product?.stock,
-    product.variants,
-    selectVa,
-    selectVariant,
-    value,
+    product,
+    product?.prices,
+    product?.stocks,
+    product?.manageStock,
+    product?.image,
   ]);
-
-  useEffect(() => {
-    const res = Object.keys(Object.assign({}, ...product?.variants));
-    const varTitle = attributes?.filter((att) => res.includes(att?._id));
-
-    setVariantTitle(varTitle?.sort());
-  }, [variants, attributes]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -205,64 +143,21 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
   }, [product]);
 
   const handleAddToCart = (p) => {
-    if (p.variants.length === 1 && p.variants[0].quantity < 1)
-      return notifyError(t("common:productStockOut"));
-    // if (notAvailable) return notifyError('This Variation Not Available Now!');
     if (stock <= 0) return notifyError(t("common:productStockOut"));
-    // console.log('selectVariant', selectVariant);
 
-    if (
-      product?.variants.map(
-        (variant) =>
-          Object.entries(variant).sort().toString() ===
-          Object.entries(selectVariant).sort().toString()
-      )
-    ) {
-      const { variants, categories, description, ...updatedProduct } = product;
-      const newItem = {
-        ...updatedProduct,
-        id: `${p.variants.length <= 1
-          ? p._id
-          : p._id +
-          variantTitle
-            ?.map(
-              // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-              (att) => selectVariant[att._id]
-            )
-            .join("-")
-          }`,
+    const { categories, description, ...updatedProduct } = product;
+    const productPrice = p?.prices?.[0];
 
-        title: p.variants.length <= 1
-          ? product.title
-          : {
-            he: product.title.he +
-              "-" +
-              variantTitle
-                ?.map(
-                  // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-                  (att) =>
-                    att.variants?.find((v) => v._id === selectVariant[att._id])
-                )
-                .map((el) => el?.name),
-            en: product.title.en +
-              "-" +
-              variantTitle
-                ?.map(
-                  // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-                  (att) =>
-                    att.variants?.find((v) => v._id === selectVariant[att._id])
-                )
-                .map((el) => el?.name)
-          },
-        image: img,
-        variant: selectVariant,
-        price: price,
-        originalPrice: originalPrice,
-      };
-      handleAddItem(newItem);
-    } else {
-      return notifyError("Please select all variant first!");
-    }
+    const newItem = {
+      ...updatedProduct,
+      id: p._id,
+      title: p.title,
+      image: img || p?.image?.[0],
+      price: getNumber(productPrice?.salePrice || productPrice?.price || 0),
+      originalPrice: getNumber(productPrice?.price || 0),
+    };
+
+    handleAddItem(newItem);
   };
 
   const handleChangeImage = (img) => {
@@ -507,28 +402,6 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                       originalPrice={originalPrice}
                     />
 
-                    <div className="mb-4">
-                      {variantTitle?.map((a, i) => (
-                        <span key={a._id}>
-                          <h4 className="text-sm py-1">
-                            {showingTranslateValue(a?.name)}:
-                          </h4>
-                          <div className="flex flex-row items-center justify-center gap-2 w-fit mb-3">
-                            <VariantList
-                              att={a._id}
-                              lang={lang}
-                              option={a.option}
-                              setValue={setValue}
-                              varTitle={variantTitle}
-                              variants={product?.variants}
-                              setSelectVa={setSelectVa}
-                              selectVariant={selectVariant}
-                              setSelectVariant={setSelectVariant}
-                            />
-                          </div>
-                        </span>
-                      ))}
-                    </div>
 
                     <div>
                       {showingTranslateValue(product?.description) &&
@@ -579,7 +452,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                             </p>
                             <button
                               onClick={() => setItem(item + 1)}
-                              disabled={selectVariant?.quantity <= item}
+                              disabled={stock <= item || stock === 0}
                               className="flex items-center justify-center h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                             >
                               <span className="text-dark text-base">
@@ -694,7 +567,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
               {/* related products */}
               {relatedProducts?.length >= 2 && (
                 <div className="pt-10 lg:pt-10 lg:pb-10">
-                  <div className="flex justify-between items-center mt-5 mb-4 bg-mainColor-light rounded-lg p-3">
+                  <div className="flex justify-between items-center mt-5 mb-4 bg-white rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                     <MinimalTitle title={t("common:relatedProductsTitle")} />
                   </div>
                   <div className="flex">
@@ -704,7 +577,6 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                           <ProductCard
                             key={product._id}
                             product={product}
-                            attributes={attributes}
                             offers={offers}
                           />
                         ))}
@@ -725,19 +597,22 @@ export const getServerSideProps = async (context) => {
   const { slug } = context.params;
   console.log('slug', slug)
 
-  const [data, attributes] = await Promise.all([
-    ProductServices.getShowingStoreProducts({
-      category: "",
-      slug: slug,
-    }),
-
-    AttributeServices.getShowingAttributes({}),
-  ]);
+  const data = await ProductServices.getShowingStoreProducts({
+    category: "",
+    slug: slug,
+  });
 
   let product = {};
 
   if (slug) {
-    product = data?.products?.find((p) => p.slug === slug);
+    // ה-slug מה-URL הוא כבר decoded, אבל ה-slug בבסיס הנתונים יכול להיות encoded
+    // ננסה למצוא את המוצר גם עם slug decoded וגם עם slug encoded
+    product = data?.products?.find((p) => {
+      // נפענח את ה-slug מהבסיס נתונים אם הוא מקודד
+      const decodedSlug = decodeURIComponent(p.slug);
+      // נשווה גם עם ה-slug המקורי וגם עם ה-slug המפוענח
+      return p.slug === slug || decodedSlug === slug;
+    });
   }
 
   // מעבר לדף 404 אם המוצר לא נמצא
@@ -751,7 +626,6 @@ export const getServerSideProps = async (context) => {
     props: {
       product,
       relatedProducts: data?.relatedProducts,
-      attributes,
     },
   };
   // const { slug } = context.params;

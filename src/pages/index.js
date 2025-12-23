@@ -18,7 +18,6 @@ import ProductServices from "@services/ProductServices";
 import ProductCard from "@component/product/ProductCard";
 import MainCarousel from "@component/carousel/MainCarousel";
 import FeatureCategory from "@component/category/FeatureCategory";
-import AttributeServices from "@services/AttributeServices";
 import BlogServices from "@services/BlogServices";
 import BlogCard from "@component/blog/BlogCard";
 import MainBT from "@component/button/MainBT";
@@ -30,7 +29,7 @@ import MinimalTitle from "@component/common/MinimalTitle";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useFilter from "@hooks/useFilter";
 
-const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs }) => {
+const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
   const router = useRouter();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
@@ -95,7 +94,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
     }
   }, [fakeLoading, carouselRef.current]);
 
-  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && discountProducts && attributes && Array.isArray(offers) && fakeLoading) {
+  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && discountProducts && Array.isArray(offers) && fakeLoading) {
     return (
       <>
         {isLoading ? (
@@ -114,7 +113,6 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                         discountProducts={discountProducts}
                         // קבלת הגובה של הבאנר המתחלף (קרוסלה)
                         height={carouselHeight}
-                        attributes={attributes}
                       />
                     </div>
                   </div>
@@ -163,8 +161,8 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                 </div>
               )}
 
-                {/* logos_carousel */}
-                {storeCustomizationSetting?.home?.logos_carousel_status && (
+              {/* logos_carousel */}
+              {storeCustomizationSetting?.home?.logos_carousel_status && (
                 <div className="bg-white lg:py-10 py-3 select-none border-y border-mainColor/20">
                   <div className="mx-auto px-3 sm:px-24">
                     <Swiper
@@ -204,7 +202,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
               {/* popular products */}
               {storeCustomizationSetting?.home?.popular_products_status && (
                 <div className="bg-mainColor-superLight lg:pt-10 lg:pb-4 py-4 mx-auto max-w-screen-2xl px-3 sm:px-10">
-                  <div className="w-full sm:mb-9 mb-5 bg-mainColor-light rounded p-3">
+                  <div className="w-full sm:mb-9 mb-5 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                     <CMSkeleton
                       count={1}
                       height={30}
@@ -239,7 +237,6 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                               <ProductCard
                                 key={product._id}
                                 product={product}
-                                attributes={attributes}
                                 offers={offers}
                               />
                             ))}
@@ -268,7 +265,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                     id="discount"
                     className="bg-mainColor-superLight lg:py-10 py-4 mx-auto max-w-screen-2xl px-3 sm:px-10"
                   >
-                    <div className="w-full sm:mb-9 mb-5 bg-mainColor-light rounded p-3">
+                    <div className="w-full sm:mb-9 mb-5 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                       <CMSkeleton
                         count={1}
                         height={30}
@@ -303,7 +300,6 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
                                 <ProductCard
                                   key={product._id + index}
                                   product={product}
-                                  attributes={attributes}
                                   offers={offers}
                                 />
                               ))}
@@ -317,7 +313,7 @@ const Home = ({ popularProducts, discountProducts, attributes, blogs, totalBlogs
               {/* Blog Section */}
               {blogs && blogs.length > 0 && (
                 <div className="bg-mainColor-light px-3 sm:px-10 md:px-14 lg:px-20 2xl:px-40 py-5">
-                  <div className="flex justify-between items-center my-3 bg-mainColor-superLight border border-gray-100 rounded-md p-3">
+                  <div className="w-full sm:mb-9 mb-5 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                     <MinimalTitle title={t("common:blogsTitle")} subtitle={t("common:blogsSubtitle")} />
                   </div>
 
@@ -365,13 +361,11 @@ export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
   const { query, _id } = context.query;
 
-  const [data, attributes, blogsData] = await Promise.all([
+  const [data, blogsData] = await Promise.all([
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
     }),
-
-    AttributeServices.getShowingAttributes(),
 
     BlogServices.getPublishedBlogs({
       page: 1,
@@ -394,7 +388,6 @@ export const getServerSideProps = async (context) => {
       popularProducts: sortedPopularProducts,
       discountProducts: sortedDiscountProducts,
       cookies: cookies,
-      attributes,
       blogs: blogsData?.blogs || [],
       totalBlogs: blogsData?.totalBlogs || 0,
     },

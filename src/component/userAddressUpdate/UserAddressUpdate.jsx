@@ -145,7 +145,7 @@ const UserAddressUpdate = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex justify-between items-center mt-5 mb-4 bg-mainColor-superLight rounded-lg p-3">
+      <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
         <MinimalTitle title={t("common:updateProfileTitle")} />
       </div>
       <div className="mt-5 md:mt-0 md:col-span-2">

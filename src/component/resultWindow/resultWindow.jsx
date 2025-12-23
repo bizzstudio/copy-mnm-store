@@ -16,7 +16,7 @@ import { SidebarContext } from '@context/SidebarContext';
 import { LiaCartPlusSolid } from 'react-icons/lia';
 import ImageWithFallback from '@component/common/ImageWithFallBack';
 
-export default function ResultWindow({ products = [], attributes, clearInput, closeResultWindow }) {
+export default function ResultWindow({ products = [], clearInput, closeResultWindow }) {
     // console.log('products: ', products)
     const resultRef = useRef(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -50,18 +50,30 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
         };
     }, [products, clearInput, closeResultWindow, modalOpen]);
 
-    const handleAddToCart = (product) => {
-        if (product.stock < 1) return notifyError(t("common:productStockOut"));
+    // חישוב מלאי המוצר
+    const getProductStock = (product) => {
+        if (product?.manageStock === false) {
+            return 9999;
+        } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
+            return product.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
+        }
+        return 0;
+    };
 
-        const { slug, variants, categories, description, ...updatedProduct } = product;
+    const handleAddToCart = (product) => {
+        const stock = getProductStock(product);
+        if (stock < 1) return notifyError(t("common:productStockOut"));
+
+        const { slug, categories, description, ...updatedProduct } = product;
+        const productPrice = product?.prices?.[0];
         const newItem = {
             ...updatedProduct,
             id: product._id,
             title: product.title,
-            price: product.prices.price,
-            originalPrice: product.prices?.originalPrice,
-            image: product.image[0],
-            slug: product.slug,  // Ensure slug is included
+            price: productPrice?.salePrice || productPrice?.price || 0,
+            originalPrice: productPrice?.price || 0,
+            image: product.image?.[0],
+            slug: product.slug,
         };
 
         addItem(newItem);
@@ -89,7 +101,6 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
                     setModalOpen={setModalOpen}
                     product={selectedProduct}
                     currency={currency}
-                    attributes={attributes}
                     clearInput={clearInput}
                 />
             )}
@@ -112,7 +123,7 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
                                             <ImageWithFallback
                                                 src={product.image[0]}
                                                 alt="product"
-                                                outOfStock={product.stock <= 0}
+                                                outOfStock={getProductStock(product) <= 0}
                                                 noPadding={true}
                                                 search
                                             />
@@ -121,8 +132,8 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
                                             <h3 className="font-bold">{showingTranslateValue(product?.title)}</h3>
                                             <Price
                                                 product={product}
-                                                price={product.prices.price}
-                                                originalPrice={product.prices.originalPrice}
+                                                price={product?.prices?.[0]?.salePrice || product?.prices?.[0]?.price || 0}
+                                                originalPrice={product?.prices?.[0]?.price || 0}
                                                 currency={currency}
                                                 card={true}
                                             />
@@ -158,11 +169,7 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
                                                             <button
                                                                 type='button'
                                                                 className="sm:pr-1"
-                                                                onClick={() =>
-                                                                    item?.variants?.length > 0
-                                                                        ? handleModalOpen(product)
-                                                                        : handleIncreaseQuantity(item)
-                                                                }
+                                                                onClick={() => handleIncreaseQuantity(item)}
                                                             >
                                                                 <span className="text-dark text-base">
                                                                     <IoAdd />
@@ -172,30 +179,17 @@ export default function ResultWindow({ products = [], attributes, clearInput, cl
                                                     )
                                             )
                                         ) : (
-                                            // כפתורי אפשרויות או הוספה ישירה
-                                            product?.variants?.length > 0 ? (
-                                                <button
-                                                    type='button'
-                                                    onClick={() => handleModalOpen(product)}
-                                                    aria-label="options"
-                                                    className={product?.stock <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
-                                                >
-                                                    <span className="text-[10px]">
-                                                        {t("common:options")}
-                                                    </span>
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    type='button'
-                                                    onClick={() => handleAddToCart(product)}
-                                                    aria-label="cart"
-                                                    className={product?.stock <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
-                                                >
-                                                    <span className="text-2xl">
-                                                        <LiaCartPlusSolid />
-                                                    </span>
-                                                </button>
-                                            )
+                                            <button
+                                                type='button'
+                                                onClick={() => handleAddToCart(product)}
+                                                aria-label="cart"
+                                                disabled={getProductStock(product) <= 0}
+                                                className={getProductStock(product) <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
+                                            >
+                                                <span className="text-2xl">
+                                                    <LiaCartPlusSolid />
+                                                </span>
+                                            </button>
                                         )}
                                     </div>
                                 </div>

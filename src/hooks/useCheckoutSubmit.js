@@ -511,63 +511,30 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
         const oldQuantity = product.oldQuantity;
 
-        let selectVariant = null;
-        let stock = product.stock;
-        let price = product.prices.price;
-        let originalPrice = product.prices.originalPrice;
-        let img = product.image[0];
-
-        if (
-          product?.variants.map(
-            (variant) =>
-              Object.entries(variant).sort().toString() ===
-              Object.entries(selectVariant).sort().toString()
-          )
-        ) {
-          const { variants, categories, description, ...updatedProduct } = product;
-          const newItem = {
-            ...updatedProduct,
-            id: `${product.variants.length <= 1
-              ? product._id
-              : product._id +
-              variantTitle
-                ?.map(
-                  // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-                  (att) => selectVariant[att._id]
-                )
-                .join("-")
-              }`,
-
-            title: product.variants.length <= 1
-              ? product.title
-              : {
-                he: product.title.he +
-                  "-" +
-                  variantTitle
-                    ?.map(
-                      // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-                      (att) =>
-                        att.variants?.find((v) => v._id === selectVariant[att._id])
-                    )
-                    .map((el) => el?.name),
-                en: product.title.en +
-                  "-" +
-                  variantTitle
-                    ?.map(
-                      // (att) => selectVariant[att.title.replace(/[^a-zA-Z0-9]/g, '')]
-                      (att) =>
-                        att.variants?.find((v) => v._id === selectVariant[att._id])
-                    )
-                    .map((el) => el?.name)
-              },
-            image: img,
-            variant: selectVariant,
-            price: price,
-            originalPrice: originalPrice,
-          };
-
-          addItem(newItem, oldQuantity);
+        // חישוב מלאי המוצר
+        let stock = 0;
+        if (product?.manageStock === false) {
+          stock = 9999;
+        } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
+          stock = product.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
         }
+
+        const productPrice = product?.prices?.[0];
+        const price = productPrice?.salePrice || productPrice?.price || 0;
+        const originalPrice = productPrice?.price || 0;
+        const img = product.image?.[0];
+
+        const { categories, description, ...updatedProduct } = product;
+        const newItem = {
+          ...updatedProduct,
+          id: product._id,
+          title: product.title,
+          image: img,
+          price: price,
+          originalPrice: originalPrice,
+        };
+
+        addItem(newItem, oldQuantity);
       });
 
       localStorage.removeItem("priceConflicts");

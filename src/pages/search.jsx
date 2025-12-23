@@ -12,10 +12,9 @@ import ProductCard from "@component/product/ProductCard";
 import CategoryCarousel from "@component/carousel/CategoryCarousel";
 import { SidebarContext } from "@context/SidebarContext";
 import Loading from "@component/preloader/Loading";
-import AttributeServices from "@services/AttributeServices";
 import { useRouter } from "next/router";
 
-const Search = ({ products, attributes }) => {
+const Search = ({ products }) => {
   const { t } = useTranslation();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const [visibleProduct, setVisibleProduct] = useState(24);
@@ -110,7 +109,6 @@ const Search = ({ products, attributes }) => {
                       <ProductCard
                         key={i + 1}
                         product={product}
-                        attributes={attributes}
                         offers={offers}
                       />
                     ))}
@@ -140,18 +138,14 @@ export default Search;
 export const getServerSideProps = async (context) => {
   const { query, _id } = context.query;
 
-  const [data, attributes] = await Promise.all([
-    ProductServices.getShowingStoreProducts({
-      category: _id ? _id : "",
-      title: query ? query : "",
-    }),
-    AttributeServices.getShowingAttributes({}),
-  ]);
+  const data = await ProductServices.getShowingStoreProducts({
+    category: _id ? _id : "",
+    title: query ? query : "",
+  });
 
   return {
     props: {
       products: data?.products,
-      attributes,
     },
   };
 };

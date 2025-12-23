@@ -1,7 +1,7 @@
 // src/component/cart/Cart.js
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { IoBagCheckOutline, IoClose, IoBagHandle } from "react-icons/io5";
+import { IoBagCheckOutline, IoClose, IoBagHandle, IoArrowBack } from "react-icons/io5";
 import useTranslation from "next-translate/useTranslation";
 
 // Internal import
@@ -14,7 +14,6 @@ import useCart from "@hooks/useCart";
 import { trackViewCart } from "@services/googleAnalytics";
 import { trackFbInitiateCheckout } from "@services/facebookPixel";
 import Calculating from "./Calculating";
-import MainBT from "@component/button/MainBT";
 import ThresholdDiscountSlider from "./ThresholdDiscountSlider";
 
 const Cart = () => {
@@ -67,47 +66,39 @@ const Cart = () => {
     }
   };
 
-  const handleMouseEnter = () => {
-    if (buttonRef.current) {
-      buttonRef.current.classList.add('bg-mainColor-dark');
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (buttonRef.current) {
-      buttonRef.current.classList.remove('bg-mainColor-dark');
-    }
-  };
-
   const checkoutClass = (
-    <MainBT
-      ref={buttonRef}
-      className="w-full !h-fit"
-      onClick={handleCheckoutClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <span className="w-full font-medium font-serif text-xl flex flex-col justify-start items-start py-3 px-5">
-        <small className="text-sm font-light">
-          {t("common:totalToPay")}
-        </small>
-        <span>
-          {typeof customCartTotal === 'number' ?
-            <>
-              <small>{currency}</small>
-              {customCartTotal.toFixed(2)}
-            </>
-            : <Calculating />}
-        </span>
-        {/* <FiInfo title={t("common:additonalLikut")} className="cursor-pointer mb-0.5"/> */}
-        {/* <small className="text-sm">{t("common:additonalLikut")}</small> */}
-      </span>
-      <span
-        className="whitespace-nowrap rounded-lg font-bold font-serif text-stone-800 cursor-pointer px-5 py-2"
+    <div className="w-full bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-mainColor-leaf hover:ring-offset-2">
+      {/* Summary Section */}
+      <div className="px-6 py-4 border-b border-gray-100 bg-white/50">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+            {t("common:totalToPay")}
+          </span>
+          <div className="flex items-baseline gap-1">
+            {typeof customCartTotal === 'number' ? (
+              <>
+                <span className="text-xs text-gray-500 font-normal">{currency}</span>
+                <span className="text-2xl font-bold font-serif text-gray-900">
+                  {customCartTotal.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <Calculating />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Button Section */}
+      <button
+        ref={buttonRef}
+        onClick={handleCheckoutClick}
+        className="w-full bg-mainColor hover:bg-mainColor-dark text-white font-semibold font-serif text-base py-4 px-6 flex items-center justify-center gap-2 transition-all duration-200 ease-out active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-mainColor-leaf focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed group"
       >
-        {t("common:proceedToCheckoutBtn")}
-      </span>
-    </MainBT>
+        <span>{t("common:proceedToCheckoutBtn")}</span>
+        <IoArrowBack className="text-xl transition-transform duration-200 group-hover:-translate-x-1" />
+      </button>
+    </div>
   );
 
   return (
@@ -116,19 +107,19 @@ const Cart = () => {
         <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       )}
       <div className="flex flex-col w-full h-full justify-between items-middle bg-white rounded">
-        <div className="w-full flex justify-between items-center relative px-5 py-4 border-b bg-mainColor-light border-gray-100">
-          <h2 className="font-semibold font-serif text-lg m-0 text-heading flex items-center gap-1 justify-center">
-            <span className="text-xl mr-2 mb-1">
-              <IoBagCheckOutline />
+        <div className="w-full flex justify-between items-center relative px-6 py-5 bg-gradient-to-br from-white to-gray-50 border-b border-mainColor-light shadow-sm rounded-t-lg">
+          <h2 className="font-semibold font-serif text-lg m-0 text-heading flex items-center gap-2">
+            <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-mainColor/10 text-mainColor-dark">
+              <IoBagCheckOutline className="text-xl" />
             </span>
-            {t("common:shoppingCartDrawerTitle")}
+            <span className="text-gray-900">{t("common:shoppingCartDrawerTitle")}</span>
           </h2>
           <button
             onClick={closeCartDrawer}
-            className="flex text-base items-center justify-center text-gray-500 p-2 focus:outline-none transition-opacity hover:text-red-400 group"
+            className="flex items-center justify-center gap-1.5 text-gray-500 px-3 py-2 rounded-lg focus:outline-none transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus:ring-2 focus:ring-red-200 focus:ring-offset-1 group"
           >
-            <IoClose />
-            <span className="font-sens text-sm text-gray-500 ml-1 group-hover:text-red-400 pb-0.5">
+            <IoClose className="text-lg" />
+            <span className="font-medium text-sm group-hover:text-red-500">
               {t("common:closeBtn")}
             </span>
           </button>
@@ -159,7 +150,7 @@ const Cart = () => {
         <div className="mx-5 my-3">
           {/* סליידר הנחת קניה מעל סכום */}
           <ThresholdDiscountSlider />
-          
+
           {items.length <= 0 ? (
             checkoutClass
           ) : (

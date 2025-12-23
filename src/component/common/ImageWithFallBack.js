@@ -4,7 +4,7 @@ import Image from "next/image";
 import useTranslation from "next-translate/useTranslation";
 
 const ImageWithFallback = ({
-  fallback = "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+  fallback = "https://nmplus.co.il/wp-content/uploads/2025/03/%D7%A9%D7%95%D7%9E%D7%A8-%D7%9E%D7%A7%D7%95%D7%9D-1.png",
   alt,
   src,
   outOfStock,

@@ -27,19 +27,24 @@ const useAddToCart = () => {
   // console.log('products',products)
   // console.log("items", items);
 
-  const handleAddItem = (product, quantity) => {
+  // חישוב מלאי המוצר
+  const getProductStock = (product) => {
+    if (product?.manageStock === false) {
+      return 9999;
+    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
+      return product.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
+    }
+    return product?.stock || 0;
+  };
 
+  const handleAddItem = (product, quantity) => {
     const result = items.find((i) => i.id === product.id);
-    const { variants, categories, description, ...updatedProduct } = product;
+    const { categories, description, ...updatedProduct } = product;
+    const productStock = getProductStock(product);
 
     // הוספה של מוצר קיים
     if (result !== undefined) {
-      if (
-        result?.quantity + item <=
-        (product?.variants?.length > 0
-          ? product?.variant?.quantity
-          : product?.stock)
-      ) {
+      if (result?.quantity + item <= productStock) {
         const addResult = addItem(updatedProduct, item);
         // רק אם נוספו מוצרים בפועל - הצגת התראה
         if (addResult?.added > 0) {
@@ -48,15 +53,10 @@ const useAddToCart = () => {
       } else {
         notifyError(t("common:productStockOut"));
       }
-    } 
+    }
     // הוספה של מוצר חדש
     else {
-      if (
-        item <=
-        (product?.variants?.length > 0
-          ? product?.variant?.quantity
-          : product?.stock)
-      ) {
+      if (item <= productStock) {
         const itemToPass = quantity ? quantity : item;
         const addResult = addItem(updatedProduct, itemToPass);
         // רק אם נוספו מוצרים בפועל - הצגת התראה
@@ -72,21 +72,10 @@ const useAddToCart = () => {
 
   const handleIncreaseQuantity = (product) => {
     const result = items?.find((p) => p.id === product.id);
-    // console.log(
-    //   "handleIncreaseQuantity",
-    //   product,
-    //   result?.quantity + item,
-    //   product?.variants?.length > 0
-    //     ? product?.variant?.quantity
-    //     : product?.stock
-    // );
+    const productStock = getProductStock(product);
+
     if (result) {
-      if (
-        result?.quantity + item <=
-        (product?.variants?.length > 0
-          ? product?.variant?.quantity
-          : product?.stock)
-      ) {
+      if (result?.quantity + item <= productStock) {
         updateItemQuantity(product.id, product.quantity + 1);
       } else {
         notifyError(t("common:productStockOut"));

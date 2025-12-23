@@ -11,13 +11,12 @@ import ProductCard from "@component/product/ProductCard";
 import { SidebarContext } from "@context/SidebarContext";
 import Loading from "@component/preloader/Loading";
 import { useRouter } from "next/router";
-import AttributeServices from "@services/AttributeServices";
 import MinimalTitle from "@component/common/MinimalTitle";
 import MainBT from "@component/button/MainBT";
 import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const CategoryPage = ({ products, attributes }) => {
+const CategoryPage = ({ products }) => {
     // console.log('products :>> ', products);
     const { t } = useTranslation();
     const { isLoading, setIsLoading, offers, categories } = useContext(SidebarContext);
@@ -30,7 +29,7 @@ const CategoryPage = ({ products, attributes }) => {
     const currentCategory = findMainCategory(categories, categoryName);
 
     // שם הקטגוריה להצגה
-    const displayCategoryName = currentCategory 
+    const displayCategoryName = currentCategory
         ? showingTranslateValue(currentCategory.name)
         : categoryName;
 
@@ -42,13 +41,13 @@ const CategoryPage = ({ products, attributes }) => {
 
     return (
         <Layout title={displayCategoryName}
-         description={`גלו את מגוון המוצרים בקטגוריית ${displayCategoryName}. איכות מובטחת, מחירים מעולים ומשלוח מהיר.`}
-         >
+            description={`גלו את מגוון המוצרים בקטגוריית ${displayCategoryName}. איכות מובטחת, מחירים מעולים ומשלוח מהיר.`}
+        >
             <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
                 <div className="flex py-5">
                     <div className="flex w-full">
                         <div className="w-full">
-                            <div className="my-3 bg-mainColor-light border border-gray-100 rounded-md p-3">
+                            <div className="my-3 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                     <MinimalTitle title={displayCategoryName} />
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -106,7 +105,6 @@ const CategoryPage = ({ products, attributes }) => {
                                             <ProductCard
                                                 key={i + 1}
                                                 product={product}
-                                                attributes={attributes}
                                                 offers={offers}
                                             />
                                         ))}
@@ -137,17 +135,13 @@ export default CategoryPage;
 export const getServerSideProps = async (context) => {
     const { categoryName } = context.query;
 
-    const [data, attributes] = await Promise.all([
-        ProductServices.getShowingStoreProducts({
-            category: categoryName,
-        }),
-        AttributeServices.getShowingAttributes({}),
-    ]);
+    const data = await ProductServices.getShowingStoreProducts({
+        category: categoryName,
+    });
 
     return {
         props: {
             products: data?.products,
-            attributes,
         },
     };
 };

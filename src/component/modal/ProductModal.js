@@ -1,11 +1,9 @@
 // src/component/modal/ProductModal.js
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { FiChevronLeft, FiMinus, FiPlus } from "react-icons/fi";
-import dayjs from "dayjs";
+import { FiMinus, FiPlus } from "react-icons/fi";
 
 // Internal import
 import Price from "@component/common/Price";
@@ -15,7 +13,6 @@ import { notifyError } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import MainModal from "@component/modal/MainModal";
 import Discount from "@component/common/Discount";
-import VariantList from "@component/variants/VariantList";
 import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { handleLogEvent } from "@utils/analytics";
@@ -30,7 +27,6 @@ const ProductModal = ({
   modalOpen,
   setModalOpen,
   product,
-  attributes,
   currency = '₪',
   clearInput = () => { },
   title = ''
@@ -41,20 +37,14 @@ const ProductModal = ({
   const { t } = useTranslation("ns1");
 
   const { handleAddItem, setItem, item } = useAddToCart();
-  const { lang, showingTranslateValue, getNumber, getNumberTwo } = useUtilsFunction();
+  const { showingTranslateValue, getNumber } = useUtilsFunction();
 
   // react hook
-  const [value, setValue] = useState("");
   const [price, setPrice] = useState(0);
   const [img, setImg] = useState("");
   const [originalPrice, setOriginalPrice] = useState(0);
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const [selectVariant, setSelectVariant] = useState({});
-  const [selectVa, setSelectVa] = useState({});
-  const [variantTitle, setVariantTitle] = useState([]);
-  const [variants, setVariants] = useState([]);
-  const [isReadMore, setIsReadMore] = useState(true);
 
   // סגירת הפופאפ באנימצייה
   const [isClosing, setIsClosing] = useState(false);
@@ -67,114 +57,58 @@ const ProductModal = ({
   };
 
   useEffect(() => {
-    // console.log('value', value, product);
-    if (value) {
-      const result = product?.variants?.filter((variant) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
-      // console.log("result: ", result);
+    if (!product) return;
 
-      const res = result?.map(
-        ({
-          originalPrice,
-          price,
-          discount,
-          quantity,
-          barcode,
-          sku,
-          productId,
-          image,
-          ...rest
-        }) => ({
-          ...rest,
-        })
-      );
+    // הגדרת תמונה
+    setImg(product?.image?.[0] || "");
 
-      const filterKey = Object.keys(Object.assign({}, ...res));
-      const selectVar = filterKey?.reduce(
-        (obj, key) => ({ ...obj, [key]: selectVariant[key] }),
-        {}
-      );
-      const newObj = Object.entries(selectVar).reduce(
-        (a, [k, v]) => (v ? ((a[k] = v), a) : a),
-        {}
-      );
-
-      // const result2 = result?.find((v) =>
-      //   Object.keys(newObj).every((k) => newObj[k] === v[k])
-      // );
-      const result2 = result[0];
-
-      // console.log("result2: ", result2);
-
-      if (result.length <= 0 || result2 === undefined) return setStock(0);
-
-      setVariants(result);
-      setSelectVariant(result2);
-      setSelectVa(result2);
-      setImg(result2?.image);
-      setStock(result2?.quantity);
-      const price = getNumber(result2?.price);
-      const originalPrice = getNumber(result2?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
-    } else if (product?.variants?.length > 0) {
-      const result = product?.variants?.filter((variant) =>
-        Object.keys(selectVa).every((k) => selectVa[k] === variant[k])
-      );
-
-      setVariants(result);
-      setStock(product.variants[0]?.quantity);
-      setSelectVariant(product.variants[0]);
-      setSelectVa(product.variants[0]);
-      setImg(product.variants[0]?.image);
-      const price = getNumber(product.variants[0]?.price);
-      const originalPrice = getNumber(product.variants[0]?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
+    // הגדרת מלאי - אם manageStock הוא false, נחשב שיש מלאי
+    if (product?.manageStock === false) {
+      setStock(9999); // מלאי בלתי מוגבל
+    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
+      // אם יש מערך stocks, נחשב את הסכום הכולל
+      const totalStock = product.stocks.reduce((sum, stockItem) => {
+        return sum + (stockItem?.quantity || 0);
+      }, 0);
+      setStock(totalStock);
     } else {
-      setStock(product?.stock);
-      setImg(product?.image[0]);
-      const price = getNumber(product?.prices?.price);
-      const originalPrice = getNumber(product?.prices?.originalPrice);
-      const discountPercentage = getNumber(
-        ((originalPrice - price) / originalPrice) * 100
-      );
-      setDiscount(getNumber(discountPercentage));
-      setPrice(price);
-      setOriginalPrice(originalPrice);
+      setStock(0);
+    }
+
+    // הגדרת מחירים - לוקח את המחיר הראשון מהמערך prices
+    const productPrice = product?.prices?.[0];
+    if (productPrice) {
+      // אם יש salePrice, זה המחיר המחוק, אחרת price הוא המחיר הרגיל
+      const currentPrice = getNumber(productPrice?.salePrice || productPrice?.price);
+      const originalPriceValue = productPrice?.salePrice
+        ? getNumber(productPrice?.price)
+        : getNumber(productPrice?.price);
+
+      setPrice(currentPrice);
+      setOriginalPrice(originalPriceValue);
+
+      // חישוב הנחה
+      if (productPrice?.salePrice && productPrice?.salePrice < productPrice?.price) {
+        const discountPercentage = getNumber(
+          ((originalPriceValue - currentPrice) / originalPriceValue) * 100
+        );
+        setDiscount(discountPercentage);
+      } else {
+        setDiscount(0);
+      }
+    } else {
+      setPrice(0);
+      setOriginalPrice(0);
+      setDiscount(0);
     }
   }, [
-    product?.prices?.discount,
-    product?.prices?.originalPrice,
-    product?.prices?.price,
-    product?.stock,
-    product.variants,
-    selectVa,
-    selectVariant,
-    value,
+    product,
+    product?.prices,
+    product?.stocks,
+    product?.manageStock,
+    product?.image,
   ]);
 
-  useEffect(() => {
-    if (!product?.variants || !Array.isArray(product.variants) || product.variants.length === 0) {
-      setVariantTitle([]);
-      return;
-    }
-
-    const res = Object.keys(Object.assign({}, ...product.variants));
-
-    const varTitle = attributes?.filter((att) => res.includes(att?._id));
-
-    setVariantTitle(varTitle?.sort());
-  }, [variants, attributes, product?.variants]);
 
   // Flashy Product Modal View Tracking
   useEffect(() => {
@@ -184,70 +118,28 @@ const ProductModal = ({
       // Meta Pixel ViewContent גם לפופאפ
       trackFbViewContent({
         ...product,
-        price: product?.prices?.price,
+        price: product?.prices?.[0]?.price || product?.prices?.[0]?.salePrice || 0,
       });
     }
   }, [modalOpen, product?._id]);
 
   const handleAddToCart = (p) => {
-    if (p.variants.length === 1 && p.variants[0].quantity < 1)
-      return notifyError(t("common:productStockOut"));
-
     if (stock <= 0) return notifyError(t("common:productStockOut"));
 
-    if (
-      product?.variants.map(
-        (variant) =>
-          Object.entries(variant).sort().toString() ===
-          Object.entries(selectVariant).sort().toString()
-      )
-    ) {
-      const { variants, categories, description, ...updatedProduct } = product;
-      const newItem = {
-        ...updatedProduct,
-        id: `${p?.variants.length <= 0
-          ? p._id
-          : p._id +
-          "-" +
-          variantTitle?.map((att) => selectVariant[att._id]).join("-")
-          }`,
-        title: p?.variants.length <= 0
-          ? p.title
-          : {
-            he: p.title.he +
-              "-" +
-              variantTitle
-                ?.map((att) =>
-                  att.variants?.find((v) => v._id === selectVariant[att._id])
-                )
-                .map((el) => el?.name),
-            en: p.title.en +
-              "-" +
-              variantTitle
-                ?.map((att) =>
-                  att.variants?.find((v) => v._id === selectVariant[att._id])
-                )
-                .map((el) => el?.name),
-          },
-        image: img,
-        variant: selectVariant || {},
-        price:
-          p.variants.length === 0
-            ? getNumber(p.prices.price)
-            : getNumber(price),
-        originalPrice:
-          p.variants.length === 0
-            ? getNumber(p.prices.originalPrice)
-            : getNumber(originalPrice),
-      };
+    const { categories, description, ...updatedProduct } = product;
+    const productPrice = p?.prices?.[0];
 
-      // console.log("newItem", newItem);
+    const newItem = {
+      ...updatedProduct,
+      id: p._id,
+      title: p.title,
+      image: img || p?.image?.[0],
+      price: getNumber(productPrice?.salePrice || productPrice?.price || 0),
+      originalPrice: getNumber(productPrice?.price || 0),
+    };
 
-      handleAddItem(newItem);
-      handleClose();
-    } else {
-      return notifyError("Please select all variant first!");
-    }
+    handleAddItem(newItem);
+    handleClose();
   };
 
   const handleMoreInfo = (slug) => {
@@ -363,29 +255,6 @@ const ProductModal = ({
                 />
               </div>
 
-              {/* אופציות מוצר (גדול קטן בינוני וכו') */}
-              <div className="mb-1">
-                {variantTitle?.map((a, i) => (
-                  <span key={a._id}>
-                    <h4 className="text-lg py-1 pb-2 font-serif text-gray-700 font-bold text-right">
-                      {showingTranslateValue(a?.name)}:
-                    </h4>
-                    <div className="flex flex-row items-center justify-center gap-2 w-fit">
-                      <VariantList
-                        att={a._id}
-                        lang={lang}
-                        option={a.option}
-                        setValue={setValue}
-                        varTitle={variantTitle}
-                        variants={product?.variants}
-                        setSelectVa={setSelectVa}
-                        selectVariant={selectVariant}
-                        setSelectVariant={setSelectVariant}
-                      />
-                    </div>
-                  </span>
-                ))}
-              </div>
 
               {/* בחירת כמות והוספה */}
               <div className="flex items-center mt-4">
@@ -429,7 +298,7 @@ const ProductModal = ({
                     <button
                       onClick={() => setItem(item + 1)}
                       disabled={
-                        product.quantity < item || product.quantity === item
+                        stock < item || stock === item || stock === 0
                       }
                       className="flex items-center justify-center h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                     >
@@ -440,7 +309,7 @@ const ProductModal = ({
                   </div>
                   <MainBT
                     onClick={() => handleAddToCart(product)}
-                    disabled={product.quantity < 1}
+                    disabled={stock < 1}
                     className="w-full px-6"
                   >
                     {t("common:addToCart")}

@@ -108,7 +108,7 @@ const BlogsPage = ({ initialBlogs, totalBlogs, category, tag }) => {
         <Layout title={pageTitle} description={pageTitle}>
             <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 2xl:pt-0 lg:pt-10">
                 <div className="flex flex-col py-5 gap-6">
-                    <div className="flex justify-between gap-3 items-center my-3 bg-mainColor-light border border-gray-100 rounded-md p-3">
+                    <div className="flex justify-between gap-3 items-center my-3 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                         <MinimalTitle title={pageTitle} subtitle={pageSubtitle} />
                         <h6 className="text-sm font-serif">
                             {t("common:totalI")} <span className="font-bold">{totalBlogs}</span> {t("common:itemsFound")}
