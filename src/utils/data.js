@@ -170,7 +170,7 @@ const contactData = [
     title: "contact-page-box1-title",
     info: "contact-page-box1-info",
     icon: FiMail,
-    contact: "תמרים בתומר@gmail.com",
+    contact: "MNM יבוא שיווק והפצה@gmail.com",
     className: "bg-mainColor-light",
   },
   {

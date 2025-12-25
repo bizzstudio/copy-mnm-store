@@ -23,7 +23,7 @@ const Offers = ({ discountProducts, attributes }) => {
       {isLoading ? (
         <Loading loading={isLoading} />
       ) : (
-        <Layout title="מבצעים והנחות - תמרים בתומר" description="גלו את המבצעים וההנחות המיוחדות שלנו על תמרים ומוצרי טבע. מחירים מוזלים, הצעות מיוחדות ואיכות מובטחת.">
+        <Layout title="מבצעים והנחות - MNM יבוא שיווק והפצה" description="גלו את המבצעים וההנחות המיוחדות שלנו על תמרים ומוצרי טבע. מחירים מוזלים, הצעות מיוחדות ואיכות מובטחת.">
           <div className="min-h-screen">
             {/* discounted products */}
             {storeCustomizationSetting?.home?.discount_product_status &&

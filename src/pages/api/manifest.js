@@ -6,8 +6,8 @@ export default async function handler(req, res) {
     const seo = setting?.seo || {};
 
     const manifest = {
-        name: seo.meta_title || "תמרים בתומר",
-        short_name: seo.meta_title || "תמרים בתומר",
+        name: seo.meta_title || "MNM יבוא שיווק והפצה",
+        short_name: seo.meta_title || "MNM יבוא שיווק והפצה",
         description: seo.meta_description || "",
         start_url: "/",
         display: "standalone",

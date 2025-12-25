@@ -53,7 +53,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
       setTimeout(() => {
         setFakeLoading(true);
         sessionStorage.setItem('fakeLoading', 'true');
-      }, 2000);
+      }, 100);
     }
   }, []);
 
@@ -351,7 +351,8 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
   } else {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <img src={logoGif.src} alt="loading" className="m-auto" />
+        {/* <img src={logoGif.src} alt="loading" className="m-auto" /> */}
+        <Loading loading={true} />
       </div>
     );
   }

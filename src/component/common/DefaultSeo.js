@@ -12,12 +12,12 @@ const DefaultSeo = () => {
 
   return (
     <NextSeo
-      title={meta_title || "תמרים בתומר"}
+      title={meta_title || "MNM יבוא שיווק והפצה"}
       openGraph={{
         type: "website",
         locale: "he_IL",
         url: meta_url || "https://tmarim-betomer.com",
-        site_name: meta_title || "תמרים בתומר",
+        site_name: meta_title || "MNM יבוא שיווק והפצה",
       }}
       twitter={{
         handle: "@handle",

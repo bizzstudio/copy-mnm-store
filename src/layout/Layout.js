@@ -150,7 +150,7 @@ const Layout = ({ title, description, children, cashierPage = false }) => {
 
     // עמוד מוצר
     if (pathname.startsWith('/product/')) {
-      const productName = title?.replace(` | ${meta_title || "תמרים בתומר"}`, '') || '';
+      const productName = title?.replace(` | ${meta_title || "MNM יבוא שיווק והפצה"}`, '') || '';
       return {
         productName
       };
@@ -170,7 +170,7 @@ const Layout = ({ title, description, children, cashierPage = false }) => {
 
     // עמוד הזמנה
     if (pathname.startsWith('/order/')) {
-      const orderNumber = title?.replace(` | ${meta_title || "תמרים בתומר"}`, '') || '';
+      const orderNumber = title?.replace(` | ${meta_title || "MNM יבוא שיווק והפצה"}`, '') || '';
       return {
         orderNumber
       };
@@ -251,8 +251,8 @@ const Layout = ({ title, description, children, cashierPage = false }) => {
         <Head>
           <title>
             {title
-              ? `${title} | ${meta_title || "תמרים בתומר"}`
-              : meta_title || "תמרים בתומר"}
+              ? `${title} | ${meta_title || "MNM יבוא שיווק והפצה"}`
+              : meta_title || "MNM יבוא שיווק והפצה"}
           </title>
           {description && <meta name="description" content={description} />}
         </Head>

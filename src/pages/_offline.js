@@ -6,7 +6,7 @@ const Offline = () => {
   return (
     <>
       <Head>
-        <title>אין חיבור לאינטרנט - תמרים בתומר</title>
+        <title>אין חיבור לאינטרנט - MNM יבוא שיווק והפצה</title>
       </Head>
       <div className="px-6 py-10 lg:py-20 bg-mainColor-superLight h-screen flex flex-wrap content-center">
         <div className="block justify-items-stretch mx-auto items-center text-center">
