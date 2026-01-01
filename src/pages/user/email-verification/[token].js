@@ -64,7 +64,8 @@ export const getServerSideProps = async ({ params }) => {
   const i18nProps = await getI18nProps(context);
 
   return {
-    props: { params ,
+    props: {
+      params,
       ...i18nProps,
     },
   };

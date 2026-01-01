@@ -171,15 +171,14 @@ export const getServerSideProps = async (context) => {
 
         const i18nProps = await getI18nProps(context);
 
-  return {
-    props: {
+        return {
+            props: {
                 initialBlogs: data?.blogs || [],
                 totalBlogs: data?.totalBlogs || 0,
                 category: category || null,
                 tag: tag || null,
-            ,
-      ...i18nProps,
-    },
+                ...i18nProps,
+            },
         };
     } catch (error) {
         console.error("Failed to fetch blogs:", error);

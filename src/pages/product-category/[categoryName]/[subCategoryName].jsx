@@ -148,11 +148,10 @@ export const getServerSideProps = async (context) => {
 
     const i18nProps = await getI18nProps(context);
 
-  return {
-    props: {
+    return {
+        props: {
             products: data?.products,
-        ,
-      ...i18nProps,
-    },
+            ...i18nProps,
+        },
     };
 };

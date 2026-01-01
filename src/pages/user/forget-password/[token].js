@@ -175,12 +175,15 @@ const ForgetPassword = () => {
   );
 };
 
-// export const getServerSideProps = async ({ params }) => {
-//   return {
-//     props: { params ,
+export const getServerSideProps = async ({ params }) => {
+  const i18nProps = await getI18nProps(context);
+
+  return {
+    props: {
+      params,
       ...i18nProps,
     },
-//   };
-// };
+  };
+};
 
 export default ForgetPassword;

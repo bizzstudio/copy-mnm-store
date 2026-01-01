@@ -147,12 +147,13 @@ const Order = ({ params }) => {
   );
 };
 
-export const getServerSideProps = ({ params }) => {
+export const getServerSideProps = async (context) => {
   const i18nProps = await getI18nProps(context);
 
   return {
-    props: { params ,
-      ...i18nProps,
+    props: {
+      params,
+      ...i18nProps
     },
   };
 };
