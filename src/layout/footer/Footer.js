@@ -472,7 +472,7 @@ const Footer = () => {
               לMNM יבוא שיווק והפצה
             </Link>
           </span>
-          <hr className="sm:h-4 sm:w-[1px] h-[1px] w-7 bg-gray-400" />
+          <hr className="sm:h-4 sm:w-px h-px w-7 bg-gray-400" />
           <span className="text-center">
             האתר נבנה על ידי
             <Link

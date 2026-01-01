@@ -20,7 +20,7 @@ const SortDropdown = ({ sortedField, setSortedField }) => {
     { 
       value: "Low", 
       label: t('sortPriceLowToHigh'),
-      icon: <HiOutlineSortAscending className="w-4 h-4 mt-[1px]" />
+      icon: <HiOutlineSortAscending className="w-4 h-4 mt-px" />
     },
     { 
       value: "High", 
@@ -30,7 +30,7 @@ const SortDropdown = ({ sortedField, setSortedField }) => {
     { 
       value: "Popular", 
       label: t('sortByBestSelling'),
-      icon: <AiOutlineHeart className="w-4 h-4 mt-[1px]" />
+      icon: <AiOutlineHeart className="w-4 h-4 mt-px" />
     },
   ];
 

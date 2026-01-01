@@ -5,22 +5,23 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { Provider } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Hotjar from '@hotjar/browser';
 import Script from "next/script";
 import { NextIntlClientProvider } from 'next-intl';
+import Head from "next/head";
 
 // Internal import
 import store from "@redux/store";
 import useAsync from "@hooks/useAsync";
 import { UserProvider } from "@context/UserContext";
-import DefaultSeo from "@component/common/DefaultSeo";
 import { SidebarProvider } from "@context/SidebarContext";
 import SettingServices from "@services/SettingServices";
 import { trackPageView as trackFlashyPageView } from "@services/flashy";
 import { trackPageView } from "@services/googleAnalytics";
 import { trackFbPageView } from "@services/facebookPixel";
+import { sanitizeScripts } from "@utils/sanitizeScripts";
 
 let persistor = persistStore(store);
 
@@ -29,6 +30,9 @@ const hotjarVersion = 6;
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+  const [dynamicScripts, setDynamicScripts] = useState({ head: '', bodyStart: '', bodyEnd: '' });
+  const trackingInitialized = useRef(false);
+  const hotjarInitialized = useRef(false);
 
   const {
     data: storeSetting,
@@ -36,9 +40,65 @@ function MyApp({ Component, pageProps }) {
     error,
   } = useAsync(SettingServices.getStoreSetting);
 
-  // Route change tracking: Flashy + GA4 + Meta Pixel
+  // טעינת סקריפטים דינמיים (פעם אחת)
   useEffect(() => {
-    if (!loading && !error) {
+    SettingServices.getStoreScripts()
+      .then(scripts => {
+        const sanitized = sanitizeScripts(scripts);
+        setDynamicScripts(sanitized);
+      })
+      .catch(err => {
+        console.error("Failed to load dynamic scripts:", err);
+        // ממשיכים בלי scripts - לא מפילים את האתר
+      });
+  }, []);
+
+  // הרצת bodyStart script (תחילת BODY)
+  useEffect(() => {
+    if (dynamicScripts.bodyStart) {
+      try {
+        // יצירת script element וריצה
+        const script = document.createElement('script');
+        script.textContent = dynamicScripts.bodyStart;
+        document.body.insertBefore(script, document.body.firstChild);
+        // ניקוי אחרי הרצה
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+      } catch (err) {
+        console.error("Error executing bodyStart script:", err);
+      }
+    }
+  }, [dynamicScripts.bodyStart]);
+
+  // הרצת bodyEnd script (סוף BODY)
+  useEffect(() => {
+    if (dynamicScripts.bodyEnd) {
+      try {
+        // יצירת script element וריצה
+        const script = document.createElement('script');
+        script.textContent = dynamicScripts.bodyEnd;
+        document.body.appendChild(script);
+        // ניקוי אחרי הרצה
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+      } catch (err) {
+        console.error("Error executing bodyEnd script:", err);
+      }
+    }
+  }, [dynamicScripts.bodyEnd]);
+
+  // Route change tracking: Flashy + GA4 + Meta Pixel
+  // עם הגנה מפני double events ב-React 19 Strict Mode
+  useEffect(() => {
+    if (!loading && !error && !trackingInitialized.current) {
+      trackingInitialized.current = true;
+
       const handleRouteChange = (url) => {
         // 1. Flashy Page View
         trackFlashyPageView(url);
@@ -53,6 +113,7 @@ function MyApp({ Component, pageProps }) {
       router.events.on("routeChangeComplete", handleRouteChange);
       return () => {
         router.events.off("routeChangeComplete", handleRouteChange);
+        trackingInitialized.current = false;
       };
     }
   }, [loading, error, router.events]);
@@ -64,46 +125,26 @@ function MyApp({ Component, pageProps }) {
     }
   }, [router.pathname]);
 
-  // Hotjar
+  // Hotjar - עם הגנה מפני double init ב-React 19 Strict Mode
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      Hotjar.init(siteId, hotjarVersion);
+    if (typeof window !== 'undefined' && !hotjarInitialized.current) {
+      hotjarInitialized.current = true;
+      try {
+        Hotjar.init(siteId, hotjarVersion);
+      } catch (err) {
+        console.error("Hotjar init error:", err);
+      }
     }
   }, []);
 
-  const isProductPage = router.pathname.startsWith("/product/");
-
   return (
-    <div>
-      {/* GA4 (gtag.js) */}
-      {/* <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-E7TH64F9LG"
-        strategy="afterInteractive"
-      /> */}
-
-      {/* GA4 Consent + Config */}
-      {/* <Script id="ga4-consent-config" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-
-          // מצב הסכמה ברירת מחדל לאירופה/UK/EEA/שווייץ:
-          for ( const mode of [{"analytics_storage":"denied","ad_storage":"denied","ad_user_data":"denied","ad_personalization":"denied","region":["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IS","IE","IT","LV","LI","LT","LU","MT","NL","NO","PL","PT","RO","SK","SI","ES","SE","GB","CH"]}] || [] ) {
-            gtag("consent", "default", { "wait_for_update": 500, ...mode });
-          }
-
-          gtag("js", new Date());
-          gtag("set", "developer_id.dOGY3NW", true);
-
-          gtag("config", "G-E7TH64F9LG", {
-            "track_404": true,
-            "allow_google_signals": true,
-            "logged_in": false,                  // אם תרצה לעדכן דינמית בהמשך - אפשר
-            "linker": { "domains": [], "allow_incoming": false },
-            "custom_map": { "dimension1": "logged_in" }
-          });
-        `}
-      </Script> */}
+    <>
+      {/* סקריפטים דינמיים ב-HEAD */}
+      {dynamicScripts.head && (
+        <Head>
+          <script dangerouslySetInnerHTML={{ __html: dynamicScripts.head }} />
+        </Head>
+      )}
 
       {/* Flashy Pixel */}
       <Script
@@ -158,12 +199,7 @@ function MyApp({ Component, pageProps }) {
               <PersistGate loading={null} persistor={persistor}>
                 <SidebarProvider>
                   <CartProvider>
-
-                    {/* רק בעמודים כלליים, לא בעמודי מוצר */}
-                    {!isProductPage && <DefaultSeo />}
-
                     <Component {...pageProps} />
-
                   </CartProvider>
                 </SidebarProvider>
               </PersistGate>
@@ -171,7 +207,7 @@ function MyApp({ Component, pageProps }) {
           </UserProvider>
         </GoogleOAuthProvider>
       </NextIntlClientProvider>
-    </div>
+    </>
   );
 }
 

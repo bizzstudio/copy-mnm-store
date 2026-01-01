@@ -23,7 +23,7 @@ export default function DynamicPopup({ popup = {} }) {
                 <Link
                     href={popup.link}
                     target={popup.targetBlank ? "_blank" : "_self"}
-                    className="mt-5 flex items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-11 rounded-lg border-mainColor-dark border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px] whitespace-nowrap"
+                    className="mt-5 flex items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-11 rounded-lg border-mainColor-dark border-b-4 hover:brightness-110 hover:-translate-y-px hover:border-b-[6px] active:border-b-2 active:brightness-90 active:translate-y-[2px] whitespace-nowrap"
                 >
                     {popup.linkName}
                 </Link>

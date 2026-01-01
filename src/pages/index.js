@@ -29,8 +29,9 @@ import MinimalTitle from "@component/common/MinimalTitle";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useFilter from "@hooks/useFilter";
 import { getI18nProps } from "@utils/i18n";
+import { getSeoProps } from "@utils/getSeoProps";
 
-const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
+const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => {
   const router = useRouter();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
@@ -101,7 +102,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
         {isLoading ? (
           <Loading loading={isLoading} />
         ) : (
-          <Layout>
+          <Layout seo={seo}>
             <div className="min-h-screen w-full max-w-full overflow-hidden">
               <div className="3xl:bg-mainColor-superLight bg-white">
                 <div className="mx-auto sm:py-5 max-w-screen-2x1 px-3 sm:px-10">
@@ -363,7 +364,7 @@ export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
   const { query, _id } = context.query;
 
-  const [data, blogsData, i18nProps] = await Promise.all([
+  const [data, blogsData, seoProps, i18nProps] = await Promise.all([
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
@@ -375,6 +376,8 @@ export const getServerSideProps = async (context) => {
       category: "",
       tag: ""
     }),
+
+    getSeoProps(),
 
     getI18nProps(context),
   ]);
@@ -394,6 +397,7 @@ export const getServerSideProps = async (context) => {
       cookies: cookies,
       blogs: blogsData?.blogs || [],
       totalBlogs: blogsData?.totalBlogs || 0,
+      ...seoProps,
       ...i18nProps,
     },
   };

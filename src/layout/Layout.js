@@ -1,6 +1,5 @@
 // src/layout/Layout.js
 import { useContext, useEffect, useState } from "react";
-import Head from "next/head";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -26,16 +25,11 @@ import useGetSetting from "@hooks/useGetSetting";
 import FloatingWhatsApp from "@component/common/FloatingWhatsApp";
 import CustomerServices from "@services/CustomerServices";
 import RewardOffersManager from "@component/reward-offers/RewardOffersManager";
+import DefaultSeo from "@component/common/DefaultSeo";
 
-const Layout = ({ title, description, children, cashierPage = false }) => {
+const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
   const { state: { userInfo }, dispatch } = useContext(UserContext);
-
-  // console.log('userInfo layout :>> ', userInfo);
-
-  const { storeCustomizationSetting } = useGetSetting() || {};
-  const { seo } = storeCustomizationSetting || {};
-  const { favicon, meta_title } = seo || {};
 
   let currentLang = Cookies.get('_lang');
 
@@ -147,6 +141,9 @@ const Layout = ({ title, description, children, cashierPage = false }) => {
   // יצירת props דינאמיים לפי העמוד הנוכחי
   const getWhatsAppProps = () => {
     const { pathname, query } = router;
+    const { storeCustomizationSetting } = useGetSetting() || {};
+    const { seo } = storeCustomizationSetting || {};
+    const { meta_title } = seo || {};
 
     // עמוד מוצר
     if (pathname.startsWith('/product/')) {
@@ -247,15 +244,10 @@ const Layout = ({ title, description, children, cashierPage = false }) => {
         </MainModal>
       )} */}
 
+      {/* SEO tags דינמיים לעמוד - מקבל SEO מ-props (מ-getServerSideProps) */}
+      <DefaultSeo title={title} description={description} seo={seo} />
+
       <div className="font-sans">
-        <Head>
-          <title>
-            {title
-              ? `${title} | ${meta_title || "MNM יבוא שיווק והפצה"}`
-              : meta_title || "MNM יבוא שיווק והפצה"}
-          </title>
-          {description && <meta name="description" content={description} />}
-        </Head>
         {/* <NavBarTop /> */}
         <Navbar cashierPage={cashierPage} />
         <div className="bg-mainColor-superLight min-h-[calc(100vh-127px)]">

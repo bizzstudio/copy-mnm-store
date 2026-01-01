@@ -37,7 +37,7 @@ const NotFound = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <Link href="/">
-                <MainBT className="!w-fit px-8 py-3 text-lg">
+                <MainBT className="w-fit! px-8 py-3 text-lg">
                   {t('backToHome')}
                 </MainBT>
               </Link>

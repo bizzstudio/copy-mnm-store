@@ -1,6 +1,5 @@
 // src/pages/product/[slug].jsx
 import { useTranslations } from "next-intl";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -310,7 +309,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                   {breadcrumbItems.map((item, index) => (
                     <Fragment key={index}>
                       {index > 0 && (
-                        <li className="text-xs sm:text-sm mt-[1px] shrink-0">
+                        <li className="text-xs sm:text-sm mt-px shrink-0">
                           <FiChevronLeft />
                         </li>
                       )}
@@ -629,7 +628,6 @@ export const getServerSideProps = async (context) => {
     props: {
       product,
       relatedProducts: data?.relatedProducts,
-    ,
       ...i18nProps,
     },
   };

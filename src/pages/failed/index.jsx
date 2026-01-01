@@ -28,14 +28,14 @@ const Failed = () => {
             <p className="text-gray-400 text-lg text-center">{t('orderFaildText')}</p>
             <div className="flex items-center justify-center flex-wrap gap-5 mt-3 h-11">
               <Link href="/" target="_top">
-                <MainBT className='!w-fit px-6'>
+                <MainBT className='w-fit! px-6'>
                   <div className="flex items-center gap-2">
                     <IoHome /> {t('backToHome')}
                   </div>
                 </MainBT>
               </Link>
               <Link href="/checkout" target="_top">
-                <MainBT className='!w-fit px-6'>
+                <MainBT className='w-fit! px-6'>
                   <div className="flex items-center gap-2">
                     <LuShoppingCart size={19} /> {t('tryAgain')}
                   </div>

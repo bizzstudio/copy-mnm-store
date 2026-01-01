@@ -68,7 +68,7 @@ const OrderCosts = ({
                             <MainBT
                                 type="button"
                                 onClick={handleCouponCode}
-                                className="xs:!w-fit w-full whitespace-nowrap px-6 md:text-sm"
+                                className="xs:w-fit! w-full whitespace-nowrap px-6 md:text-sm"
                             >
                                 {showingTranslateValue(
                                     storeCustomizationSetting?.checkout?.apply_button
@@ -92,7 +92,7 @@ const OrderCosts = ({
                             : <Calculating />}
                     </span>
                     {customCartTotal < minimumOrderAmount && (
-                        <span className="text-xs text-red-500 mb-[1px]">
+                        <span className="text-xs text-red-500 mb-px">
                             ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
                         </span>
                     )}

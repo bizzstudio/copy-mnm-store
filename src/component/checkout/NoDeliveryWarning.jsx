@@ -26,7 +26,7 @@ const NoDeliveryWarning = ({
                 <div className="flex items-start gap-3">
                     <div className="grow ">
                         <h3 className="flex items-center gap-1.5 text-sm font-semibold text-stone-700 mb-2">
-                            <IoWarningOutline className="text-[22px] mb-[1px] text-mainColor-dark" />
+                            <IoWarningOutline className="text-[22px] mb-px text-mainColor-dark" />
                             {t('noDeliveryToAddress')}
                         </h3>
 

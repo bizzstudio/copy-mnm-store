@@ -90,7 +90,7 @@ const BlogDetails = ({ blog, pageKey }) => {
                 </div>
 
                 {/* Content */}
-                <div className="sm:!container mx-auto mt-10 px-5">
+                <div className="sm:container! mx-auto mt-10 px-5">
                     <div className="bg-white sm:p-8 p-4 rounded-lg shadow-sm blog-content-responsive-zoom">
                         <ReactQuill
                             value={contentHtml}

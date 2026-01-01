@@ -20,7 +20,7 @@ const StickyCart = () => {
 
   return (
     <button aria-label="Cart" onClick={toggleCartDrawer} className="absolute">
-      <div className="left-0 w-35 float-right fixed top-2/4 bottom-2/4 align-middle cursor-pointer z-30 hidden lg:block xl:block max-w-[140px]">
+      <div className="left-0 w-24 float-right fixed top-2/4 bottom-2/4 align-middle cursor-pointer z-30 hidden lg:block xl:block max-w-[140px]">
       <div className="shadow-xl rounded-lg">
         <div className="flex flex-col items-center justify-center bg-white rounded-tr-lg p-2 text-gray-700 border-mainColor-dark border">
           <span className="text-2xl mb-1 text-mainColor-dark">

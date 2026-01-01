@@ -134,7 +134,7 @@ const Category = ({ onLinkClick, onClose }) => {
                     className="shrink-0 h-4 w-4"
                     aria-hidden="true"
                   />
-                  <p className="inline-flex items-center justify-between text-sm font-medium w-full mb-[1px]">
+                  <p className="inline-flex items-center justify-between text-sm font-medium w-full mb-px">
                     {t(item.title)}
                   </p>
                 </Link>

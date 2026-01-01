@@ -241,7 +241,7 @@ const VoiceRecognition = ({
                         }}
                     >
                         <HiMicrophone size={15} />
-                        <span className="text-base mb-[1px]">
+                        <span className="text-base mb-px">
                             {isInitializing
                                 ? t('voiceSearchInitializing')
                                 : (isListening

@@ -140,7 +140,7 @@ const Navbar = ({ cashierPage = false }) => {
                 {/* Search Bar */}
                 <div className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
                   <form onSubmit={handleSubmit}
-                    className={`flex relative w-full h-[32px] sm:h-[40px] lg:min-w-[250px] items-center px-2 sm:px-3.5 rounded-[10px] transition-[border-radius] duration-500 ease-in-out bg-gray-100 focus-within:rounded-[1px] before:content-[''] before:absolute before:bg-mainColor before:transform before:scale-x-0 before:origin-center before:w-full before:h-[2px] before:left-0 before:bottom-0 before:rounded-[1px] before:transition-transform before:duration-300 before:ease-in-out focus-within:before:scale-100`}>
+                    className={`flex relative w-full h-[32px] sm:h-[40px] lg:min-w-[250px] items-center px-2 sm:px-3.5 rounded-[10px] transition-[border-radius] duration-500 ease-in-out bg-gray-100 focus-within:rounded-px before:content-[''] before:absolute before:bg-mainColor before:transform before:scale-x-0 before:origin-center before:w-full before:h-[2px] before:left-0 before:bottom-0 before:rounded-px before:transition-transform before:duration-300 before:ease-in-out focus-within:before:scale-100`}>
                     <button type="submit" className="border-none bg-none text-[#8b8ba7] focus:text-mainColor text-base sm:text-lg shrink-0">
                       <IoSearchOutline />
                     </button>
@@ -249,7 +249,7 @@ const Navbar = ({ cashierPage = false }) => {
                   {/* כפתור פרופיל */}
                   {userInfo?.name ?
                     <Link
-                      className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
+                      className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
                       aria-label="Login"
                       href="/user/dashboard"
                     >
@@ -265,7 +265,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <FiUserCheck className="w-6 h-6 drop-shadow-xl" />
                         </span>}
                     </Link> :
-                    <button className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
+                    <button className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
                       aria-label="Login"
                       onClick={() => setModalOpen(!modalOpen)}>
                       <FiUser className="w-6 h-6 drop-shadow-xl" />
@@ -276,7 +276,7 @@ const Navbar = ({ cashierPage = false }) => {
                   {userInfo?.isCashier && (
                     <Link
                       href={cashierPage ? "/" : "/cashier-desk"}
-                      className="flex items-center justify-center text-white bg-mainColor text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
+                      className="flex items-center justify-center text-white bg-mainColor text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
                       aria-label={cashierPage ? t('backToHomePgae') : t('cashierDesk')}
                       title={cashierPage ? t('backToHomePgae') : t('cashierDesk')}
                     >

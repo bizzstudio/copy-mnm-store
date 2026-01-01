@@ -156,7 +156,7 @@ const NavbarPromo = () => {
       )}
 
       <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 3xl:bg-transparent w-full relative`}>
-        <div className="relative w-full sm:ps-20 3xl:!ps-0 md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
+        <div className="relative w-full sm:ps-20 3xl:ps-0! md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
           {/* קונטיינר גלילה אמיתי */}
           <div className="w-full relative py-2">
             {/* חץ שמאלה (צד שמאל של המסך) – גולל שמאלה */}

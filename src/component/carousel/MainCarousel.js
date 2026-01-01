@@ -152,7 +152,7 @@ const MainCarousel = () => {
                 </p>
                 <Link
                   href={item.url}
-                  className="hidden w-fit sm:inline-block lg:inline-block mt-6 items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-10 rounded-lg border-mainColor-dark border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
+                  className="hidden w-fit sm:inline-block lg:inline-block mt-6 items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-10 rounded-lg border-mainColor-dark border-b-4 hover:brightness-110 hover:-translate-y-px hover:border-b-[6px] active:border-b-2 active:brightness-90 active:translate-y-[2px]"
                 >
                   {item.buttonName}
                 </Link>

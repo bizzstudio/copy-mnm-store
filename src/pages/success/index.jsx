@@ -118,14 +118,14 @@ const Success = () => {
             {/* <h3 className="text-xl font-bold text-center">{t('orsderInProcess')}</h3> */}
             <div className="flex items-center justify-center flex-wrap gap-5 mt-3 h-11">
               <Link href="/" target="_top">
-                <MainBT className='!w-fit px-6'>
+                <MainBT className='w-fit! px-6'>
                   <div className="flex items-center gap-2">
                     <IoHome /> {t('backToHome')}
                   </div>
                 </MainBT>
               </Link>
               <Link href="/user/my-orders" target="_top">
-                <MainBT className='!w-fit px-6'>
+                <MainBT className='w-fit! px-6'>
                   <div className="flex items-center gap-2">
                     <PiListMagnifyingGlassBold size={20} /> {t('viewOrder')}
                   </div>

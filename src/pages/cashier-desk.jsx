@@ -334,7 +334,7 @@ const CashierDesk = () => {
                                                 <MainBT
                                                     type="button"
                                                     onClick={handleCouponCode}
-                                                    className="xs:!w-fit w-full whitespace-nowrap px-6 md:text-sm"
+                                                    className="xs:w-fit! w-full whitespace-nowrap px-6 md:text-sm"
                                                 >
                                                     {showingTranslateValue(
                                                         storeCustomizationSetting?.checkout?.apply_button
