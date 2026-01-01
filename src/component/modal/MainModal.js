@@ -24,7 +24,7 @@ const MainModal = ({ modalOpen, setModalOpen, children, z = null, onClose }) => 
           initialFocus={cancelButtonRef}
           style={{ zIndex: z ? z : 30 }}
         >
-          <div className="min-h-[100dvh] sm:px-8 px-2">
+          <div className="min-h-dvh sm:px-8 px-2">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -58,7 +58,7 @@ const MainModal = ({ modalOpen, setModalOpen, children, z = null, onClose }) => 
                     ref={cancelButtonRef}
                     onClick={handleClose}
                     type="button"
-                    className="inline-flex justify-center p-1 sm:p-2 sm:text-base text-sm font-medium text-white bg-mainColor border-none rounded-full outline -outline-offset-1 sm:outline-[8px] outline-4 outline-white"
+                    className="inline-flex justify-center p-1 sm:p-2 sm:text-base text-sm font-medium text-white bg-mainColor border-none rounded-full -outline-offset-1 sm:outline-8 outline-4 outline-white"
                   >
                     <IoClose />
                   </button>

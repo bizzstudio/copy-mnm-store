@@ -55,7 +55,7 @@ const Category = ({ onLinkClick, onClose }) => {
             </h2> */}
             <button
               onClick={onClose}
-              className="absolute left-4 top-4 z-10 inline-flex justify-center px-2 py-2 text-base font-medium text-white bg-mainColor border-none rounded-full outline -outline-offset-1 outline-[8px] outline-white"
+              className="absolute left-4 top-4 z-10 inline-flex justify-center px-2 py-2 text-base font-medium text-white bg-mainColor border-none rounded-full outline-offset-1 outline-8 outline-white"
               aria-label="close"
             >
               <IoClose />
