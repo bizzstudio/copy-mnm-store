@@ -1,15 +1,15 @@
 // src/component/voice-search/VoiceSearchButton.jsx
 import React, { useState } from 'react';
 import { HiMicrophone } from 'react-icons/hi2';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import VoiceSearchModal from './VoiceSearchModal';
 
 const VoiceSearchButton = ({ tooltipMessage = null }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [modalOpen, setModalOpen] = useState(false);
 
     // הודעת tooltip - ברירת מחדל או מה שהועבר
-    const defaultTooltip = t('common:voiceSearchTooltip');
+    const defaultTooltip = t('voiceSearchTooltip');
     const tooltip = tooltipMessage || defaultTooltip;
 
     return (
@@ -18,7 +18,7 @@ const VoiceSearchButton = ({ tooltipMessage = null }) => {
             <button
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className="flex items-center justify-center p-1.5 sm:p-3 -ml-1 sm:-ml-2 rounded-lg text-black hover:text-mainColor transition-colors duration-200 group relative outline-none flex-shrink-0"
+                className="flex items-center justify-center p-1.5 sm:p-3 -ml-1 sm:-ml-2 rounded-lg text-black hover:text-mainColor transition-colors duration-200 group relative outline-none shrink-0"
                 // title={tooltip}
                 aria-label="תמלול קולי"
             >

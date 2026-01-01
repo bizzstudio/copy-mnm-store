@@ -1,7 +1,7 @@
 // src/pages/search.jsx
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -13,9 +13,10 @@ import CategoryCarousel from "@component/carousel/CategoryCarousel";
 import { SidebarContext } from "@context/SidebarContext";
 import Loading from "@component/preloader/Loading";
 import { useRouter } from "next/router";
+import { getI18nProps } from "@utils/i18n";
 
 const Search = ({ products }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const [visibleProduct, setVisibleProduct] = useState(24);
   const [isCategory, setIsCategory] = useState(false);
@@ -31,8 +32,8 @@ const Search = ({ products }) => {
 
   return (
     <Layout
-      title={query?.query ? `${t("common:search")}: ${query.query}` : t("common:search")}
-      description={t("common:searchDescription")}
+      title={query?.query ? `${t('search')}: ${query.query}` : t('search')}
+      description={t('searchDescription')}
     >
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
         <div className="flex py-5">
@@ -54,7 +55,7 @@ const Search = ({ products }) => {
                     height={380}
                   />
                   <h2 className="text-lg md:text-xl lg:text-2xl xl:text-2xl text-center mt-2 font-medium font-serif text-gray-600">
-                    {t("common:sorryText")}
+                    {t('sorryText')}
                   </h2>
                 </div>
               ) : (
@@ -62,9 +63,9 @@ const Search = ({ products }) => {
                   <img src={category} alt={query?.category || ''} className="h-24 mx-auto animate-fadeIn" /> :
                   <div className="flex justify-between my-3 bg-mainColor-light border border-gray-100 rounded p-3">
                     <h6 className="text-sm font-serif">
-                      {t("common:totalI")}{" "}
+                      {t('totalI')}{" "}
                       <span className="font-bold">{productData?.length}</span>{" "}
-                      {t("common:itemsFound")}
+                      {t('itemsFound')}
                     </h6>
                     {/* מיון על פי מחיר, כרגע בהערה */}
                     {/* <span className="text-sm font-serif">
@@ -73,13 +74,13 @@ const Search = ({ products }) => {
                       className="py-0 text-sm font-serif font-medium block w-full rounded border-0 bg-white pr-10 cursor-pointer focus:ring-0"
                     >
                       <option className="px-3" value="All" defaultValue hidden>
-                        {t("common:sortByPrice")}
+                        {t('sortByPrice')}
                       </option>
                       <option className="px-3" value="Low">
-                        {t("common:lowToHigh")}
+                        {t('lowToHigh')}
                       </option>
                       <option className="px-3" value="High">
-                        {t("common:highToLow")}
+                        {t('highToLow')}
                       </option>
                     </select>
                   </span> */}
@@ -120,7 +121,7 @@ const Search = ({ products }) => {
                       // className="w-auto mx-auto md:text-sm leading-5 flex items-center transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none bg-indigo-100 text-gray-700 px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-mainColor-dark h-12 mt-6 text-sm lg:text-sm "
                       className="w-auto mx-auto mt-6 flex items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-11 rounded-lg border-mainColor-dark border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]"
                     >
-                      {t("common:loadMoreBtn")}
+                      {t('loadMoreBtn')}
                     </button>
                   )}
                 </>
@@ -143,9 +144,12 @@ export const getServerSideProps = async (context) => {
     title: query ? query : "",
   });
 
+  const i18nProps = await getI18nProps(context);
+
   return {
     props: {
       products: data?.products,
+      ...i18nProps,
     },
   };
 };

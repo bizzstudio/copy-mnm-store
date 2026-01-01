@@ -1,7 +1,7 @@
 // src/component/common/ImageWithFallBack.js
 import { useState, useRef } from "react";
 import Image from "next/image";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const ImageWithFallback = ({
   fallback = "https://nmplus.co.il/wp-content/uploads/2025/03/%D7%A9%D7%95%D7%9E%D7%A8-%D7%9E%D7%A7%D7%95%D7%9D-1.png",
@@ -17,7 +17,7 @@ const ImageWithFallback = ({
   enableZoom = false,
   ...props
 }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isHovering, setIsHovering] = useState(false);
   const containerRef = useRef(null);
@@ -67,7 +67,7 @@ const ImageWithFallback = ({
                       ? "px-1 py-1 text-xs whitespace-nowrap"
                       : "px-2 py-1 text-2xl me-2 mb-2"
           }`}>
-            {t("common:stockOut")}
+            {t('stockOut')}
           </div>
         </div>
       )}

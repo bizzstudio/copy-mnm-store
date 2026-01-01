@@ -9,7 +9,7 @@ import { IoHome, IoNewspaperOutline, IoSearchOutline } from "react-icons/io5";
 import { FiShoppingCart, FiUser, FiBell, FiUserCheck } from "react-icons/fi";
 import { FaX } from "react-icons/fa6";
 import { MdPointOfSale } from "react-icons/md";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import debounce from "lodash.debounce";
 import { RiCustomerServiceLine } from "react-icons/ri";
 import { TbTruckDelivery } from "react-icons/tb";
@@ -34,7 +34,7 @@ import MainModal from "@component/modal/MainModal";
 import AutoDeliveriesPopup from "@component/deliveriesPopup/AutoDeliveriesPopup";
 
 const Navbar = ({ cashierPage = false }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const router = useRouter();
 
   const [imageUrl, setImageUrl] = useState("");
@@ -117,7 +117,7 @@ const Navbar = ({ cashierPage = false }) => {
           {/* logo */}
           <Link
             href={cashierPage ? "/cashier-desk" : "/"}
-            className="flex items-center flex-shrink-0 ms-4"
+            className="flex items-center shrink-0 ms-4"
           >
             <Image
               width={200}
@@ -141,18 +141,18 @@ const Navbar = ({ cashierPage = false }) => {
                 <div className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
                   <form onSubmit={handleSubmit}
                     className={`flex relative w-full h-[32px] sm:h-[40px] lg:min-w-[250px] items-center px-2 sm:px-3.5 rounded-[10px] transition-[border-radius] duration-500 ease-in-out bg-gray-100 focus-within:rounded-[1px] before:content-[''] before:absolute before:bg-mainColor before:transform before:scale-x-0 before:origin-center before:w-full before:h-[2px] before:left-0 before:bottom-0 before:rounded-[1px] before:transition-transform before:duration-300 before:ease-in-out focus-within:before:scale-100`}>
-                    <button type="submit" className="border-none bg-none text-[#8b8ba7] focus:text-mainColor text-base sm:text-lg flex-shrink-0">
+                    <button type="submit" className="border-none bg-none text-[#8b8ba7] focus:text-mainColor text-base sm:text-lg shrink-0">
                       <IoSearchOutline />
                     </button>
                     <input
                       onChange={(e) => setSearchText(e.target.value)}
                       className="peer text-xs sm:text-sm bg-transparent w-full h-full px-1.5 sm:px-2 py-0 sm:py-[0.7em] border-none focus:outline-none focus:ring-0"
-                      placeholder={t(`common:search-placeholder`)}
+                      placeholder={t('search-placeholder')}
                       required
                       type="text"
                       value={searchText}
                     />
-                    <button onClick={() => { setSearchResults(), setSearchText("") }} type="reset" className="border-none peer-placeholder-shown:opacity-0 peer-placeholder-shown:invisible transition-opacity duration-300 flex-shrink-0" >
+                    <button onClick={() => { setSearchResults(), setSearchText("") }} type="reset" className="border-none peer-placeholder-shown:opacity-0 peer-placeholder-shown:invisible transition-opacity duration-300 shrink-0" >
                       <FaX size={10} className="sm:w-3 sm:h-3" />
                     </button>
 
@@ -177,7 +177,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <Link href="/עלינו" className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
                               <IoInformationCircleOutline size={22} />
-                              <span>{t("common:aboutUs")}</span>
+                              <span>{t('aboutUs')}</span>
                             </div>
                           </Link>
                         ),
@@ -188,7 +188,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <Link href="/צרו-קשר" className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
                               <RiCustomerServiceLine size={19} />
-                              <span>{t("common:contactUs")}</span>
+                              <span>{t('contactUs')}</span>
                             </div>
                           </Link>
                         ),
@@ -199,7 +199,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <Link href="/blogs" className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
                               <IoNewspaperOutline size={20} />
-                              <span>{t("common:blogsTitle")}</span>
+                              <span>{t('blogsTitle')}</span>
                             </div>
                           </Link>
                         ),
@@ -210,7 +210,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <div className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
                               <TbTruckDelivery size={24} />
-                              <span>{t("common:deliveryAreas")}</span>
+                              <span>{t('deliveryAreas')}</span>
                             </div>
                           </div>
                         ),
@@ -221,7 +221,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <Link href="/תקנון-אתר" className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
                               <FaList size={17} />
-                              <span>{t("common:termsAndConditions")}</span>
+                              <span>{t('termsAndConditions')}</span>
                             </div>
                           </Link>
                         ),
@@ -277,8 +277,8 @@ const Navbar = ({ cashierPage = false }) => {
                     <Link
                       href={cashierPage ? "/" : "/cashier-desk"}
                       className="flex items-center justify-center text-white bg-mainColor text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
-                      aria-label={cashierPage ? t("common:backToHomePgae") : t("common:cashierDesk")}
-                      title={cashierPage ? t("common:backToHomePgae") : t("common:cashierDesk")}
+                      aria-label={cashierPage ? t('backToHomePgae') : t('cashierDesk')}
+                      title={cashierPage ? t('backToHomePgae') : t('cashierDesk')}
                     >
                       {cashierPage ?
                         <IoHome className="w-5 h-5 drop-shadow-xl" /> :

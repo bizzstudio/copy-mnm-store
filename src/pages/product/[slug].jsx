@@ -1,5 +1,5 @@
 // src/pages/product/[slug].jsx
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,6 +39,7 @@ import MainBT from "@component/button/MainBT";
 import MinimalTitle from "@component/common/MinimalTitle";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { trackFbViewContent } from "@services/facebookPixel";
+import { getI18nProps } from "@utils/i18n";
 
 const ProductScreen = ({ product, relatedProducts }) => {
   const router = useRouter();
@@ -143,7 +144,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
   }, [product]);
 
   const handleAddToCart = (p) => {
-    if (stock <= 0) return notifyError(t("common:productStockOut"));
+    if (stock <= 0) return notifyError(t('productStockOut'));
 
     const { categories, description, ...updatedProduct } = product;
     const productPrice = p?.prices?.[0];
@@ -164,7 +165,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
     setImg(img);
   };
 
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { getCategorySlug, findMainCategory, findSubCategory } = useUtilsFunction();
   const { categories } = useContext(SidebarContext);
 
@@ -201,7 +202,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
 
   // תמיד מתחילים מהבית
   breadcrumbItems.push({
-    name: t("common:HOME"),
+    name: t('HOME'),
     href: "/",
     isActive: false
   });
@@ -309,11 +310,11 @@ const ProductScreen = ({ product, relatedProducts }) => {
                   {breadcrumbItems.map((item, index) => (
                     <Fragment key={index}>
                       {index > 0 && (
-                        <li className="text-xs sm:text-sm mt-[1px] flex-shrink-0">
+                        <li className="text-xs sm:text-sm mt-[1px] shrink-0">
                           <FiChevronLeft />
                         </li>
                       )}
-                      <li className={`text-xs sm:text-sm ${index === breadcrumbItems.length - 1 ? 'min-w-0 flex-1 overflow-hidden' : 'flex-shrink-0'} ${index === 0 ? 'pr-1' : index === breadcrumbItems.length - 1 ? 'px-1' : 'pl-1'} transition duration-200 ease-in ${item.isActive ? '' : 'cursor-pointer hover:text-black font-semibold'}`}>
+                      <li className={`text-xs sm:text-sm ${index === breadcrumbItems.length - 1 ? 'min-w-0 flex-1 overflow-hidden' : 'shrink-0'} ${index === 0 ? 'pr-1' : index === breadcrumbItems.length - 1 ? 'px-1' : 'pl-1'} transition duration-200 ease-in ${item.isActive ? '' : 'cursor-pointer hover:text-black font-semibold'}`}>
                         {item.href ? (
                           <Link href={item.href} className={index === breadcrumbItems.length - 1 ? 'block truncate' : 'block'}>
                             <button
@@ -334,7 +335,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
               </div>
               {/* <div className="rounded-lg p-3 lg:p-12 bg-white"> */}
               <div className="w-full flex flex-col items-center justify-center lg:flex-row rounded-lg p-3 lg:p-12 bg-white">
-                <div className="max-w-lg flex-shrink-0 lg:block md:w-6/12">
+                <div className="max-w-lg shrink-0 lg:block md:w-6/12">
                   <Discount slug product={product} discount={discount} title={offerTitle}
                   // title={product.isCombination ? (selectVariant?.offers?.length > 0 ? (
                   //   selectVariant.offers.reduce((title, obj) => (
@@ -385,7 +386,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                       </h1>
 
                       <p className="uppercase font-serif font-medium text-gray-500 text-sm">
-                        {t("common:SKU")} :{" "}
+                        {t('SKU')} :{" "}
                         <span className="font-bold text-gray-600">
                           {product.sku}
                         </span>
@@ -419,8 +420,8 @@ const ProductScreen = ({ product, relatedProducts }) => {
                                 className="read-or-hide"
                               >
                                 {isReadMore
-                                  ? t("common:moreInfo")
-                                  : t("common:showLess")}
+                                  ? t('moreInfo')
+                                  : t('showLess')}
                               </span>
                             )
                             : product?.description?.en?.length > 230 && (
@@ -429,31 +430,31 @@ const ProductScreen = ({ product, relatedProducts }) => {
                                 className="read-or-hide"
                               >
                                 {isReadMore
-                                  ? t("common:moreInfo")
-                                  : t("common:showLess")}
+                                  ? t('moreInfo')
+                                  : t('showLess')}
                               </span>
                             )}
                         </div>}
 
                       <div className="flex items-center mt-4">
                         <div className="flex items-center justify-start space-s-3 sm:space-s-4 w-full gap-3">
-                          <div className="group flex items-center justify-between rounded-md overflow-hidden flex-shrink-0 border h-11 md:h-12 border-gray-300">
+                          <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300">
                             <button
                               onClick={() => setItem(item - 1)}
                               disabled={item === 1}
-                              className="flex items-center justify-center flex-shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
+                              className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
                             >
                               <span className="text-dark text-base">
                                 <FiMinus />
                               </span>
                             </button>
-                            <p className="font-semibold flex items-center justify-center h-full  transition-colors duration-250 ease-in-out cursor-default flex-shrink-0 text-base text-heading w-8  md:w-20 xl:w-24">
+                            <p className="font-semibold flex items-center justify-center h-full  transition-colors duration-250 ease-in-out cursor-default shrink-0 text-base text-heading w-8  md:w-20 xl:w-24">
                               {item}
                             </p>
                             <button
                               onClick={() => setItem(item + 1)}
                               disabled={stock <= item || stock === 0}
-                              className="flex items-center justify-center h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
+                              className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                             >
                               <span className="text-dark text-base">
                                 <FiPlus />
@@ -464,7 +465,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                             onClick={() => handleAddToCart(product)}
                             className="text-sm w-full h-12 px-6"
                           >
-                            {t("common:addToCart")}
+                            {t('addToCart')}
                           </MainBT>
                         </div>
                       </div>
@@ -472,7 +473,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                       <div className="flex flex-col mt-4">
                         <span className="font-serif font-semibold py-1 text-sm d-block">
                           <span className="text-gray-800">
-                            {t("common:category")}:
+                            {t('category')}:
                           </span>{" "}
                           <Link
                             href={parentCategory ? `/product-category/${getCategorySlug(parentCategory)}/${getCategorySlug(foundCategory)}` : `/product-category/${getCategorySlug(foundCategory)}`}
@@ -501,10 +502,10 @@ const ProductScreen = ({ product, relatedProducts }) => {
                       {/* social share */}
                       <div className="mt-2">
                         {/* <h3 className="text-base font-semibold mb-1 font-serif">
-                          {t("common:shareYourSocial")}
+                          {t('shareYourSocial')}
                         </h3> */}
                         {/* <p className="font-sans text-sm text-gray-500">
-                          {t("common:shareYourSocialText")}
+                          {t('shareYourSocialText')}
                         </p> */}
                         {/* <ul className="flex gap-2 mt-4">
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
@@ -568,7 +569,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
               {relatedProducts?.length >= 2 && (
                 <div className="pt-10 lg:pt-10 lg:pb-10">
                   <div className="flex justify-between items-center mt-5 mb-4 bg-white rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-                    <MinimalTitle title={t("common:relatedProductsTitle")} />
+                    <MinimalTitle title={t('relatedProductsTitle')} />
                   </div>
                   <div className="flex">
                     <div className="w-full">
@@ -622,10 +623,14 @@ export const getServerSideProps = async (context) => {
     };
   }
 
+  const i18nProps = await getI18nProps(context);
+
   return {
     props: {
       product,
       relatedProducts: data?.relatedProducts,
+    ,
+      ...i18nProps,
     },
   };
   // const { slug } = context.params;

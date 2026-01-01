@@ -9,17 +9,18 @@ import Layout from "@layout/Layout";
 import useGetSetting from "@hooks/useGetSetting";
 import PageHeader from "@component/header/PageHeader";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const Faq = () => {
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <Layout
-      title={t("common:FAQ")}
-      description={t("common:faqDescription")}
+      title={t('FAQ')}
+      description={t('faqDescription')}
     >
       <PageHeader
         headerBg={storeCustomizationSetting?.faq?.header_bg}
@@ -247,5 +248,12 @@ const Faq = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default Faq;

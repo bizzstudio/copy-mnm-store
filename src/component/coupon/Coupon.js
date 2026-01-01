@@ -1,14 +1,14 @@
+// src/component/coupon/Coupon.js
 import React, { useState } from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 
 // Internal import
 import useAsync from "@hooks/useAsync";
 import CouponServices from "@services/CouponServices";
 import OfferTimer from "@component/coupon/OfferTimer";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const Coupon = ({ couponInHome }) => {
   const [copiedCode, setCopiedCode] = useState("");
@@ -16,13 +16,42 @@ const Coupon = ({ couponInHome }) => {
 
   const { data, error } = useAsync(CouponServices.getShowingCoupons);
   const { showingTranslateValue, currency } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // console.log("coupon  data", data);
 
-  const handleCopied = (code) => {
-    setCopiedCode(code);
-    setCopied(true);
+  const handleCopied = async (code) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setCopied(true);
+      // Reset copied state after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+        setCopiedCode("");
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy code:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = code;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopiedCode(code);
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+          setCopiedCode("");
+        }, 2000);
+      } catch (fallbackErr) {
+        console.error("Fallback copy failed:", fallbackErr);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   // console.log("data", data);
@@ -59,16 +88,16 @@ const Coupon = ({ couponInHome }) => {
                         <span>{coupon?.discountType?.value}%</span>
                       )}
                     </span>{" "}
-                    {t("common:off")}
+                    {t('off')}
                   </h6>
                   <div className="ml-2">
                     {dayjs().isAfter(dayjs(coupon.endTime)) ? (
                       <span className="text-red-600 inline-block px-4 py-1 rounded-full font-medium text-xs bg-red-100">
-                        {t("common:inactive")}
+                        {t('inactive')}
                       </span>
                     ) : (
                       <span className="text-mainColor-dark inline-block px-4 py-1 rounded-full font-medium text-xs bg-mainColor-light">
-                        {t("common:active")}
+                        {t('active')}
                       </span>
                     )}
                   </div>
@@ -113,26 +142,24 @@ const Coupon = ({ couponInHome }) => {
                 <div className="w-full">
                   <div className="block">
                     <div className="font-serif border border-dashed bg-mainColor-superLight py-1 border-mainColor rounded-lg text-center block">
-                      <CopyToClipboard
-                        text={coupon.couponCode}
-                        onCopy={() => handleCopied(coupon.couponCode)}
+                      <button
+                        className="block w-full"
+                        onClick={() => handleCopied(coupon.couponCode)}
                       >
-                        <button className="block w-full">
-                          {copied && coupon.couponCode === copiedCode ? (
-                            <span className="text-mainColor-dark text-sm leading-7 font-semibold">
-                              {t("common:copied!")}
-                            </span>
-                          ) : (
-                            <span className="uppercase font-serif font-semibold text-sm leading-7 text-mainColor-dark">
-                              {coupon.couponCode}{" "}
-                            </span>
-                          )}
-                        </button>
-                      </CopyToClipboard>
+                        {copied && coupon.couponCode === copiedCode ? (
+                          <span className="text-mainColor-dark text-sm leading-7 font-semibold">
+                            {t('copied!')}
+                          </span>
+                        ) : (
+                          <span className="uppercase font-serif font-semibold text-sm leading-7 text-mainColor-dark">
+                            {coupon.couponCode}{" "}
+                          </span>
+                        )}
+                      </button>
                     </div>
                   </div>
                   <p className="text-xs leading-4 text-gray-500 mt-2 text-center">
-                    {t("common:OfferCard-description")}{" "}
+                    {t('OfferCard-description')}{" "}
                     <span className="font-bold">
                       {currency}
                       {coupon.minimumAmount}
@@ -199,7 +226,7 @@ const Coupon = ({ couponInHome }) => {
                       <span>{coupon?.discountType?.value}%</span>
                     )}
                   </span>{" "}
-                  {t("common:off")}
+                  {t('off')}
                 </h2>
               </div>
             </div>
@@ -212,37 +239,35 @@ const Coupon = ({ couponInHome }) => {
                       <div className="ml-2">
                         {dayjs().isAfter(dayjs(coupon.endTime)) ? (
                           <span className="text-red-600 inline-block">
-                            {t("common:inactive")}
+                            {t('inactive')}
                           </span>
                         ) : (
                           <span className="text-mainColor-dark inline-block">
-                            {t("common:active")}
+                            {t('active')}
                           </span>
                         )}
                       </div>
                     </div>
 
                     <div className="font-serif border border-dashed bg-mainColor-superLight py-2 border-mainColor rounded-lg text-center block">
-                      <CopyToClipboard
-                        text={coupon.couponCode}
-                        onCopy={() => handleCopied(coupon.couponCode)}
+                      <button
+                        className="block w-full"
+                        onClick={() => handleCopied(coupon.couponCode)}
                       >
-                        <button className="block w-full">
-                          {copied && coupon.couponCode === copiedCode ? (
-                            <span className="text-mainColor-dark text-base leading-7 font-semibold">
-                              {t("common:copied!")}
-                            </span>
-                          ) : (
-                            <span className="uppercase font-serif font-semibold text-base leading-7 text-mainColor-dark">
-                              {coupon.couponCode}{" "}
-                            </span>
-                          )}
-                        </button>
-                      </CopyToClipboard>
+                        {copied && coupon.couponCode === copiedCode ? (
+                          <span className="text-mainColor-dark text-base leading-7 font-semibold">
+                            {t('copied!')}
+                          </span>
+                        ) : (
+                          <span className="uppercase font-serif font-semibold text-base leading-7 text-mainColor-dark">
+                            {coupon.couponCode}{" "}
+                          </span>
+                        )}
+                      </button>
                     </div>
                   </div>
                   <p className="text-xs leading-5 text-gray-500 mt-2 text-center">
-                    {t("common:OfferCard-description")}{" "}
+                    {t('OfferCard-description')}{" "}
                     <span className="font-bold text-gray-700">
                       {currency}
                       {coupon.minimumAmount}

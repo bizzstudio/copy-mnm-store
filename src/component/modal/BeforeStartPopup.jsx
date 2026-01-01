@@ -5,10 +5,10 @@ import DeliveryServices from "@services/DeliveryServices";
 import { getNextDeliveryMessage } from "@utils/getNextDeliveryMessage";
 import MinimalTitle from "@component/common/MinimalTitle";
 import MainBT from "@component/button/MainBT";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const BeforeStartPopup = ({ onClose }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     // state עבור בחירת עיר
     const [chosenCity, setChosenCity] = useState(null);
@@ -58,7 +58,7 @@ const BeforeStartPopup = ({ onClose }) => {
         <div className="px-3 sm:px-11 py-8 max-w-md">
             {/* כותרת */}
             <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-                <MinimalTitle title={t("common:beforeStartTitle")} />
+                <MinimalTitle title={t('beforeStartTitle')} />
             </div>
 
             {/* טקסט הסבר */}

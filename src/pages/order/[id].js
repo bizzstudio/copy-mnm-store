@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { IoCloudDownloadOutline, IoPrintOutline } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import ReactToPrint from "react-to-print";
 import Cookies from "js-cookie";
 
@@ -17,6 +17,7 @@ import { UserContext } from "@context/UserContext";
 import OrderServices from "@services/OrderServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const Order = ({ params }) => {
   const printRef = useRef();
@@ -30,7 +31,7 @@ const Order = ({ params }) => {
   } = useContext(UserContext);
   const { showingTranslateValue, getNumberTwo, currency } = useUtilsFunction();
   const { storeCustomizationSetting, globalSetting } = useGetSetting();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   useEffect(() => {
     (async () => {
@@ -66,7 +67,7 @@ const Order = ({ params }) => {
   // console.log('data', data)
 
   return (
-    <Layout title={t("common:order") + " " + data?.invoice} description={t("common:orderConfirmationDescription")}>
+    <Layout title={t('order') + " " + data?.invoice} description={t('orderConfirmationDescription')}>
       {loading && !data ? (
         <Loading loading={loading} />
       ) : (
@@ -122,7 +123,7 @@ const Order = ({ params }) => {
 
                 <ReactToPrint
                   trigger={() => (
-                    <MainBT className="!w-auto mb-3 sm:mb-0 md:mb-0 lg:mb-0 bg-mainColor text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md me-auto">
+                    <MainBT className="w-auto! mb-3 sm:mb-0 md:mb-0 lg:mb-0 bg-mainColor text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md me-auto">
                       <div className={`flex justify-center items-center gap-2 ${currentLang ? 'flex-row-reverse' : ''}`}>
                         {showingTranslateValue(
                           storeCustomizationSetting?.dashboard?.print_button
@@ -147,8 +148,12 @@ const Order = ({ params }) => {
 };
 
 export const getServerSideProps = ({ params }) => {
+  const i18nProps = await getI18nProps(context);
+
   return {
-    props: { params },
+    props: { params ,
+      ...i18nProps,
+    },
   };
 };
 

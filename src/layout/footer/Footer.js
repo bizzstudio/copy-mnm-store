@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 import {
   FacebookIcon,
@@ -20,7 +20,7 @@ import CMSkeleton from "@component/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const Footer = () => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const {
     state: { userInfo },
@@ -320,11 +320,11 @@ const Footer = () => {
                 />
                 <br />
                 <span className="break-words">
-                  {t("common:phone")} : {storeCustomizationSetting?.footer?.block4_phone}
+                  {t('phone')} : {storeCustomizationSetting?.footer?.block4_phone}
                 </span>
                 <br />
                 <span className="break-words">
-                  {t("common:email")} : {storeCustomizationSetting?.footer?.block4_email}
+                  {t('email')} : {storeCustomizationSetting?.footer?.block4_email}
                 </span>
               </p>
             </div>
@@ -345,7 +345,7 @@ const Footer = () => {
                     storeCustomizationSetting?.footer?.social_linkedin ||
                     storeCustomizationSetting?.footer?.social_whatsapp) && (
                       <span className="text-sm sm:text-base leading-7 font-medium block mb-3 sm:mb-2 pb-0.5 text-center lg:text-left">
-                        {t("common:footer-follow-us")}
+                        {t('footer-follow-us')}
                       </span>
                     )}
                   <ul className="text-sm flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
@@ -424,7 +424,7 @@ const Footer = () => {
               <div className="col-span-1 text-center order-2">
                 <div>
                   <p className="text-sm sm:text-base leading-7 font-medium block mb-2">
-                    {t("common:footer-call-us")}
+                    {t('footer-call-us')}
                   </p>
                   <h5 className="text-lg sm:text-xl lg:text-2xl font-bold text-black leading-7">
                     {/* +012345-67900 */}

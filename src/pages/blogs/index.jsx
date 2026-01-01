@@ -8,10 +8,11 @@ import BlogServices from "@services/BlogServices";
 import MinimalTitle from "@component/common/MinimalTitle";
 import Loading from "@component/preloader/Loading";
 import { SidebarContext } from "@context/SidebarContext";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const BlogsPage = ({ initialBlogs, totalBlogs, category, tag }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { isLoading, setIsLoading } = useContext(SidebarContext);
     const router = useRouter();
 
@@ -29,8 +30,8 @@ const BlogsPage = ({ initialBlogs, totalBlogs, category, tag }) => {
     // ref לאלמנט האחרון
     const observerTarget = useRef(null);
 
-    const pageTitle = t("common:blogsTitle");
-    const pageSubtitle = tag ? `#${tag}` : category ? `#${category}` : t("common:allBlogs");
+    const pageTitle = t('blogsTitle');
+    const pageSubtitle = tag ? `#${tag}` : category ? `#${category}` : t('allBlogs');
 
     useEffect(() => {
         setIsLoading(false);
@@ -111,7 +112,7 @@ const BlogsPage = ({ initialBlogs, totalBlogs, category, tag }) => {
                     <div className="flex justify-between gap-3 items-center my-3 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
                         <MinimalTitle title={pageTitle} subtitle={pageSubtitle} />
                         <h6 className="text-sm font-serif">
-                            {t("common:totalI")} <span className="font-bold">{totalBlogs}</span> {t("common:itemsFound")}
+                            {t('totalI')} <span className="font-bold">{totalBlogs}</span> {t('itemsFound')}
                         </h6>
                     </div>
 
@@ -127,7 +128,7 @@ const BlogsPage = ({ initialBlogs, totalBlogs, category, tag }) => {
                                 height={380}
                             />
                             <h2 className="text-lg md:text-xl lg:text-2xl xl:text-2xl text-center mt-2 font-medium font-serif text-gray-600">
-                                {t("common:noBlogsFound")}
+                                {t('noBlogsFound')}
                             </h2>
                         </div>
                     ) : (
@@ -168,13 +169,17 @@ export const getServerSideProps = async (context) => {
             tag
         });
 
-        return {
-            props: {
+        const i18nProps = await getI18nProps(context);
+
+  return {
+    props: {
                 initialBlogs: data?.blogs || [],
                 totalBlogs: data?.totalBlogs || 0,
                 category: category || null,
                 tag: tag || null,
-            },
+            ,
+      ...i18nProps,
+    },
         };
     } catch (error) {
         console.error("Failed to fetch blogs:", error);

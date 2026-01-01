@@ -1,7 +1,7 @@
 // src/component/guestAddress/GuestAddressForm.jsx
 import React, { useEffect } from "react";
 import { IoLocationOutline } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Label from "@component/form/Label";
@@ -14,54 +14,54 @@ import City from "@component/select/City";
 const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chosenCity, setChosenCity }) => {
     const { storeCustomizationSetting } = useGetSetting();
     const { showingTranslateValue } = useUtilsFunction();
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     const validateInput = (data) => {
         const { name, lastName, phone, street, houseNumber, apartmentNumber } = data;
 
         // בדיקת רווחים בשדות שם פרטי ושם משפחה
         if (!name?.trim()) {
-            setError('name', { type: 'manual', message: t('common:invalidName') });
+            setError('name', { type: 'manual', message: t('invalidName') });
             return false;
         }
 
         if (!lastName?.trim()) {
-            setError('lastName', { type: 'manual', message: t('common:invalidLastName') });
+            setError('lastName', { type: 'manual', message: t('invalidLastName') });
             return false;
         }
 
         // בדיקת רווחים בשדות כתובת
         if (!street?.trim()) {
-            setError('street', { type: 'manual', message: t('common:invalidStreet') });
+            setError('street', { type: 'manual', message: t('invalidStreet') });
             return false;
         }
 
         if (!houseNumber?.trim()) {
-            setError('houseNumber', { type: 'manual', message: t('common:invalidHouseNumber') });
+            setError('houseNumber', { type: 'manual', message: t('invalidHouseNumber') });
             return false;
         }
 
         if (!chosenCity) {
-            setError('city', { type: 'manual', message: t('common:invalidCity') });
+            setError('city', { type: 'manual', message: t('invalidCity') });
             return false;
         }
 
         if (!apartmentNumber?.trim()) {
-            setError('apartmentNumber', { type: 'manual', message: t('common:invalidApartmentNumber') });
+            setError('apartmentNumber', { type: 'manual', message: t('invalidApartmentNumber') });
             return false;
         }
 
         // בדיקת מספר טלפון - מתחיל ב־05 וכולל 10 ספרות בדיוק
         const phoneRegex = /^05\d{8}$/;
         if (!phoneRegex.test(phone)) {
-            setError('phone', { type: 'manual', message: t('common:invalidPhone') });
+            setError('phone', { type: 'manual', message: t('invalidPhone') });
             return false;
         }
 
         // בדיקת אימייל
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
-            setError('email', { type: 'manual', message: t('common:invalidEmail') || 'נא להזין אימייל תקין' });
+            setError('email', { type: 'manual', message: t('invalidEmail') || 'נא להזין אימייל תקין' });
             return false;
         }
 
@@ -149,7 +149,7 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                 <div className="p-4 sm:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <IoLocationOutline className="text-mainColor-dark text-xl" />
-                        {t("common:deliveryDetails")}
+                        {t('deliveryDetails')}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {/* שם פרטי */}
@@ -218,10 +218,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
 
                         {/* עיר */}
                         <div>
-                            <Label label={t("common:city")} />
+                            <Label label={t('city')} />
                             <City
                                 setValue={setChosenCity}
-                                placeholder={chosenCity ? JSON.stringify(chosenCity) : t("common:selectCity")}
+                                placeholder={chosenCity ? JSON.stringify(chosenCity) : t('selectCity')}
                             />
                             <Error errorName={errors.guestCity} />
                         </div>
@@ -230,10 +230,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:street")}
+                                label={t('street')}
                                 name="guestStreet"
                                 type="text"
-                                placeholder={t("common:street")}
+                                placeholder={t('street')}
                             />
                             <Error errorName={errors.guestStreet} />
                         </div>
@@ -242,10 +242,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:houseNumber")}
+                                label={t('houseNumber')}
                                 name="guestHouseNumber"
                                 type="text"
-                                placeholder={t("common:houseNumber")}
+                                placeholder={t('houseNumber')}
                             />
                             <Error errorName={errors.guestHouseNumber} />
                         </div>
@@ -254,10 +254,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:apartmentNumber")}
+                                label={t('apartmentNumber')}
                                 name="guestApartmentNumber"
                                 type="text"
-                                placeholder={t("common:apartmentNumber")}
+                                placeholder={t('apartmentNumber')}
                             />
                             <Error errorName={errors.guestApartmentNumber} />
                         </div>
@@ -266,10 +266,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:floor")}
+                                label={t('floor')}
                                 name="guestFloor"
                                 type="number"
-                                placeholder={t("common:floor")}
+                                placeholder={t('floor')}
                                 isRequired={false}
                             />
                             <Error errorName={errors.guestFloor} />
@@ -279,10 +279,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:entryCode")}
+                                label={t('entryCode')}
                                 name="guestEntryCode"
                                 type="text"
-                                placeholder={t("common:entryCode")}
+                                placeholder={t('entryCode')}
                                 isRequired={false}
                             />
                             <Error errorName={errors.guestEntryCode} />
@@ -292,10 +292,10 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                         <div>
                             <InputArea
                                 register={register}
-                                label={t("common:postalCode")}
+                                label={t('postalCode')}
                                 name="guestPostalCode"
                                 type="text"
-                                placeholder={t("common:postalCode")}
+                                placeholder={t('postalCode')}
                                 isRequired={false}
                             />
                             <Error errorName={errors.guestPostalCode} />

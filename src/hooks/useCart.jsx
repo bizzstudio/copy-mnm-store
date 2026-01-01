@@ -7,14 +7,14 @@ import { debouncedCartUpdate } from '@services/flashy';
 import { trackAddToCart, trackRemoveFromCart } from '@services/googleAnalytics';
 import { trackFbAddToCart, trackFbCustomEvent } from '@services/facebookPixel';
 import { notifyError } from '@utils/toast';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import { findOptimalOfferCombination } from '@utils/offerCalculations';
 
 const useCart = () => {
     const cart = useOriginalCart();
     const { offers } = useContext(SidebarContext);
     const { state: { userInfo } } = useContext(UserContext);
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     // Ref לשמירת מצב קודם של העגלה למעקב שינויים
     const prevCartItemsRef = useRef([]);
@@ -30,7 +30,7 @@ const useCart = () => {
                 // משתמשים ב-purchaseLimit של המוצר הקיים או החדש
                 const itemPurchaseLimit = existingItem.purchaseLimit || product.purchaseLimit;
                 if (existingItem.quantity + quantity > itemPurchaseLimit) {
-                    notifyError(t("common:maxQuantityReached"));
+                    notifyError(t('maxQuantityReached'));
                     return { added: 0, limit: itemPurchaseLimit, current: existingItem.quantity };
                 }
                 // הכל תקין - מוסיף את הכמות המלאה
@@ -47,7 +47,7 @@ const useCart = () => {
             } else {
                 // המוצר לא קיים - בדיקה אם הכמות הראשונית עולה על המגבלה
                 if (quantity > product.purchaseLimit) {
-                    notifyError(t("common:exceedingMaxQuantity", { limit: product.purchaseLimit }));
+                    notifyError(t('exceedingMaxQuantity', { limit: product.purchaseLimit }));
                     // מוסיף רק עד המגבלה עם שמירת purchaseLimit
                     const itemToAdd = product.purchaseLimit ? { ...product, purchaseLimit: product.purchaseLimit } : product;
                     cart.addItem(itemToAdd, product.purchaseLimit);
@@ -89,7 +89,7 @@ const useCart = () => {
         if (existingItem && existingItem.purchaseLimit && existingItem.purchaseLimit > 0) {
             // בדיקה אם הכמות החדשה תעבור את המגבלה
             if (quantity > existingItem.purchaseLimit) {
-                notifyError(t("common:maxQuantityReached"));
+                notifyError(t('maxQuantityReached'));
                 return;
             }
         }

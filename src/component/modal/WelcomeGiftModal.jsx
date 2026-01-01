@@ -2,7 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import { FiGift } from "react-icons/fi";
 import { useRouter } from "next/router";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 import MainBT from "@component/button/MainBT";
@@ -13,7 +13,7 @@ import { notifySuccess } from "@utils/toast";
 import MainModal from "@component/modal/MainModal";
 
 const WelcomeGiftModal = ({ isOpen, onClose }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const router = useRouter();
     const { handleAddItem } = useAddToCart();
     const { state: { userInfo } } = useContext(UserContext);
@@ -65,7 +65,7 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
         };
 
         handleAddItem(giftProductWithFlag, 1);
-        notifySuccess(t("common:welcomeGiftAdded"));
+        notifySuccess(t('welcomeGiftAdded'));
         onClose();
     };
 
@@ -106,7 +106,7 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                 {/* Gift Badge */}
                                 <div className="absolute top-2 left-2 md:top-3 md:left-3 lg:top-6 lg:left-6 bg-mainColor text-white px-2.5 py-1 md:px-3 md:py-1.5 lg:px-4 lg:py-2 rounded-full shadow-lg flex items-center gap-1.5 md:gap-2 animate-bounce">
                                     <FiGift size={14} className="md:!w-4 md:!h-4 lg:!w-5 lg:!h-5" />
-                                    <span className="font-bold text-[10px] md:text-xs lg:text-sm">{t("common:free")}!</span>
+                                    <span className="font-bold text-[10px] md:text-xs lg:text-sm">{t('free')}!</span>
                                 </div>
                             </div>
 
@@ -115,10 +115,10 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                 {/* Header - Compact */}
                                 <div className="text-center mb-4 md:mb-5 lg:mb-6">
                                     <h2 className="text-base md:text-xl lg:text-2xl font-bold text-gray-800 mb-1.5 md:mb-2">
-                                        {t("common:welcomeGiftTitle")}
+                                        {t('welcomeGiftTitle')}
                                     </h2>
                                     <p className="text-[11px] md:text-sm text-gray-500">
-                                        {t("common:welcomeGiftSubtitle")}
+                                        {t('welcomeGiftSubtitle')}
                                     </p>
                                 </div>
 
@@ -141,7 +141,7 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                     >
                                         <div className="flex items-center justify-center gap-1.5 md:gap-2 !py-2 md:!py-3 lg:!py-4 text-xs md:text-base">
                                             <FiGift size={14} className="md:!w-5 md:!h-5" />
-                                            <span className="font-semibold">{t("common:addGiftToCart")}</span>
+                                            <span className="font-semibold">{t('addGiftToCart')}</span>
                                         </div>
                                     </MainBT>
 
@@ -150,14 +150,14 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                             onClick={handleViewProduct}
                                             className="flex-1 py-2 px-2.5 md:py-2.5 md:px-4 border border-gray-200 text-gray-600 text-xs md:text-sm font-medium rounded-lg md:rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
                                         >
-                                            {t("common:viewProduct")}
+                                            {t('viewProduct')}
                                         </button>
 
                                         <button
                                             onClick={onClose}
                                             className="flex-1 py-2 px-2.5 md:py-2.5 md:px-4 border border-gray-200 text-gray-600 text-xs md:text-sm font-medium rounded-lg md:rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
                                         >
-                                            {t("common:maybeLater")}
+                                            {t('maybeLater')}
                                         </button>
                                     </div>
                                 </div>
@@ -165,9 +165,9 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                         </>
                     ) : (
                         <div className="text-center py-8 md:py-10 lg:py-12 px-4 md:px-6 lg:px-8">
-                            <p className="text-gray-600 mb-4">{t("common:giftProductNotFound")}</p>
+                            <p className="text-gray-600 mb-4">{t('giftProductNotFound')}</p>
                             <MainBT onClick={onClose}>
-                                {t("common:close")}
+                                {t('close')}
                             </MainBT>
                         </div>
                     )}

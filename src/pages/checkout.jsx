@@ -1,7 +1,7 @@
 // checkout.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
@@ -25,6 +25,7 @@ import PriceUpdatedModal from "@component/modal/PriceUpdatedModal";
 import { SidebarContext } from "@context/SidebarContext";
 import AutoDeliveriesPopup from "@component/deliveriesPopup/AutoDeliveriesPopup";
 import { notifyError } from "@utils/toast";
+import { getI18nProps } from "@utils/i18n";
 // Checkout Components
 import CheckoutItems from "@component/checkout/CheckoutItems";
 import OrderCosts from "@component/checkout/OrderCosts";
@@ -35,7 +36,7 @@ import CheckoutActions from "@component/checkout/CheckoutActions";
 
 const Checkout = () => {
   const router = useRouter();
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
   const { data: storeSetting } = useAsync(SettingServices.getStoreSetting);
@@ -67,7 +68,6 @@ const Checkout = () => {
     showCard,
     setShowCard,
     error,
-    // stripe,
     couponInfo,
     couponRef,
     handleCouponCode,
@@ -256,7 +256,7 @@ const Checkout = () => {
       setTimeout(() => {
         // מחיקת הנתונים מה-localStorage לאחר הצגת ההודעה
         localStorage.removeItem("offerConflicts");
-        notifyError(t("common:pleaseNote"))
+        notifyError(t('pleaseNote'))
       }, 300);
     };
   }, [isCheckoutSubmit]);
@@ -501,7 +501,7 @@ const Checkout = () => {
           </div>
         </MainModal>
       )}
-      <Layout title={t("common:checkout")} description={t("common:checkoutDescription")}>
+      <Layout title={t('checkout')} description={t('checkoutDescription')}>
         <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
           <div className="py-0 md:py-10 lg:py-12 px-0 2xl:max-w-screen-2xl w-full xl:max-w-screen-xl flex flex-col items-center gap-8">
             <div className="w-full flex h-full flex-col order-2 sm:order-1 lg:order-1">
@@ -690,8 +690,8 @@ const Checkout = () => {
                     height={440}
                     alt="websiteClose"
                   />
-                  <h2 className="text-4xl font-bold mt-5 text-center">{t("common:storeClose")}</h2>
-                  <p className="text-gray-400 text-center">{t("common:storeCloseMessage")}</p>
+                  <h2 className="text-4xl font-bold mt-5 text-center">{t('storeClose')}</h2>
+                  <p className="text-gray-400 text-center">{t('storeCloseMessage')}</p>
                 </div>
               )}
             </div>
@@ -700,6 +700,16 @@ const Checkout = () => {
       </Layout>
     </>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const i18nProps = await getI18nProps(context);
+  
+  return {
+    props: {
+      ...i18nProps,
+    },
+  };
 };
 
 export default dynamic(() => Promise.resolve(Checkout), { ssr: false });

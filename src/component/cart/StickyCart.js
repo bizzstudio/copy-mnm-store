@@ -6,7 +6,7 @@ import { IoBagHandleOutline } from "react-icons/io5";
 import { SidebarContext } from "@context/SidebarContext";
 import useAsync from "@hooks/useAsync";
 import SettingServices from "@services/SettingServices";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useCart from "@hooks/useCart";
 import Calculating from "./Calculating";
 
@@ -14,7 +14,7 @@ const StickyCart = () => {
   const { totalItems, customCartTotal } = useCart();
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { data: globalSetting } = useAsync(SettingServices.getGlobalSetting);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const currency = globalSetting?.default_currency || "₪";
 
@@ -27,7 +27,7 @@ const StickyCart = () => {
             <IoBagHandleOutline />
           </span>
           <span className="px-2 text-sm font-serif font-medium">
-            {totalItems} {t("common:items")}
+            {totalItems} {t('items')}
           </span>
         </div>
         <div className="flex flex-row items-center justify-center bg-mainColor-dark p-2 text-white text-base font-serif font-medium rounded-br-lg mx-auto">

@@ -1,20 +1,6 @@
 // next.config.js
-const runtimeCaching = require("next-pwa/cache");
-const nextTranslate = require("next-translate-plugin");
-const withPWA = require("next-pwa")({
-  dest: "public",
-  register: true,
-  runtimeCaching,
-  buildExcludes: [/middleware-manifest\.json$/],
-  scope: "/",
-  sw: "service-worker.js",
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
-});
-
 const baseConfig = {
   reactStrictMode: true,
-  eslint: { ignoreDuringBuilds: true },
   i18n: { locales: ["he"], defaultLocale: "he" },
   images: { remotePatterns: [{ protocol: "https", hostname: "**" }] },
 
@@ -39,4 +25,4 @@ const baseConfig = {
   }  
 };
 
-module.exports = nextTranslate(withPWA(baseConfig));
+module.exports = baseConfig;

@@ -9,7 +9,8 @@ import Loading from "@component/preloader/Loading";
 import OrderHistory from "@component/order/OrderHistory";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const RecentOrder = ({ data, loading, error }) => {
   const router = useRouter();
@@ -17,7 +18,7 @@ const RecentOrder = ({ data, loading, error }) => {
 
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const pageCount = Math.ceil(data?.totalDoc / 8);
 
@@ -41,7 +42,7 @@ const RecentOrder = ({ data, loading, error }) => {
                 <IoBagHandle />
               </span>
               <h2 className="font-medium text-md my-4 text-gray-600">
-                {t("common:noOrder")}
+                {t('noOrder')}
               </h2>
             </div>
           ) : (
@@ -61,32 +62,32 @@ const RecentOrder = ({ data, loading, error }) => {
                             scope="col"
                             className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider hidden md:block"
                           >
-                            {t("common:orderId")}
+                            {t('orderId')}
                           </th>
                           <th
                             scope="col"
                             className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                           >
-                            {t("common:orderTime")}
+                            {t('orderTime')}
                           </th>
 
                           <th
                             scope="col"
                             className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider hidden md:block"
                           >
-                            {t("common:method")}
+                            {t('method')}
                           </th>
                           <th
                             scope="col"
                             className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                           >
-                            {t("common:Status")}
+                            {t('Status')}
                           </th>
                           <th
                             scope="col"
                             className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                           >
-                            {t("common:total")}
+                            {t('total')}
                           </th>
                         </tr>
                       </thead>
@@ -102,11 +103,11 @@ const RecentOrder = ({ data, loading, error }) => {
                       <div className="paginationOrder">
                         <ReactPaginate
                           breakLabel="..."
-                          nextLabel={t("common:next")}
+                          nextLabel={t('next')}
                           onPageChange={(e) => handleChangePage(e.selected + 1)}
                           pageRangeDisplayed={3}
                           pageCount={pageCount}
-                          previousLabel={t("common:previous")}
+                          previousLabel={t('previous')}
                           renderOnZeroPageCount={null}
                           pageClassName="page--item"
                           pageLinkClassName="page--link"
@@ -131,5 +132,12 @@ const RecentOrder = ({ data, loading, error }) => {
     </>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default RecentOrder;

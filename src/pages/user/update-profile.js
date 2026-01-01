@@ -1,8 +1,9 @@
+// src/pages/user/update-profile.js
 import dynamic from "next/dynamic";
 import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
 import React, { useContext, useEffect, useState } from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Label from "@component/form/Label";
@@ -17,6 +18,7 @@ import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import City from "@component/select/City";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const UpdateProfile = () => {
   const [imageUrl, setImageUrl] = useState("");
@@ -27,7 +29,7 @@ const UpdateProfile = () => {
   } = useContext(UserContext);
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const {
     register,
@@ -42,40 +44,40 @@ const UpdateProfile = () => {
 
     // בדיקת רווחים בשדות שם פרטי ושם משפחה
     if (!name.trim()) {
-      setError('name', { type: 'manual', message: t('common:invalidName') });
+      setError('name', { type: 'manual', message: t('invalidName') });
       return false;
     }
 
     if (!lastName.trim()) {
-      setError('lastName', { type: 'manual', message: t('common:invalidLastName') });
+      setError('lastName', { type: 'manual', message: t('invalidLastName') });
       return false;
     }
 
     // בדיקת רווחים בשדות כתובת
     if (!street.trim()) {
-      setError('street', { type: 'manual', message: t('common:invalidStreet') });
+      setError('street', { type: 'manual', message: t('invalidStreet') });
       return false;
     }
 
     if (!houseNumber.trim()) {
-      setError('houseNumber', { type: 'manual', message: t('common:invalidHouseNumber') });
+      setError('houseNumber', { type: 'manual', message: t('invalidHouseNumber') });
       return false;
     }
 
     if (!chosenCity) {
-      setError('city', { type: 'manual', message: t('common:invalidCity') });
+      setError('city', { type: 'manual', message: t('invalidCity') });
       return false;
     }
 
     if (!apartmentNumber.trim()) {
-      setError('apartmentNumber', { type: 'manual', message: t('common:invalidApartmentNumber') });
+      setError('apartmentNumber', { type: 'manual', message: t('invalidApartmentNumber') });
       return false;
     }
 
     // בדיקת מספר טלפון - מתחיל ב־05 וכולל 10 ספרות בדיוק
     const phoneRegex = /^05\d{8}$/;
     if (!phoneRegex.test(phone)) {
-      setError('phone', { type: 'manual', message: t('common:invalidPhone') });
+      setError('phone', { type: 'manual', message: t('invalidPhone') });
       return false;
     }
 
@@ -111,7 +113,7 @@ const UpdateProfile = () => {
       .then((res) => {
         if (res) {
           setLoading(false);
-          notifySuccess(t("common:success"));
+          notifySuccess(t('success'));
           Cookies.set("userInfo", JSON.stringify(res), {
             expires: 10, // 10 days
           });
@@ -210,7 +212,7 @@ const UpdateProfile = () => {
                         </div>
                       </div>
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
-                        <Label label={t("common:city")} />
+                        <Label label={t('city')} />
                         <City
                           setValue={setChosenCity}
                           placeholder={JSON.stringify(chosenCity)}
@@ -220,40 +222,40 @@ const UpdateProfile = () => {
                         <InputArea
                           register={register}
 
-                          label={t("common:street")}
+                          label={t('street')}
                           name="street"
                           type="text"
-                          placeholder={t("common:street")}
+                          placeholder={t('street')}
                         />
                         <Error errorName={errors.street} />
                       </div>
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
                         <InputArea
                           register={register}
-                          label={t("common:houseNumber")}
+                          label={t('houseNumber')}
                           name="houseNumber"
                           type="text"
-                          placeholder={t("common:houseNumber")}
+                          placeholder={t('houseNumber')}
                         />
                         <Error errorName={errors.houseNumber} />
                       </div>
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
                         <InputArea
                           register={register}
-                          label={t("common:apartmentNumber")}
+                          label={t('apartmentNumber')}
                           name="apartmentNumber"
                           type="text"
-                          placeholder={t("common:apartmentNumber")}
+                          placeholder={t('apartmentNumber')}
                         />
                         <Error errorName={errors.apartmentNumber} />
                       </div>
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
                         <InputArea
                           register={register}
-                          label={t("common:floor")}
+                          label={t('floor')}
                           name="floor"
                           type="number"
-                          placeholder={t("common:floor")}
+                          placeholder={t('floor')}
                           isRequired={false}
                         />
                         <Error errorName={errors.floor} />
@@ -261,10 +263,10 @@ const UpdateProfile = () => {
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
                         <InputArea
                           register={register}
-                          label={t("common:entryCode")}
+                          label={t('entryCode')}
                           name="entryCode"
                           type="text"
-                          placeholder={t("common:entryCode")}
+                          placeholder={t('entryCode')}
                           isRequired={false}
                         />
                         <Error errorName={errors.entryCode} />
@@ -272,10 +274,10 @@ const UpdateProfile = () => {
                       <div className="col-span-6 xs:col-span-3 sm:col-span-3">
                         <InputArea
                           register={register}
-                          label={t("common:postalCode")}
+                          label={t('postalCode')}
                           name="postalCode"
                           type="text"
-                          placeholder={t("common:postalCode")}
+                          placeholder={t('postalCode')}
                           isRequired={false}
                         />
                         <Error errorName={errors.postalCode} />
@@ -325,7 +327,7 @@ const UpdateProfile = () => {
                               height={10}
                               className="saturate-0"
                             />
-                            {t("common:processing")}
+                            {t('processing')}
                           </div>
                         </MainBT>
                       ) : (
@@ -348,6 +350,16 @@ const UpdateProfile = () => {
       </div>
     </Dashboard>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const i18nProps = await getI18nProps(context);
+
+  return {
+    props: {
+      ...i18nProps,
+    },
+  };
 };
 
 export default dynamic(() => Promise.resolve(UpdateProfile), { ssr: false });

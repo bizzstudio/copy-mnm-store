@@ -2,7 +2,7 @@
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { IoBagCheckOutline, IoClose, IoBagHandle, IoArrowBack } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import CartItem from "@component/cart/CartItem";
@@ -16,13 +16,13 @@ import { trackFbInitiateCheckout } from "@services/facebookPixel";
 import Calculating from "./Calculating";
 import ThresholdDiscountSlider from "./ThresholdDiscountSlider";
 
-const Cart = () => {
+const Cart = ({ onClose }) => {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const { isEmpty, items, customCartTotal } = useCart();
-  const { toggleCartDrawer, closeCartDrawer } = useContext(SidebarContext);
+  const { toggleCartDrawer } = useContext(SidebarContext);
   const { currency } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
   const buttonRef = useRef(null);
 
   const {
@@ -57,7 +57,8 @@ const Cart = () => {
       trackFbInitiateCheckout(items, customCartTotal);
     }
 
-    closeCartDrawer(); // Call the closeCartDrawer function
+    // Close drawer with animation before navigation
+    onClose();
     // אפשרות לרכוש כאורח - מעבר ישיר לעמוד התשלום
     if (userInfo && !userInfo?.address?.city) {
       localStorage.setItem("firstTime", true);
@@ -67,12 +68,12 @@ const Cart = () => {
   };
 
   const checkoutClass = (
-    <div className="w-full bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-mainColor-leaf hover:ring-offset-2">
+    <div className="w-full bg-linear-to-br from-white to-gray-50 rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:ring-2 hover:ring-mainColor-leaf hover:ring-offset-2">
       {/* Summary Section */}
       <div className="px-6 py-4 border-b border-gray-100 bg-white/50">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-            {t("common:totalToPay")}
+            {t('totalToPay')}
           </span>
           <div className="flex items-baseline gap-1">
             {typeof customCartTotal === 'number' ? (
@@ -93,9 +94,9 @@ const Cart = () => {
       <button
         ref={buttonRef}
         onClick={handleCheckoutClick}
-        className="w-full bg-mainColor hover:bg-mainColor-dark text-white font-semibold font-serif text-base py-4 px-6 flex items-center justify-center gap-2 transition-all duration-200 ease-out active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-mainColor-leaf focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+        className="w-full bg-mainColor hover:bg-mainColor-dark text-white font-semibold font-serif text-base py-4 px-6 flex items-center justify-center gap-2 transition-all duration-200 ease-out active:scale-[1.1] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed group"
       >
-        <span>{t("common:proceedToCheckoutBtn")}</span>
+        <span>{t('proceedToCheckoutBtn')}</span>
         <IoArrowBack className="text-xl transition-transform duration-200 group-hover:-translate-x-1" />
       </button>
     </div>
@@ -107,24 +108,24 @@ const Cart = () => {
         <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       )}
       <div className="flex flex-col w-full h-full justify-between items-middle bg-white rounded">
-        <div className="w-full flex justify-between items-center relative px-6 py-5 bg-gradient-to-br from-white to-gray-50 border-b border-mainColor-light shadow-sm rounded-t-lg">
+        <div className="w-full flex justify-between items-center relative px-6 py-5 bg-linear-to-br from-white to-gray-50 border-b border-mainColor-light shadow-sm rounded-t-lg">
           <h2 className="font-semibold font-serif text-lg m-0 text-heading flex items-center gap-2">
             <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-mainColor/10 text-mainColor-dark">
               <IoBagCheckOutline className="text-xl" />
             </span>
-            <span className="text-gray-900">{t("common:shoppingCartDrawerTitle")}</span>
+            <span className="text-gray-900">{t('shoppingCartDrawerTitle')}</span>
           </h2>
           <button
-            onClick={closeCartDrawer}
+            onClick={onClose}
             className="flex items-center justify-center gap-1.5 text-gray-500 px-3 py-2 rounded-lg focus:outline-none transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus:ring-2 focus:ring-red-200 focus:ring-offset-1 group"
           >
             <IoClose className="text-lg" />
             <span className="font-medium text-sm group-hover:text-red-500">
-              {t("common:closeBtn")}
+              {t('closeBtn')}
             </span>
           </button>
         </div>
-        <div className="overflow-y-auto flex-grow scrollbar-hide w-full max-h-full">
+        <div className="overflow-y-auto grow scrollbar-hide w-full max-h-full">
           {isEmpty && (
             <div className="flex flex-col h-full justify-center">
               <div className="flex flex-col items-center">
@@ -134,10 +135,10 @@ const Cart = () => {
                   </span>
                 </div>
                 <h3 className="font-serif font-semibold text-gray-700 text-lg pt-5">
-                  {t("common:cartEmptyTitle")}
+                  {t('cartEmptyTitle')}
                 </h3>
                 <p className="px-12 text-center text-sm text-gray-500 pt-2">
-                  {t("common:cartEmptyText")}
+                  {t('cartEmptyText')}
                 </p>
               </div>
             </div>

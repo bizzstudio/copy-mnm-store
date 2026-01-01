@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
 import React, { useContext, useEffect, useState } from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Label from "@component/form/Label";
@@ -28,7 +28,7 @@ const UserAddressInitialize = () => {
   } = useContext(UserContext);
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const {
     register,
@@ -43,40 +43,40 @@ const UserAddressInitialize = () => {
 
     // בדיקת רווחים בשדות שם פרטי ושם משפחה
     if (!name.trim()) {
-      setError('name', { type: 'manual', message: t('common:invalidName') });
+      setError('name', { type: 'manual', message: t('invalidName') });
       return false;
     }
 
     if (!lastName.trim()) {
-      setError('lastName', { type: 'manual', message: t('common:invalidLastName') });
+      setError('lastName', { type: 'manual', message: t('invalidLastName') });
       return false;
     }
 
     // בדיקת רווחים בשדות כתובת
     if (!street.trim()) {
-      setError('street', { type: 'manual', message: t('common:invalidStreet') });
+      setError('street', { type: 'manual', message: t('invalidStreet') });
       return false;
     }
 
     if (!houseNumber.trim()) {
-      setError('houseNumber', { type: 'manual', message: t('common:invalidHouseNumber') });
+      setError('houseNumber', { type: 'manual', message: t('invalidHouseNumber') });
       return false;
     }
 
     if (!chosenCity) {
-      setError('city', { type: 'manual', message: t('common:invalidCity') });
+      setError('city', { type: 'manual', message: t('invalidCity') });
       return false;
     }
 
     if (!apartmentNumber.trim()) {
-      setError('apartmentNumber', { type: 'manual', message: t('common:invalidApartmentNumber') });
+      setError('apartmentNumber', { type: 'manual', message: t('invalidApartmentNumber') });
       return false;
     }
 
     // בדיקת מספר טלפון - מתחיל ב־05 וכולל 10 ספרות בדיוק
     const phoneRegex = /^05\d{8}$/;
     if (!phoneRegex.test(phone)) {
-      setError('phone', { type: 'manual', message: t('common:invalidPhone') });
+      setError('phone', { type: 'manual', message: t('invalidPhone') });
       return false;
     }
 
@@ -112,7 +112,7 @@ const UserAddressInitialize = () => {
       .then((res) => {
         if (res) {
           setLoading(false);
-          notifySuccess(t("common:success"));
+          notifySuccess(t('success'));
           Cookies.set("userInfo", JSON.stringify(res), {
             expires: 10, // 10 days
           });
@@ -155,10 +155,10 @@ const UserAddressInitialize = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-between items-center mt-6 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:initializeAddressTitle")} />
+        <MinimalTitle title={t('initializeAddressTitle')} />
       </div>
       <p className="text-center text-lg font-semibold">
-        {t("common:hey")} {userInfo?.name?.split(' ')[0]}! {t("common:initializeAddressDes")}
+        {t('hey')} {userInfo?.name?.split(' ')[0]}! {t('initializeAddressDes')}
       </p>
       <div className="mt-5 md:mt-0 md:col-span-2">
         <div className="mt-10 sm:mt-0">
@@ -199,7 +199,7 @@ const UserAddressInitialize = () => {
                   </div>
 
                   <div className="col-span-6 xs:col-span-3 sm:col-span-3">
-                    <Label label={t("common:city")} />
+                    <Label label={t('city')} />
                     <City
                       setValue={setChosenCity}
                       placeholder={JSON.stringify(chosenCity)}
@@ -210,10 +210,10 @@ const UserAddressInitialize = () => {
                     <InputArea
                       register={register}
 
-                      label={t("common:street")}
+                      label={t('street')}
                       name="street"
                       type="text"
-                      placeholder={t("common:street")}
+                      placeholder={t('street')}
                     />
                     <Error errorName={errors.street} />
                   </div>
@@ -221,10 +221,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:houseNumber")}
+                      label={t('houseNumber')}
                       name="houseNumber"
                       type="text"
-                      placeholder={t("common:houseNumber")}
+                      placeholder={t('houseNumber')}
                     />
                     <Error errorName={errors.houseNumber} />
                   </div>
@@ -232,10 +232,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:apartmentNumber")}
+                      label={t('apartmentNumber')}
                       name="apartmentNumber"
                       type="text"
-                      placeholder={t("common:apartmentNumber")}
+                      placeholder={t('apartmentNumber')}
                     />
                     <Error errorName={errors.apartmentNumber} />
                   </div>
@@ -243,10 +243,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:floor")}
+                      label={t('floor')}
                       name="floor"
                       type="number"
-                      placeholder={t("common:floor")}
+                      placeholder={t('floor')}
                       isRequired={false}
                     />
                     <Error errorName={errors.floor} />
@@ -255,10 +255,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:entryCode")}
+                      label={t('entryCode')}
                       name="entryCode"
                       type="text"
-                      placeholder={t("common:entryCode")}
+                      placeholder={t('entryCode')}
                       isRequired={false}
                     />
                     <Error errorName={errors.entryCode} />
@@ -267,10 +267,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:postalCode") + " " + t("common:optional")}
+                      label={t('postalCode') + " " + t('optional')}
                       name="postalCode"
                       type="text"
-                      placeholder={t("common:postalCode")}
+                      placeholder={t('postalCode')}
                       isRequired={false}
                     />
                     <Error errorName={errors.postalCode} />
@@ -279,10 +279,10 @@ const UserAddressInitialize = () => {
                   <div className="col-span-6 xs:col-span-3 sm:col-span-2">
                     <InputArea
                       register={register}
-                      label={t("common:phone")}
+                      label={t('phone')}
                       name="phone"
                       type="tel"
-                      placeholder={t("common:phone")}
+                      placeholder={t('phone')}
                     />
                     <Error errorName={errors.phone} />
                   </div>
@@ -303,7 +303,7 @@ const UserAddressInitialize = () => {
                           height={10}
                           className="saturate-0"
                         />
-                        {t("common:processing")}
+                        {t('processing')}
                       </div>
                     </MainBT>
                   ) : (

@@ -7,7 +7,7 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import Router from "next/router";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import CMSkeleton from "@component/preloader/CMSkeleton";
@@ -17,7 +17,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 const FeatureCategory = () => {
   const { categories } = useContext(SidebarContext);
   const [activePopover, setActivePopover] = useState(null);
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { showingTranslateValue, getCategorySlug } = useUtilsFunction();
 
   // פונקציה להחזיר אייקונים לפי קטגוריה
@@ -94,7 +94,7 @@ const FeatureCategory = () => {
                                   }`}
                               />
                             </span>
-                            <span>{t("common:showAllSubCategories")} ({category.children.length})</span>
+                            <span>{t('showAllSubCategories')} ({category.children.length})</span>
                           </button>
                         </div>
                       )}

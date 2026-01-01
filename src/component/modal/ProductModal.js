@@ -1,5 +1,5 @@
 // src/component/modal/ProductModal.js
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -34,7 +34,7 @@ const ProductModal = ({
   console.log('ProductModal product: ', product);
   const router = useRouter();
   const { setIsLoading, isLoading } = useContext(SidebarContext);
-  const { t } = useTranslation("ns1");
+  const t = useTranslations();
 
   const { handleAddItem, setItem, item } = useAddToCart();
   const { showingTranslateValue, getNumber } = useUtilsFunction();
@@ -124,7 +124,7 @@ const ProductModal = ({
   }, [modalOpen, product?._id]);
 
   const handleAddToCart = (p) => {
-    if (stock <= 0) return notifyError(t("common:productStockOut"));
+    if (stock <= 0) return notifyError(t('productStockOut'));
 
     const { categories, description, ...updatedProduct } = product;
     const productPrice = p?.prices?.[0];
@@ -259,11 +259,11 @@ const ProductModal = ({
               {/* בחירת כמות והוספה */}
               <div className="flex items-center mt-4">
                 <div className="flex sm:flex-row flex-col items-center gap-3 justify-between space-s-3 sm:space-s-4 w-full">
-                  <div className="group flex items-center justify-between rounded-md overflow-hidden flex-shrink-0 border h-11 md:h-12 border-gray-300 w-full sm:w-auto">
+                  <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300 w-full sm:w-auto">
                     <button
                       onClick={() => setItem(item - 1)}
                       disabled={item === 1}
-                      className="flex items-center justify-center flex-shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
+                      className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
                     >
                       <span className="text-dark text-base">
                         <FiMinus />
@@ -292,7 +292,7 @@ const ProductModal = ({
                         if (val > 9999) val = 9999;
                         setItem(val);
                       }}
-                      className="no-spinner font-semibold flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-text flex-shrink-0 text-base text-heading w-8 md:w-20 xl:w-24 text-center outline-none"
+                      className="no-spinner font-semibold flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-text shrink-0 text-base text-heading w-8 md:w-20 xl:w-24 text-center outline-none"
                       style={{ MozAppearance: 'textfield' }}
                     />
                     <button
@@ -300,7 +300,7 @@ const ProductModal = ({
                       disabled={
                         stock < item || stock === item || stock === 0
                       }
-                      className="flex items-center justify-center h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
+                      className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                     >
                       <span className="text-dark text-base">
                         <FiPlus />
@@ -312,7 +312,7 @@ const ProductModal = ({
                     disabled={stock < 1}
                     className="w-full px-6"
                   >
-                    {t("common:addToCart")}
+                    {t('addToCart')}
                   </MainBT>
                 </div>
               </div>
@@ -323,7 +323,7 @@ const ProductModal = ({
                   <div className="flex flex-col items-start gap-2">
                     <div className="flex items-center gap-1 text-sm text-gray-700">
                       <span className="font-serif font-semibold">
-                        {t("common:category")}:
+                        {t('category')}:
                       </span>{" "}
                       <Link
                         href={`/product-category/${category_slug}`}
@@ -350,7 +350,7 @@ const ProductModal = ({
                       onClick={() => handleMoreInfo(product.slug)}
                       className="font-sans font-medium text-sm text-customRed hover:underline whitespace-nowrap"
                     >
-                      {t("common:moreInfo")}
+                      {t('moreInfo')}
                     </button>
                   </div>
                 </div>

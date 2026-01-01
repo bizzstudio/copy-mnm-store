@@ -4,13 +4,13 @@ import Image from "next/image";
 import useAsync from "@hooks/useAsync";
 import DeliveryServices from "@services/DeliveryServices";
 import useGetSetting from "@hooks/useGetSetting";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 
 const AutoDeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
   const { data: deliveries, error, loading } = useAsync(DeliveryServices.getAllDeliveries);
   const { storeCustomizationSetting } = useGetSetting();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   let currentLang = Cookies.get('_lang');
 
@@ -41,18 +41,18 @@ const AutoDeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
           <div className={`flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 md:gap-5 mb-4 sm:mb-5 ${currentLang ? "sm:flex-row-reverse" : ""}`}>
             <div className="flex flex-col justify-start gap-0.5 text-center sm:text-left">
               <h2 className={`font-serif text-lg sm:text-xl lg:text-2xl font-bold ${currentLang ? "sm:text-right" : ""} text-center`}>
-                {t("common:deliveryAreas")}
+                {t('deliveryAreas')}
               </h2>
               <div className={`text-xs sm:text-sm font-sans leading-5 sm:leading-6 ${currentLang ? "sm:text-right" : ""} text-center`}>
-                {t("common:deliveryAreasDescription")}
+                {t('deliveryAreasDescription')}
               </div>
             </div>
 
             <Image
               width={100}
               height={100}
-              alt={t("common:deliveryNationwide")}
-              className="block object-contain flex-shrink-0 sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px]"
+              alt={t('deliveryNationwide')}
+              className="block object-contain shrink-0 sm:w-[120px] sm:h-[120px] md:w-[140px] md:h-[140px]"
               src={
                 storeCustomizationSetting?.home?.quick_delivery_img ||
                 "/cta/delivery-boy.png"
@@ -70,7 +70,7 @@ const AutoDeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
               </div>
             ) : error ? (
               <div className="text-center py-6 sm:py-8">
-                <p className="text-red-500 text-sm">{t("common:errorLoadingData")}</p>
+                <p className="text-red-500 text-sm">{t('errorLoadingData')}</p>
               </div>
             ) : sortedCities.length > 0 ? (
               <div className="max-h-60 sm:max-h-72 md:max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -80,7 +80,7 @@ const AutoDeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
                       key={index}
                       className="text-xs sm:text-sm text-gray-700 hover:text-mainColor-dark transition-colors duration-200 flex items-center gap-1.5 sm:gap-2 py-0.5"
                     >
-                      <span className="text-mainColor-dark flex-shrink-0">•</span>
+                      <span className="text-mainColor-dark shrink-0">•</span>
                       <span className="truncate">{currentLang ? delivery.city.city_name_he : delivery.city.city_name_en}</span>
                     </div>
                   ))}
@@ -88,7 +88,7 @@ const AutoDeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
               </div>
             ) : (
               <div className="text-center py-6 sm:py-8">
-                <p className="text-gray-500 text-sm">{t("common:noCitiesFound")}</p>
+                <p className="text-gray-500 text-sm">{t('noCitiesFound')}</p>
               </div>
             )}
           </div>

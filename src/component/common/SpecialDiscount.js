@@ -1,8 +1,8 @@
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const SpecialDiscount = ({ title = '', slug, modal }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <span className={

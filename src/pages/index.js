@@ -1,10 +1,10 @@
 // pages/index.js
 import { SidebarContext } from "@context/SidebarContext";
-import { Suspense, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from "swiper";
+import { Autoplay } from "swiper/modules";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -24,16 +24,17 @@ import MainBT from "@component/button/MainBT";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import logoGif from "public/logoGif.gif";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import MinimalTitle from "@component/common/MinimalTitle";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useFilter from "@hooks/useFilter";
+import { getI18nProps } from "@utils/i18n";
 
 const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
   const router = useRouter();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [fakeLoading, setFakeLoading] = useState(false)
 
   const { showingTranslateValue } = useUtilsFunction();
@@ -105,7 +106,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
               <div className="3xl:bg-mainColor-superLight bg-white">
                 <div className="mx-auto sm:py-5 max-w-screen-2x1 px-3 sm:px-10">
                   <div className="flex flex-col lg:flex-row gap-6 mx-auto py-5 max-w-screen-2xl px-3 sm:px-10">
-                    <div ref={carouselRef} className="flex-shrink-0 lg:block w-full lg:w-3/5 h-fit">
+                    <div ref={carouselRef} className="shrink-0 lg:block w-full lg:w-3/5 h-fit">
                       <MainCarousel />
                     </div>
                     <div className="w-full hidden lg:flex">
@@ -314,14 +315,14 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
               {blogs && blogs.length > 0 && (
                 <div className="bg-mainColor-light px-3 sm:px-10 md:px-14 lg:px-20 2xl:px-40 py-5">
                   <div className="w-full sm:mb-9 mb-5 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-                    <MinimalTitle title={t("common:blogsTitle")} subtitle={t("common:blogsSubtitle")} />
+                    <MinimalTitle title={t('blogsTitle')} subtitle={t('blogsSubtitle')} />
                   </div>
 
                   {/* Blog Cards */}
-                  <div className="flex overflow-x-auto gap-4 md:gap-6 mb-8 pb-4 scrollbar-hide">
+                  <div className="flex overflow-x-auto gap-4 md:gap-6 mb-2 pb-4 scrollbar-hide">
                     <div className="flex gap-4 md:gap-6 min-w-full sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:min-w-0">
                       {blogs.map((blog) => (
-                        <div key={blog._id} className="w-80 sm:w-auto flex-shrink-0 sm:flex-shrink flex">
+                        <div key={blog._id} className="w-80 sm:w-auto shrink-0 sm:shrink flex">
                           <BlogCard blog={blog} isHome={true} />
                         </div>
                       ))}
@@ -332,9 +333,9 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs }) => {
                   {totalBlogs > 3 && (
                     <div className="flex justify-center">
                       <Link href="/blogs">
-                        <MainBT className="!w-auto px-6 py-3 text-base">
+                        <MainBT className="w-auto! px-6 py-3 text-base">
                           <div className="flex justify-center items-center gap-2">
-                            {t("common:allBlogs")}
+                            {t('allBlogs')}
                             <MdKeyboardDoubleArrowLeft size={24} className="mt-[3px]" />
                           </div>
                         </MainBT>
@@ -362,7 +363,7 @@ export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
   const { query, _id } = context.query;
 
-  const [data, blogsData] = await Promise.all([
+  const [data, blogsData, i18nProps] = await Promise.all([
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
@@ -374,6 +375,8 @@ export const getServerSideProps = async (context) => {
       category: "",
       tag: ""
     }),
+
+    getI18nProps(context),
   ]);
 
   const sortedPopularProducts = data.popularProducts;
@@ -391,6 +394,7 @@ export const getServerSideProps = async (context) => {
       cookies: cookies,
       blogs: blogsData?.blogs || [],
       totalBlogs: blogsData?.totalBlogs || 0,
+      ...i18nProps,
     },
   };
 };

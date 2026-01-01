@@ -7,16 +7,17 @@ import useGetSetting from "@hooks/useGetSetting";
 import PageHeader from "@component/header/PageHeader";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const PrivacyPolicy = () => {
   const { storeCustomizationSetting, loading, error } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
   // console.log("data", storeCustomizationSetting);
 
   return (
-    <Layout title={t("common:Privacy Policy")} description={t("common:privacyPolicyDescription")}>
+    <Layout title={t('Privacy Policy')} description={t('privacyPolicyDescription')}>
       <PageHeader
         headerBg={storeCustomizationSetting?.privacy_policy?.header_bg}
         title={showingTranslateValue(
@@ -39,79 +40,79 @@ const PrivacyPolicy = () => {
           <CMSkeleton count={15} height={15} loading={loading} />
           {/* <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-consent")}
+              {t('privacy-policy-consent')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-consent-docs")}</p>
+              <p>{t('privacy-policy-consent-docs')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-information")}
+              {t('privacy-policy-information')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-information-docs1")}</p>
-              <p>{t("common:privacy-policy-information-docs2")}</p>
+              <p>{t('privacy-policy-information-docs1')}</p>
+              <p>{t('privacy-policy-information-docs2')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-use-information")}
+              {t('privacy-policy-use-information')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-use-information-docs")}</p>
+              <p>{t('privacy-policy-use-information-docs')}</p>
 
               <ol>
-                <li>{t("common:privacy-policy-use-information-docs1")}</li>
-                <li>{t("common:privacy-policy-use-information-docs2")}</li>
-                <li>{t("common:privacy-policy-use-information-docs3")}</li>
-                <li>{t("common:privacy-policy-use-information-docs4")}</li>
-                <li>{t("common:privacy-policy-use-information-docs5")}</li>
-                <li>{t("common:privacy-policy-use-information-docs6")}</li>
-                <li>{t("common:privacy-policy-use-information-docs7")}</li>
+                <li>{t('privacy-policy-use-information-docs1')}</li>
+                <li>{t('privacy-policy-use-information-docs2')}</li>
+                <li>{t('privacy-policy-use-information-docs3')}</li>
+                <li>{t('privacy-policy-use-information-docs4')}</li>
+                <li>{t('privacy-policy-use-information-docs5')}</li>
+                <li>{t('privacy-policy-use-information-docs6')}</li>
+                <li>{t('privacy-policy-use-information-docs7')}</li>
               </ol>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-log-file")}
+              {t('privacy-policy-log-file')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-log-file-docs")}</p>
+              <p>{t('privacy-policy-log-file-docs')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-advertising")}
+              {t('privacy-policy-advertising')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-advertising-docs")}</p>
+              <p>{t('privacy-policy-advertising-docs')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-third-party")}
+              {t('privacy-policy-third-party')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-third-party-docs1")}</p>
-              <p>{t("common:privacy-policy-third-party-docs2")}</p>
+              <p>{t('privacy-policy-third-party-docs1')}</p>
+              <p>{t('privacy-policy-third-party-docs2')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-ccpa-rights")}
+              {t('privacy-policy-ccpa-rights')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-ccpa-rights-docs")}</p>
+              <p>{t('privacy-policy-ccpa-rights-docs')}</p>
             </div>
           </div>
           <div className="mb-8 lg:mb-12 last:mb-0">
             <h2 className="text-xl xl:text-2xl xl:leading-7 font-semibold font-serif mb-2 lg:mb-4">
-              {t("common:privacy-policy-children-information")}
+              {t('privacy-policy-children-information')}
             </h2>
             <div className="font-sans leading-7">
-              <p>{t("common:privacy-policy-children-information-docs1")}</p>
-              <p>{t("common:privacy-policy-children-information-docs2")}</p>
+              <p>{t('privacy-policy-children-information-docs1')}</p>
+              <p>{t('privacy-policy-children-information-docs2')}</p>
             </div>
           </div> */}
         </div>
@@ -119,5 +120,12 @@ const PrivacyPolicy = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default PrivacyPolicy;

@@ -1,3 +1,4 @@
+// src/pages/offers.js
 import { SidebarContext } from "@context/SidebarContext";
 import { useContext, useEffect } from "react";
 
@@ -9,6 +10,7 @@ import ProductServices from "@services/ProductServices";
 import ProductCard from "@component/product/ProductCard";
 import AttributeServices from "@services/AttributeServices";
 import CMSkeleton from "@component/preloader/CMSkeleton";
+import { getI18nProps } from "@utils/i18n";
 
 const Offers = ({ discountProducts, attributes }) => {
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
@@ -95,20 +97,19 @@ const Offers = ({ discountProducts, attributes }) => {
 };
 
 export const getServerSideProps = async (context) => {
+  // return {
+  //   notFound: true,
+  // };
 
-  return {
-    notFound: true,
-  };
-  
   const { cookies } = context.req;
   const { query, _id } = context.query;
 
-  const [data, attributes] = await Promise.all([
+  const [i18nProps, data, attributes] = await Promise.all([
+    getI18nProps(context),
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
     }),
-
     AttributeServices.getShowingAttributes(),
   ]);
 
@@ -122,6 +123,7 @@ export const getServerSideProps = async (context) => {
       discountProducts: sortedDiscountProducts,
       cookies: cookies,
       attributes,
+      ...i18nProps,
     },
   };
 };

@@ -2,14 +2,14 @@
 import MainBT from '@component/button/MainBT';
 import dayjs from 'dayjs';
 import 'dayjs/locale/he';
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import MinimalTitle from "@component/common/MinimalTitle";
 
 // הגדרת השפה לעברית
 dayjs.locale('he');
 
 const PickupMsgModal = ({ closeModal = () => { } }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const now = dayjs();
   const currentHour = now.hour();
   // systemDay: ראשון=1, שני=2, ... שישי=6, שבת=7
@@ -59,14 +59,14 @@ const PickupMsgModal = ({ closeModal = () => { } }) => {
   return (
     <div className="sm:w-52 w-full">
       <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:pleaseNotePopupTitle")} />
+        <MinimalTitle title={t('pleaseNotePopupTitle')} />
       </div>
       <div className="flex flex-col justify-center gap-3">
         <p className="text-center text-lg">
           {finalMessage}
         </p>
         <MainBT onClick={closeModal}>
-          {t("common:ok")}
+          {t('ok')}
         </MainBT>
       </div>
     </div>

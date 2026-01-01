@@ -1,35 +1,35 @@
 // src/component/common/SortDropdown.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { HiOutlineSortAscending, HiOutlineSortDescending } from 'react-icons/hi';
 import { BiSortAlt2 } from 'react-icons/bi';
 import { AiOutlineHeart } from 'react-icons/ai';
 
 const SortDropdown = ({ sortedField, setSortedField }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const sortOptions = [
     { 
       value: "Alphabetical", 
-      label: t("common:sortAlphabetical"),
+      label: t('sortAlphabetical'),
       icon: <BiSortAlt2 className="w-[17px] h-[17px]" />
     },
     { 
       value: "Low", 
-      label: t("common:sortPriceLowToHigh"),
+      label: t('sortPriceLowToHigh'),
       icon: <HiOutlineSortAscending className="w-4 h-4 mt-[1px]" />
     },
     { 
       value: "High", 
-      label: t("common:sortPriceHighToLow"),
+      label: t('sortPriceHighToLow'),
       icon: <HiOutlineSortDescending className="w-4 h-4 mt-[2px]" />
     },
     { 
       value: "Popular", 
-      label: t("common:sortByBestSelling"),
+      label: t('sortByBestSelling'),
       icon: <AiOutlineHeart className="w-4 h-4 mt-[1px]" />
     },
   ];
@@ -71,7 +71,7 @@ const SortDropdown = ({ sortedField, setSortedField }) => {
         >
           <div className="flex items-center gap-1">
             <span className="text-gray-400 text-sm font-medium me-1">
-              {t("common:sortBy")}:
+              {t('sortBy')}:
             </span>
             <span className="text-mainColor-dark">
               {selectedOption?.icon}

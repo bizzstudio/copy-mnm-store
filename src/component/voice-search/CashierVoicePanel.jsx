@@ -1,6 +1,6 @@
 // src/component/voice-search/CashierVoicePanel.jsx
 import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import VoiceRecognition from './VoiceRecognition';
 import RecognizedProducts from './RecognizedProducts';
 import { notifyError, notifySuccess } from '@utils/toast';
@@ -12,7 +12,7 @@ import { HiStop } from 'react-icons/hi';
 import { HiMicrophone } from 'react-icons/hi2';
 
 const CashierVoicePanel = forwardRef((props, ref) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { updateItemQuantity, inCart, addItem } = useCart();
 
     // סטייטים לניהול התמלול והמוצרים
@@ -80,11 +80,11 @@ const CashierVoicePanel = forwardRef((props, ref) => {
             try {
                 // בדיקת מלאי
                 if (product.stock < 1) {
-                    notifyError(t('common:productOutOfStock', { product: product.title?.he || product.title?.en }));
+                    notifyError(t('productOutOfStock', { product: product.title?.he || product.title?.en }));
                     return;
                 }
                 if (product.quantity > product.stock) {
-                    notifyError(t('common:maxQuantityExceeded', { stock: product.stock, product: product.title?.he || product.title?.en }));
+                    notifyError(t('maxQuantityExceeded', { stock: product.stock, product: product.title?.he || product.title?.en }));
                     return;
                 }
 
@@ -117,7 +117,7 @@ const CashierVoicePanel = forwardRef((props, ref) => {
         });
 
         if (addedCount > 0) {
-            notifySuccess(`${addedCount} ${t('common:productsAddedToCart')}!`);
+            notifySuccess(`${addedCount} ${t('productsAddedToCart')}!`);
             // ניקוי רשימת המוצרים שזוהו
             setRecognizedProducts([]);
             setTranscript('');
@@ -180,15 +180,15 @@ const CashierVoicePanel = forwardRef((props, ref) => {
                             className="w-8 h-8"
                         />
                         <h2 className="text-xl font-semibold text-mainColor">
-                            {t("common:addProductsVoice")}
+                            {t('addProductsVoice')}
                         </h2>
                     </div>
 
                     {/* תיאור השימוש */}
                     {/* <p className="text-gray-600 text-right ms-2">
                         {isActive ?
-                            t('common:voiceSearchInstructions') :
-                            t("common:clickToActivateMicrophone")
+                            t('voiceSearchInstructions') :
+                            t('clickToActivateMicrophone')
                         }
                     </p> */}
                 </div>
@@ -204,12 +204,12 @@ const CashierVoicePanel = forwardRef((props, ref) => {
                     {isActive ? (
                         <>
                             <HiStop size={19} />
-                            {t("common:turnOffMicrophone")}
+                            {t('turnOffMicrophone')}
                         </>
                     ) : (
                         <>
                             <HiMicrophone size={18} />
-                            {t("common:turnOnMicrophone")}
+                            {t('turnOnMicrophone')}
                         </>
                     )}
                 </button>
@@ -243,7 +243,7 @@ const CashierVoicePanel = forwardRef((props, ref) => {
                                 onClick={handleAddAllToCart}
                                 className="py-3 px-6 bg-mainColor text-white rounded-lg hover:bg-mainColor-dark transition-colors font-medium"
                             >
-                                {t("common:addProductsToCart", { count: recognizedProducts.length })}
+                                {t('addProductsToCart', { count: recognizedProducts.length })}
                             </button>
                         </div>
                     )}

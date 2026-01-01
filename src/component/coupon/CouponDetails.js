@@ -1,17 +1,48 @@
+// src/component/coupon/CouponDetails.js
 import React, { useState } from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import OfferTimer from "@component/coupon/OfferTimer";
+import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const CouponDetails = ({ coupon }) => {
   const [copiedCode, setCopiedCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const { currency } = useUtilsFunction();
 
-  const handleCopied = (code) => {
-    setCopiedCode(code);
-    setCopied(true);
+  const handleCopied = async (code) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setCopied(true);
+      // Reset copied state after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+        setCopiedCode("");
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy code:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = code;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopiedCode(code);
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+          setCopiedCode("");
+        }, 2000);
+      } catch (fallbackErr) {
+        console.error("Fallback copy failed:", fallbackErr);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   return (
@@ -90,22 +121,20 @@ const CouponDetails = ({ coupon }) => {
                 </div>
 
                 <div className="font-serif border border-dashed bg-mainColor-superLight py-2 border-mainColor-light rounded-lg text-center block">
-                  <CopyToClipboard
-                    text={coupon.couponCode}
-                    onCopy={() => handleCopied(coupon.couponCode)}
+                  <button
+                    className="block w-full"
+                    onClick={() => handleCopied(coupon.couponCode)}
                   >
-                    <button className="block w-full">
-                      {copied && coupon.couponCode === copiedCode ? (
-                        <span className="text-mainColor-dark text-base leading-7 font-semibold">
-                          Copied!
-                        </span>
-                      ) : (
-                        <span className="uppercase font-serif font-semibold text-base leading-7 text-mainColor-dark">
-                          {coupon.couponCode}{" "}
-                        </span>
-                      )}
-                    </button>
-                  </CopyToClipboard>
+                    {copied && coupon.couponCode === copiedCode ? (
+                      <span className="text-mainColor-dark text-base leading-7 font-semibold">
+                        Copied!
+                      </span>
+                    ) : (
+                      <span className="uppercase font-serif font-semibold text-base leading-7 text-mainColor-dark">
+                        {coupon.couponCode}{" "}
+                      </span>
+                    )}
+                  </button>
                 </div>
               </div>
               <p className="text-xs leading-5 text-gray-500 mt-2">

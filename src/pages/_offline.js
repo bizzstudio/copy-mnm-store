@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-// import useTranslation from "next-translate/useTranslation";
+// import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const Offline = () => {
   return (
@@ -21,5 +22,12 @@ const Offline = () => {
     </>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default Offline;

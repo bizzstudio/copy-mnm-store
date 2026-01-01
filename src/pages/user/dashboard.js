@@ -1,3 +1,4 @@
+// src/pages/user/dashboard.js
 import Cookies from "js-cookie";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -14,7 +15,7 @@ import {
   FiShoppingCart,
   FiTruck,
 } from "react-icons/fi";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -27,10 +28,11 @@ import Loading from "@component/preloader/Loading";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import MyOrders from "./my-orders";
+import { getI18nProps } from "@utils/i18n";
 
 const Dashboard = ({ title, description, children }) => {
   const router = useRouter();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const {
     dispatch,
@@ -112,12 +114,12 @@ const Dashboard = ({ title, description, children }) => {
         <Loading loading={isLoading} />
       ) : (
         <Layout
-          title={title ? title : t("common:dashboard")}
-          description={description ? description : t("common:dashboardDescription")}
+          title={title ? title : t('dashboard')}
+          description={description ? description : t('dashboardDescription')}
         >
           <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
             <div className="py-10 lg:py-12 flex flex-col lg:flex-row w-full">
-              <div className="flex-shrink-0 w-full lg:w-80 ml-7 lg:ml-10  xl:ml-10 ">
+              <div className="shrink-0 w-full lg:w-80 ml-7 lg:ml-10  xl:ml-10 ">
                 <div className="bg-white p-4 sm:p-5 lg:p-8 rounded-md sticky top-32">
                   {userSidebar?.map((item) => (
                     <span
@@ -125,7 +127,7 @@ const Dashboard = ({ title, description, children }) => {
                       className="p-2 my-2 flex gap-1 font-serif items-center rounded-md hover:bg-mainColor-superLight w-full hover:text-mainColor-dark"
                     >
                       <item.icon
-                        className="flex-shrink-0 h-4 w-4"
+                        className="shrink-0 h-4 w-4"
                         aria-hidden="true"
                       />
                       <Link
@@ -204,6 +206,16 @@ const Dashboard = ({ title, description, children }) => {
       )}
     </>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const i18nProps = await getI18nProps(context);
+
+  return {
+    props: {
+      ...i18nProps,
+    },
+  };
 };
 
 export default dynamic(() => Promise.resolve(Dashboard), { ssr: false });

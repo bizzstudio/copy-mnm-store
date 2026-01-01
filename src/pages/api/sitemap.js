@@ -4,7 +4,7 @@ import ProductServices from "@services/ProductServices";
 
 export default async function handler(req, res) {
   try {
-    const baseUrl = 'https://tmarim-betomer.com';
+    const baseUrl = 'https://mnm-store.vercel.app';
     
     // Static pages
     const staticPages = [

@@ -1,7 +1,7 @@
 // src/component/voice-search/VoiceRecognition.jsx
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { HiMicrophone } from 'react-icons/hi2';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import Loading from '@component/preloader/Loading';
 
 /**
@@ -17,7 +17,7 @@ const VoiceRecognition = ({
     isListening,
     setIsListening,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const [isProcessing, setIsProcessing] = useState(false);
     const [refres, setRefres] = useState(0);
     const [isInitializing, setIsInitializing] = useState(true); // ממתין למיקרופון
@@ -221,10 +221,10 @@ const VoiceRecognition = ({
                             ? <div className="absolute top-1 flex items-center justify-center">
                                 <Loading />
                             </div>
-                            //t('common:voiceSearchInitializing')
-                            : (isListening ? t('common:startTalking') : ' ')
+                            //t('voiceSearchInitializing')
+                            : (isListening ? t('startTalking') : ' ')
                         }
-                        {/* {isListening ? t('common:startTalking') : ' '} */}
+                        {/* {isListening ? t('startTalking') : ' '} */}
                     </p>
                 )}
 
@@ -243,10 +243,10 @@ const VoiceRecognition = ({
                         <HiMicrophone size={15} />
                         <span className="text-base mb-[1px]">
                             {isInitializing
-                                ? t('common:voiceSearchInitializing')
+                                ? t('voiceSearchInitializing')
                                 : (isListening
-                                    ? t('common:voiceSearchListening')
-                                    : t('common:voiceSearchNotListening')
+                                    ? t('voiceSearchListening')
+                                    : t('voiceSearchNotListening')
                                 )
                             }
                         </span>
@@ -255,7 +255,7 @@ const VoiceRecognition = ({
                     {isProcessing && (
                         <div className="flex items-center gap-[5px]">
                             <div className="animate-spin w-3 h-3 border-2 border-t-transparent rounded-full border-gray-400" />
-                            <span className="text-base">{t('common:processing')}...</span>
+                            <span className="text-base">{t('processing')}...</span>
                         </div>
                     )}
                 </div>

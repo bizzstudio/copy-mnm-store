@@ -1,10 +1,10 @@
 // src/component/select/City.jsx
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const City = ({ setValue, placeholder }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [cities, setCities] = useState([]);
 
@@ -63,7 +63,7 @@ const City = ({ setValue, placeholder }) => {
   // פונקציה לבדיקה אם המחרוזת היא JSON תקף
   const getPlaceholderText = () => {
     if (!placeholder) {
-      return t("common:selectCity");
+      return t('selectCity');
     }
 
     // בדיקה אם זה JSON תקף
@@ -78,7 +78,7 @@ const City = ({ setValue, placeholder }) => {
       return placeholder;
     }
 
-    return t("common:selectCity");
+    return t('selectCity');
   };
 
   return (
@@ -87,7 +87,7 @@ const City = ({ setValue, placeholder }) => {
       onChange={(selectedOption) => setValue(selectedOption ? selectedOption.value : null)}
       placeholder={getPlaceholderText()}
       styles={customStyles}
-      noOptionsMessage={() => t("common:noOptions")}
+      noOptionsMessage={() => t('noOptions')}
       isRtl={true}
       menuPortalTarget={typeof window !== "undefined" ? document.body : null}
       menuPosition="absolute"

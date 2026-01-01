@@ -16,13 +16,14 @@ import OrderHistory from "@component/order/OrderHistory";
 import { SidebarContext } from "@context/SidebarContext";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useCart from "@hooks/useCart";
 import ProductServices from "@services/ProductServices";
 import { notifyError, notifySuccess } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import SubModal from "@component/modal/SubModal";
 import addingToCart from 'public/addingToCart.svg'
+import { getI18nProps } from "@utils/i18n";
 
 const MyOrders = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const MyOrders = () => {
 
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
@@ -150,7 +151,7 @@ const MyOrders = () => {
           <div className="px-9 pb-10 pt-7 flex flex-col gap-4">
             <img src={addingToCart.src} alt="Adding to cart image" className="h-56 mr-[13%] up-down-animation" />
             <h2 className="text-xl font-serif font-semibold text-center">
-              {t("common:addingItemsToCart", { x: addedItems, y: totalItems })}
+              {t('addingItemsToCart', { x: addedItems, y: totalItems })}
             </h2>
           </div>
         </SubModal>
@@ -175,26 +176,26 @@ const MyOrders = () => {
                   <IoBagHandle />
                 </span>
                 <h2 className="font-medium text-md my-4 text-gray-600">
-                  {t("common:noOrder")}
+                  {t('noOrder')}
                 </h2>
               </div>
             ) : (
               <div className="flex flex-col">
                 <h2 className="text-xl font-serif font-semibold mb-5">
-                  {t("common:footer-my-account-myOrders")}
+                  {t('footer-my-account-myOrders')}
                 </h2>
                 <div className="flex md:hidden gap-2 justify-between w-full mb-5">
                   <div
-                    className="flex flex-grow gap-1 items-center justify-center mx-auto px-3 py-1 bg-mainColor-light text-xs text-mainColor-dark font-semibold rounded-full cursor-auto text-center"
+                    className="flex grow gap-1 items-center justify-center mx-auto px-3 py-1 bg-mainColor-light text-xs text-mainColor-dark font-semibold rounded-full cursor-auto text-center"
                   >
                     <MdPayment size={17} /> <span>=</span>
-                    {t("common:payNow")}
+                    {t('payNow')}
                   </div>
                   <div
-                    className="flex flex-grow gap-1 items-center justify-center px-3 py-1 bg-mainColor-light text-xs text-mainColor-dark font-semibold rounded-full cursor-auto text-center"
+                    className="flex grow gap-1 items-center justify-center px-3 py-1 bg-mainColor-light text-xs text-mainColor-dark font-semibold rounded-full cursor-auto text-center"
                   >
                     <MdRestore size={17} /> <span>=</span>
-                    {t("common:Reorder")}
+                    {t('Reorder')}
                   </div>
                 </div>
                 <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -207,37 +208,37 @@ const MyOrders = () => {
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider hidden md:block"
                             >
-                              {t("common:orderId")}
+                              {t('orderId')}
                             </th>
                             <th
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                             >
-                              {t("common:orderTime")}
+                              {t('orderTime')}
                             </th>
                             <th
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider hidden md:block"
                             >
-                              {t("common:method")}
+                              {t('method')}
                             </th>
                             <th
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                             >
-                              {t("common:Status")}
+                              {t('Status')}
                             </th>
                             <th
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                             >
-                              {t("common:total")}
+                              {t('total')}
                             </th>
                             <th
                               scope="col"
                               className="text-center text-xs font-serif font-semibold md:px-6 px-2 py-2 text-gray-700 uppercase tracking-wider"
                             >
-                              {t("common:action")}
+                              {t('action')}
                             </th>
                           </tr>
                         </thead>
@@ -254,7 +255,7 @@ const MyOrders = () => {
                                       onClick={(e) => { e.stopPropagation(); restoreOrder(order); }}
                                     >
                                       <MdPayment size={17} />
-                                      {t("common:payNow")}
+                                      {t('payNow')}
                                     </button>
                                     <button
                                       disabled={loadingRestore}
@@ -272,7 +273,7 @@ const MyOrders = () => {
                                       onClick={(e) => { e.stopPropagation(); restoreOrder(order); }}
                                     >
                                       <MdRestore size={17} />
-                                      {t("common:Reorder")}
+                                      {t('Reorder')}
                                     </button>
                                     <button
                                       disabled={loadingRestore}
@@ -292,11 +293,11 @@ const MyOrders = () => {
                         <div className="paginationOrder">
                           <ReactPaginate
                             breakLabel="..."
-                            nextLabel={t("common:next")}
+                            nextLabel={t('next')}
                             onPageChange={(e) => handleChangePage(e.selected + 1)}
                             pageRangeDisplayed={3}
                             pageCount={pageCount}
-                            previousLabel={t("common:previous")}
+                            previousLabel={t('previous')}
                             renderOnZeroPageCount={null}
                             pageClassName="page--item"
                             pageLinkClassName="page--link"
@@ -322,5 +323,12 @@ const MyOrders = () => {
     </>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default MyOrders;

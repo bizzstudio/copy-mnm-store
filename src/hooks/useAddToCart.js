@@ -3,7 +3,7 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 
 import { notifyError, notifySuccess } from "@utils/toast";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useCart from "./useCart";
 
 const useAddToCart = () => {
@@ -20,7 +20,7 @@ const useAddToCart = () => {
       currentLang = false;
       break;
   }
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [item, setItem] = useState(1);
   const { addItem, items, updateItemQuantity } = useCart();
@@ -48,10 +48,10 @@ const useAddToCart = () => {
         const addResult = addItem(updatedProduct, item);
         // רק אם נוספו מוצרים בפועל - הצגת התראה
         if (addResult?.added > 0) {
-          notifySuccess(`${addResult.added} ${currentLang ? product.title?.he : product.title?.en} ${t("common:addedToCart!")}`);
+          notifySuccess(`${addResult.added} ${currentLang ? product.title?.he : product.title?.en} ${t('addedToCart!')}`);
         }
       } else {
-        notifyError(t("common:productStockOut"));
+        notifyError(t('productStockOut'));
       }
     }
     // הוספה של מוצר חדש
@@ -62,10 +62,10 @@ const useAddToCart = () => {
         // רק אם נוספו מוצרים בפועל - הצגת התראה
         if (!quantity && addResult?.added > 0) {
           const actualAdded = addResult.requested ? addResult.added : addResult.added;
-          notifySuccess(`${actualAdded} ${currentLang ? product.title?.he : product.title?.en} ${t("common:addedToCart!")}`);
+          notifySuccess(`${actualAdded} ${currentLang ? product.title?.he : product.title?.en} ${t('addedToCart!')}`);
         }
       } else {
-        notifyError(t("common:productStockOut"));
+        notifyError(t('productStockOut'));
       }
     }
   };
@@ -78,7 +78,7 @@ const useAddToCart = () => {
       if (result?.quantity + item <= productStock) {
         updateItemQuantity(product.id, product.quantity + 1);
       } else {
-        notifyError(t("common:productStockOut"));
+        notifyError(t('productStockOut'));
       }
     }
   };

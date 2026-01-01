@@ -12,6 +12,7 @@ import CustomerServices from "@services/CustomerServices";
 import { UserContext } from "@context/UserContext";
 import { notifyError, notifySuccess } from "@utils/toast";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
@@ -176,7 +177,9 @@ const ForgetPassword = () => {
 
 // export const getServerSideProps = async ({ params }) => {
 //   return {
-//     props: { params },
+//     props: { params ,
+      ...i18nProps,
+    },
 //   };
 // };
 

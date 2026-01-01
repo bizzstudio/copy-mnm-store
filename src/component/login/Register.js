@@ -1,6 +1,6 @@
 //src/component/login/Register.js
 import { FiLock, FiMail, FiPhone, FiUser } from "react-icons/fi";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 // Internal import
@@ -20,13 +20,13 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
     watch,
     setError,
   } = useLoginSubmit(setModalOpen, newsletterOptIn);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [notMatch, setNotMatch] = useState({ message: '' });
 
   const comparePasswords = (value) => {
     if (value !== watch("password")) {
-      setNotMatch({ message: t('common:passwordsDoNotMatch') });
+      setNotMatch({ message: t('passwordsDoNotMatch') });
     } else {
       setNotMatch('');
     }
@@ -37,25 +37,25 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
 
     // בדיקת רווחים בשדות שם ושם משפחה
     if (!name.trim()) {
-      setError('name', { type: 'manual', message: t('common:invalidName') });
+      setError('name', { type: 'manual', message: t('invalidName') });
       return false;
     }
 
     if (!lastName.trim()) {
-      setError('lastName', { type: 'manual', message: t('common:invalidLastName') });
+      setError('lastName', { type: 'manual', message: t('invalidLastName') });
       return false;
     }
 
     // בדיקת מספר טלפון - מתחיל ב־05 וכולל 10 ספרות בדיוק
     const phoneRegex = /^05\d{8}$/;
     if (!phoneRegex.test(phone)) {
-      setError('phone', { type: 'manual', message: t('common:invalidPhone') });
+      setError('phone', { type: 'manual', message: t('invalidPhone') });
       return false;
     }
 
     // בדיקת אימות סיסמה
     if (data.password !== confirmPassword) {
-      setError('confirmPassword', { type: 'manual', message: t('common:passwordsDoNotMatch') });
+      setError('confirmPassword', { type: 'manual', message: t('passwordsDoNotMatch') });
       return false;
     }
 
@@ -71,7 +71,7 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
   return (
     <>
       <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:registerTitle")} />
+        <MinimalTitle title={t('registerTitle')} />
       </div>
       <form
         onSubmit={handleSubmit(customSubmitHandler)}
@@ -81,10 +81,10 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
           <div className="col-span-2 xs:col-span-1">
             <InputArea
               register={register}
-              // label={t("common:name")}
+              // label={t('name')}
               name="name"
               type="text"
-              placeholder={t("common:name")}
+              placeholder={t('name')}
               Icon={FiUser}
             />
             <Error errorName={errors.name} />
@@ -93,10 +93,10 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
           <div className="col-span-2 xs:col-span-1">
             <InputArea
               register={register}
-              // label={t("common:lastName")}
+              // label={t('lastName')}
               name="lastName"
               type="text"
-              placeholder={t("common:lastName")}
+              placeholder={t('lastName')}
               Icon={FiUser}
             />
             <Error errorName={errors.lastName} />
@@ -105,10 +105,10 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
           <div className="col-span-2 sm:col-span-1">
             <InputArea
               register={register}
-              // label={t("common:email")}
+              // label={t('email')}
               name="email"
               type="email"
-              placeholder={t("common:email")}
+              placeholder={t('email')}
               Icon={FiMail}
             />
             <Error errorName={errors.email} />
@@ -117,10 +117,10 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
           <div className="col-span-2 sm:col-span-1">
             <InputArea
               register={register}
-              // label={t("common:phone")}
+              // label={t('phone')}
               name="phone"
               type="tel"
-              placeholder={t("common:phone")}
+              placeholder={t('phone')}
               Icon={FiPhone}
             />
             <Error errorName={errors.phone} />
@@ -130,10 +130,10 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
             <div className="form-group w-full">
               <InputArea
                 register={register}
-                // label={t("common:password")}
+                // label={t('password')}
                 name="password"
                 type="password"
-                placeholder={t("common:password")}
+                placeholder={t('password')}
                 Icon={FiLock}
               />
               <Error errorName={errors.password} />
@@ -149,16 +149,16 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
                 </div>
                 <input
                   {...register("confirmPassword", {
-                    required: t("common:confirmPassword") + " is required!",
+                    required: t('confirmPassword') + " is required!",
                     validate: (value) => {
                       if (value !== watch("password")) {
-                        return t('common:passwordsDoNotMatch');
+                        return t('passwordsDoNotMatch');
                       }
                       return true;
                     }
                   })}
                   type="password"
-                  placeholder={t('common:confirmPassword')}
+                  placeholder={t('confirmPassword')}
                   className="py-2 px-4 pl-10 w-full appearance-none border text-sm opacity-75 text-input rounded-md placeholder-body min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-mainColor h-11 md:h-12"
                 />
               </div>
@@ -173,7 +173,7 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
                 onClick={() => setShowResetPassword(true)}
                 className="text-end text-sm text-heading ps-3 underline hover:no-underline focus:outline-none"
               >
-                {t("common:forgotPassword")}
+                {t('forgotPassword')}
               </button>
             </div>
           </div> */}
@@ -191,7 +191,7 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
                   height={10}
                   className="saturate-0"
                 />
-                <span>{t("common:processing")}</span>
+                <span>{t('processing')}</span>
               </div>
             </MainBT>
           ) : (
@@ -200,7 +200,7 @@ const Register = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false 
               type="submit"
               className="col-span-2 flex items-center justify-center"
             >
-              {t("common:signingUp")}
+              {t('signingUp')}
             </MainBT>
           )}
         </div>

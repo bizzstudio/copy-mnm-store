@@ -4,7 +4,7 @@ import { notifyError } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import useGetSetting from "@hooks/useGetSetting";
 import ProductModal from "@component/modal/ProductModal";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Link from 'next/link';
 import Price from '@component/common/Price';
@@ -26,7 +26,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
     const { handleIncreaseQuantity } = useAddToCart();
     const { globalSetting } = useGetSetting();
     const { showingTranslateValue } = useUtilsFunction();
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { offers } = useContext(SidebarContext);
 
     const currency = globalSetting?.default_currency || "₪";
@@ -62,7 +62,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
 
     const handleAddToCart = (product) => {
         const stock = getProductStock(product);
-        if (stock < 1) return notifyError(t("common:productStockOut"));
+        if (stock < 1) return notifyError(t('productStockOut'));
 
         const { slug, categories, description, ...updatedProduct } = product;
         const productPrice = product?.prices?.[0];
@@ -110,7 +110,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                 className='fixed sm:absolute sm:top-10 top-16 left-1/2 sm:left-0 -translate-x-1/2 sm:translate-x-0 bg-white w-[90vw] sm:w-full lg:min-w-[585px] max-w-full shadow-xl overflow-hidden rounded-bl-lg rounded-br-lg z-10'
             >
                 <div className="p-1">
-                    <h2 className="text-right text-xl p-4">{products.length} {t("common:itemsFound")}</h2>
+                    <h2 className="text-right text-xl p-4">{products.length} {t('itemsFound')}</h2>
                     <div className="overflow-y-auto sm:max-h-[570px] max-h-[450px]">
                         {products.slice(0, 10).map((product) => (
                             <Link
@@ -203,7 +203,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                 className="text-blackhover:underline"
                                 type='submit'
                             >
-                                {t("common:showAll")} ({products.length})
+                                {t('showAll')} ({products.length})
                             </button>
                         </div>
                     )}

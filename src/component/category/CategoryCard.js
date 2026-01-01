@@ -20,11 +20,11 @@ const getCategoryIconByCode = (category) => {
   };
 };
 
-const CategoryCard = ({ title, nested, id, onLinkClick }) => {
+const CategoryCard = ({ title, nested, id, onLinkClick, onClose }) => {
   const router = useRouter();
   const { query, pathname, asPath } = router;
   const { showingTranslateValue, getCategorySlug } = useUtilsFunction();
-  const { closeCategoryDrawer, setIsLoading } = useContext(SidebarContext);
+  const { setIsLoading } = useContext(SidebarContext);
 
   // אם אין nested או זה ריק, לא מציגים כלום
   if (!nested || nested.length === 0) {
@@ -34,15 +34,15 @@ const CategoryCard = ({ title, nested, id, onLinkClick }) => {
   const handleCategoryClick = (category) => {
     const categorySlug = getCategorySlug(category);
     const targetPath = `/product-category/${categorySlug}`;
-    
+
     // בדיקה אם כבר נמצאים באותו מקום
     if (asPath === targetPath) {
-      closeCategoryDrawer();
+      onClose();
       if (onLinkClick) setTimeout(() => onLinkClick(), 100);
       return;
     }
 
-    closeCategoryDrawer();
+    onClose();
     if (onLinkClick) setTimeout(() => onLinkClick(), 100);
     router.push(targetPath);
   };
@@ -51,16 +51,16 @@ const CategoryCard = ({ title, nested, id, onLinkClick }) => {
     const categorySlug = getCategorySlug(category);
     const subCategorySlug = getCategorySlug(subCategory);
     const targetPath = `/product-category/${categorySlug}/${subCategorySlug}`;
-    
+
     // בדיקה אם כבר נמצאים באותו מקום
     if (asPath === targetPath) {
-      closeCategoryDrawer();
+      onClose();
       if (onLinkClick) setTimeout(() => onLinkClick(), 100);
       return;
     }
 
     // אחרת – מתחילים טעינה ומעבירים
-    closeCategoryDrawer();
+    onClose();
     if (onLinkClick) setTimeout(() => onLinkClick(), 100);
     router.push(targetPath);
   };

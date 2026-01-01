@@ -1,7 +1,7 @@
 // src/component/checkout/OrderSummary.jsx
 import React from "react";
 import { IoBagHandle, IoDocumentTextOutline } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import CartItem from "@component/cart/CartItem";
 import MainBT from "@component/button/MainBT";
 import Calculating from "@component/cart/Calculating";
@@ -24,7 +24,7 @@ const OrderSummary = ({
     city,
     guestChosenCity,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     return (
         <div className="w-full flex flex-col h-full">
@@ -37,7 +37,7 @@ const OrderSummary = ({
                 </h2>
 
                 {/* רשימת מוצרים */}
-                <div className="overflow-y-auto flex-grow scrollbar-hide w-full max-h-64 bg-mainColor-superLight block">
+                <div className="overflow-y-auto grow scrollbar-hide w-full max-h-64 bg-mainColor-superLight block">
                     {items.map((item) => (
                         <CartItem key={item.id} item={item} currency={currency} />
                     ))}
@@ -48,7 +48,7 @@ const OrderSummary = ({
                                 <IoBagHandle />
                             </span>
                             <h2 className="font-medium font-serif text-sm pt-2 text-gray-600">
-                                {t("common:noItemAdded")}
+                                {t('noItemAdded')}
                             </h2>
                         </div>
                     )}
@@ -59,7 +59,7 @@ const OrderSummary = ({
                     {couponInfo.couponCode ? (
                         <span className="bg-mainColor-superLight px-4 py-3 leading-tight w-full rounded-md flex justify-between">
                             {" "}
-                            <p className="text-mainColor-dark">{t("common:couponApplied")} </p>{" "}
+                            <p className="text-mainColor-dark">{t('couponApplied')} </p>{" "}
                             <span className="text-red-500 text-right">
                                 {couponInfo.couponCode}
                             </span>
@@ -69,7 +69,7 @@ const OrderSummary = ({
                             <input
                                 ref={couponRef}
                                 type="text"
-                                placeholder={t("common:couponCode")}
+                                placeholder={t('couponCode')}
                                 className="form-input py-2 px-3 md:px-4 w-full appearance-none transition ease-in-out border text-input text-sm rounded-md h-12 duration-200 bg-white border-gray-200 focus:ring-0 focus:outline-none focus:border-mainColor placeholder-gray-500 placeholder-opacity-75"
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -96,7 +96,7 @@ const OrderSummary = ({
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.sub_total
                     )}
-                    <span className="flex-shrink-0 text-gray-800 font-bold">
+                    <span className="shrink-0 text-gray-800 font-bold">
                         {typeof customCartTotal === 'number' ?
                             <>
                                 <small>{currency}</small>
@@ -106,7 +106,7 @@ const OrderSummary = ({
                     </span>
                     {customCartTotal < minimumOrderAmount && (
                         <span className="text-xs text-red-500 mb-[1px]">
-                            ({t("common:minimumPurchaseAmount", { amount: minimumOrderAmount })})
+                            ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
                         </span>
                     )}
                 </div>
@@ -117,7 +117,7 @@ const OrderSummary = ({
                         {showingTranslateValue(
                             storeCustomizationSetting?.checkout?.shipping_cost
                         )}
-                        <span className="flex-shrink-0 text-gray-800 font-bold">
+                        <span className="shrink-0 text-gray-800 font-bold">
                             {currency}
                             {shippingCost?.toFixed(2)}
                         </span>
@@ -129,7 +129,7 @@ const OrderSummary = ({
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.discount
                     )}
-                    <span className="ml-auto flex-shrink-0 font-bold text-orange-400">
+                    <span className="ml-auto shrink-0 font-bold text-orange-400">
                         {currency}
                         {discountAmount?.toFixed(2)}
                     </span>

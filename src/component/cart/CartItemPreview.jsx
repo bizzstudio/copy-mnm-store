@@ -19,7 +19,7 @@ const CartItemPreview = ({ item }) => {
 
   return (
     <div className="group w-full h-auto flex gap-4 justify-start items-center bg-white py-3 border-b border-gray-100 relative last:border-b-0">
-      <div className="relative flex justify-between rounded-full border border-gray-100 shadow-sm overflow-hidden flex-shrink-0"
+      <div className="relative flex justify-between rounded-full border border-gray-100 shadow-sm overflow-hidden shrink-0"
       >
         <img
           key={item?.id}

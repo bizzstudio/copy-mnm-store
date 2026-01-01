@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import { FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 
 // Internal import
@@ -17,9 +17,10 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import CustomerServices from "@services/CustomerServices";
 import notifyApiResponse from "@utils/notifyApiResponse";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const ContactUs = () => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -46,7 +47,7 @@ const ContactUs = () => {
   };
 
   return (
-    <Layout title={t("common:contactUs")} description={t("common:contactUsDescription")}>
+    <Layout title={t('contactUs')} description={t('contactUsDescription')}>
       {storeCustomizationSetting?.contact_us?.header_status && (
         <PageHeader
           headerBg={storeCustomizationSetting?.contact_us?.header_bg}
@@ -205,11 +206,11 @@ const ContactUs = () => {
                     <div className="w-full md:w-1/2 ">
                       <InputArea
                         register={register}
-                        label={t("common:contact-page-form-input-name")}
+                        label={t('contact-page-form-input-name')}
                         name="name"
                         type="text"
                         placeholder={t(
-                          "common:contact-page-form-plaholder-name"
+                          'contact-page-form-plaholder-name'
                         )}
                       />
                       <Error errorName={errors.name} />
@@ -217,11 +218,11 @@ const ContactUs = () => {
                     <div className="w-full md:w-1/2 md:mr-2.5 lg:mr-5 mt-2 md:mt-0">
                       <InputArea
                         register={register}
-                        label={t("common:contact-page-form-input-email")}
+                        label={t('contact-page-form-input-email')}
                         name="email"
                         type="email"
                         placeholder={t(
-                          "common:contact-page-form-plaholder-email"
+                          'contact-page-form-plaholder-email'
                         )}
                       />
                       <Error errorName={errors.email} />
@@ -230,18 +231,18 @@ const ContactUs = () => {
                   <div className="relative">
                     <InputArea
                       register={register}
-                      label={t("common:contact-page-form-input-subject")}
+                      label={t('contact-page-form-input-subject')}
                       name="subject"
                       type="text"
                       placeholder={t(
-                        "common:contact-page-form-plaholder-subject"
+                        'contact-page-form-plaholder-subject'
                       )}
                     />
                     <Error errorName={errors.subject} />
                   </div>
                   <div className="relative mb-4">
                     <Label
-                      label={t("common:contact-page-form-input-message")}
+                      label={t('contact-page-form-input-message')}
                     />
                     <textarea
                       {...register("message", {
@@ -253,7 +254,7 @@ const ContactUs = () => {
                       spellCheck="false"
                       rows="4"
                       placeholder={t(
-                        "common:contact-page-form-plaholder-message"
+                        'contact-page-form-plaholder-message'
                       )}
                     ></textarea>
                     <Error errorName={errors.message} />
@@ -272,7 +273,7 @@ const ContactUs = () => {
                             height={10}
                             className="saturate-0"
                           />
-                          <span>{t("common:processing")}</span>
+                          <span>{t('processing')}</span>
                         </div>
                       </MainBT>
                     ) : (
@@ -280,7 +281,7 @@ const ContactUs = () => {
                         disabled={loading}
                         type="submit"
                       >
-                        {t("common:contact-page-form-send-btn")}
+                        {t('contact-page-form-send-btn')}
                       </MainBT>
                     )}
                   </div>
@@ -307,5 +308,12 @@ const ContactUs = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default ContactUs;

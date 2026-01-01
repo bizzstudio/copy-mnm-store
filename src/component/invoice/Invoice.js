@@ -9,14 +9,14 @@ import 'dayjs/locale/he'; // ייבוא תאריכים בעברית
 // Internal import
 import OrderTable from "@component/order/OrderTable";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useGetSetting from "@hooks/useGetSetting";
 
 const Invoice = ({ data, printRef, globalSetting, currency }) => {
   // console.log('invoice data',data)
 
   const { getNumberTwo, showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { storeCustomizationSetting } = useGetSetting();
 
   let currentLang = Cookies.get('_lang');
@@ -41,9 +41,9 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
       <div className="bg-mainColor-light p-8 rounded-t-xl">
         <div className="flex lg:flex-row md:flex-row flex-col lg:items-center justify-between pb-4 border-b border-mainColor-superLight">
           <div>
-            <h1 className="font-bold font-serif text-2xl uppercase">{t("common:order")}</h1>
+            <h1 className="font-bold font-serif text-2xl uppercase">{t('order')}</h1>
             <h6 className="text-gray-700">
-              <b>{t("common:status")}: </b>
+              <b>{t('status')}: </b>
               {(() => {
                 switch (data?.status?.name) {
                   case "delivered":
@@ -65,7 +65,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
             {/* הערות הלקוח להזמנה */}
             {data?.customer_note && (
               <div>
-                <h6 className="text-gray-700"><b>{t("common:notes")}: </b>{data?.customer_note}</h6>
+                <h6 className="text-gray-700"><b>{t('notes')}: </b>{data?.customer_note}</h6>
               </div>
             )}
           </div>
@@ -91,7 +91,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
         <div className="flex lg:flex-row md:flex-row flex-col justify-between pt-4">
           <div className="mb-3 md:mb-0 lg:mb-0 flex flex-col">
             <span className="font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:date")}
+              {t('date')}
             </span>
             <span className="text-sm text-gray-500 block">
               {data.createdAt !== undefined && (
@@ -101,7 +101,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
           </div>
           <div className="mb-3 md:mb-0 lg:mb-0 flex flex-col">
             <span className="font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:orderNo")}
+              {t('orderNo')}
             </span>
             <span className="text-sm text-gray-500 block">
               #{data?.invoice}
@@ -109,7 +109,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
           </div>
           <div className="flex flex-col lg:text-right text-left">
             <span className="font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:orderTo")}
+              {t('orderTo')}
             </span>
             <span className="text-sm text-gray-500 block min-w-[175px]">
               {name}<br />
@@ -130,32 +130,32 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
                     scope="col"
                     className="font-serif font-semibold px-6 py-2 text-gray-700 uppercase tracking-wider text-center"
                   >
-                    {t("common:sr")}
+                    {t('sr')}
                   </th>
                   <th
                     scope="col"
                     className="font-serif font-semibold px-6 py-2 text-gray-700 uppercase tracking-wider text-center"
                   >
-                    {t("common:productName")}
+                    {t('productName')}
                   </th>
                   <th
                     scope="col"
                     className="font-serif font-semibold px-6 py-2 text-gray-700 uppercase tracking-wider text-center"
                   >
-                    {t("common:quantity")}
+                    {t('quantity')}
                   </th>
                   <th
                     scope="col"
                     className="font-serif font-semibold px-6 py-2 text-gray-700 uppercase tracking-wider text-center"
                   >
-                    {t("common:itemPrice")}
+                    {t('itemPrice')}
                   </th>
 
                   <th
                     scope="col"
                     className="font-serif font-semibold px-6 py-2 text-gray-700 uppercase tracking-wider text-right"
                   >
-                    {t("common:amount")}
+                    {t('amount')}
                   </th>
                 </tr>
               </thead>
@@ -169,15 +169,15 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
         <div className="flex lg:flex-row md:flex-row flex-col justify-between pt-4">
           <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
             <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:paymentMethod")}
+              {t('paymentMethod')}
             </span>
             <span className="text-sm text-gray-500 font-semibold font-serif block">
-              {t(`common:${data?.paymentMethod}`)}
+              {t(data?.paymentMethod)}
             </span>
           </div>
           <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
             <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:shippingCost")}
+              {t('shippingCost')}
 
             </span>
             <span className="text-sm text-gray-500 font-semibold font-serif block">
@@ -199,7 +199,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
           {data.offerDiscount && data.offerDiscount > 0 && (
             <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
               <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 block">
-                {t("common:thresholdDiscount")}
+                {t('thresholdDiscount')}
               </span>
               <span className="text-sm text-gray-500 font-semibold font-serif block">
                 {currency}
@@ -209,7 +209,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
           )}
           <div className="flex flex-col sm:flex-wrap">
             <span className="mb-1 font-bold font-serif text-sm uppercase text-gray-600 block">
-              {t("common:totalAmount")}
+              {t('totalAmount')}
             </span>
             <span className="text-2xl font-serif font-bold text-red-500 block">
               {currency}

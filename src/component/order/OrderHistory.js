@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import 'dayjs/locale/he'; // ייבוא תאריכים בעברית
 
 const OrderHistory = ({ order, currency }) => {
 
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [status, setStatus] = useState(null);
   const [dateFormat, setDateFormat] = useState("D/MM/YYYY"); // פורמט ברירת מחדל
 
@@ -76,7 +76,7 @@ const OrderHistory = ({ order, currency }) => {
       </td>
 
       <td className="px-1 md:px-5 py-3 leading-6 text-center whitespace-nowrap md:block hidden">
-        <span className="text-sm">{t(`common:${order.paymentMethod}`)}</span>
+        <span className="text-sm">{t(order.paymentMethod)}</span>
       </td>
       <td className="px-1 md:px-5 py-3 leading-6 text-center md:whitespace-nowrap font-medium text-sm max-md:w-min">
         {status}

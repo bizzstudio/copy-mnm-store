@@ -1,8 +1,8 @@
 import React from 'react'
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 export default function Calculating({ showText = true }) {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     return (
         <span className="flex flex-row justify-center items-center gap-1 text-center">
@@ -14,7 +14,7 @@ export default function Calculating({ showText = true }) {
                 className="saturate-0"
             />
             {showText && <span>
-                {t("common:calculating")}
+                {t('calculating')}
             </span>}
         </span>
     )

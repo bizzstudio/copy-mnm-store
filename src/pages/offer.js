@@ -4,15 +4,16 @@ import Coupon from "@component/coupon/Coupon";
 import PageHeader from "@component/header/PageHeader";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const Offer = () => {
   const { data } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
-    <Layout title={t("common:Offers")} description={t("common:offersDescription")}>
+    <Layout title={t('Offers')} description={t('offersDescription')}>
       <PageHeader
         headerBg={data?.offer?.header_bg}
         title={showingTranslateValue(data?.offer?.title)}
@@ -25,5 +26,12 @@ const Offer = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default Offer;

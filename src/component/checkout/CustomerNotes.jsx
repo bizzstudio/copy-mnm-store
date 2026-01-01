@@ -1,10 +1,10 @@
 // src/component/checkout/CustomerNotes.jsx
 import React from "react";
 import { MdKeyboardArrowDown, MdOutlineEditNote } from "react-icons/md";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const CustomerNotes = ({ register, watch, isNoteOpen, setIsNoteOpen }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     return (
         <div className="w-full flex flex-col h-full">
@@ -13,7 +13,7 @@ const CustomerNotes = ({ register, watch, isNoteOpen, setIsNoteOpen }) => {
                     onClick={() => setIsNoteOpen(!isNoteOpen)}>
                     <h2 className="font-semibold font-serif text-lg flex items-center gap-2">
                         <MdOutlineEditNote className="text-mainColor-dark text-xl" />
-                        {t("common:customerNote")}
+                        {t('customerNote')}
                     </h2>
                     <button type="button" className="text-mainColor">
                         <MdKeyboardArrowDown size={30} className={`transform ${isNoteOpen ? 'rotate-180' : ''}`} />
@@ -24,7 +24,7 @@ const CustomerNotes = ({ register, watch, isNoteOpen, setIsNoteOpen }) => {
                         rows={4}
                         maxLength={200}
                         className="textareaCheckout w-full border border-gray-200 rounded-md px-4 py-3 text-sm font-sans focus-visible:outline-none focus:outline-none "
-                        placeholder={t("common:typeHere")}
+                        placeholder={t('typeHere')}
                         {...register("customer_note")}
                     />
 

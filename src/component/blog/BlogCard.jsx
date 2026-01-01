@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal imports
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -23,7 +23,7 @@ const stripHtml = (htmlString = "") => {
 };
 
 const BlogCard = ({ blog, isHome = false }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { showingTranslateValue } = useUtilsFunction();
 
     // Get translated title & preview/content
@@ -54,17 +54,17 @@ const BlogCard = ({ blog, isHome = false }) => {
                         </div>
                     </div>
                 )}
-                <div className="flex flex-col flex-grow p-5 pt-4">
+                <div className="flex flex-col grow p-5 pt-4">
                     <h2 className="text-lg font-semibold mb-2 text-gray-800 line-clamp-2">
                         {title}
                     </h2>
-                    <p className="text-sm text-gray-500 flex-grow leading-relaxed line-clamp-5 overflow-hidden">
+                    <p className="text-sm text-gray-500 grow leading-relaxed line-clamp-5 overflow-hidden">
                         {previewText}
                     </p>
                     <div className="mt-4 flex justify-end">
-                        <MainBT className="!w-auto px-4 py-1 text-sm">
+                        <MainBT className="w-auto! px-4 py-1 text-sm">
                             <div className="flex justify-center items-center gap-1">
-                                {t("common:readMore")}
+                                {t('readMore')}
                                 <MdKeyboardDoubleArrowLeft size={20} className="mt-[3px]" />
                             </div>
                         </MainBT>

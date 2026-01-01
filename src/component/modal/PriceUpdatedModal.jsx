@@ -1,13 +1,13 @@
 // PriceUpdatedModal.jsx
 import React from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 // אפשר להחליף בתמונה אחרת לבחירתך
 import newPriceImage from "public/update product.svg";
 import CartItemPreview from "@component/cart/CartItemPreview";
 import MainBT from "@component/button/MainBT";
 
 const PriceUpdatedModal = ({ priceUpdatedItems = [], closeModal = () => { } }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const count = priceUpdatedItems.length;
 
     return (
@@ -15,7 +15,7 @@ const PriceUpdatedModal = ({ priceUpdatedItems = [], closeModal = () => { } }) =
             <img src={newPriceImage.src} alt="Price Updated image" className="w-[85px]" />
             <h1 className="text-[22px] font-bold text-blackmt-4 mb-2 text-center">
                 {/* "למוצרים הבאים עודכן המחיר" עם משתנה count */}
-                {t("common:priceUpdatedForProducts", { count })}
+                {t('priceUpdatedForProducts', { count })}
             </h1>
             <ul className="text-right">
                 {priceUpdatedItems.map((conflictItem, index) => (
@@ -25,7 +25,7 @@ const PriceUpdatedModal = ({ priceUpdatedItems = [], closeModal = () => { } }) =
                 ))}
             </ul>
             <MainBT onClick={closeModal}>
-                {t("common:ok")}
+                {t('ok')}
             </MainBT>
         </div>
     );

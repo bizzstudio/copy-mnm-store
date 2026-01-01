@@ -1,7 +1,7 @@
 // src/pages/about-us.js
 import React from "react";
 import Image from "next/image";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // ייבוא רכיבים פנימיים מהאפליקציה
 import Layout from "@layout/Layout";
@@ -9,17 +9,18 @@ import useGetSetting from "@hooks/useGetSetting";
 import PageHeader from "@component/header/PageHeader";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import { getI18nProps } from "@utils/i18n";
 
 // הקומפוננטה הראשית של עמוד "אודותינו"
 const AboutUs = () => {
   const { storeCustomizationSetting, loading, error } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // console.log('storeCustomizationSetting :>> ', storeCustomizationSetting);
 
   return (
-    <Layout title={t("common:aboutUs")} description={t("common:aboutUsDescription")}>
+    <Layout title={t('aboutUs')} description={t('aboutUsDescription')}>
       {/* כותרת העמוד */}
       <PageHeader
         headerBg={storeCustomizationSetting?.about_us?.header_bg}
@@ -34,7 +35,7 @@ const AboutUs = () => {
           <div className="grid grid-flow-row lg:grid-cols-2 gap-4 lg:gap-16 items-center">
             <div className="">
               <h3 className="text-xl lg:text-3xl mb-2 font-serif font-semibold">
-                {/* {t("common:about-section-title")} */}
+                {/* {t('about-section-title')} */}
 
                 <CMSkeleton
                   count={1}
@@ -356,6 +357,13 @@ const AboutUs = () => {
 };
 
 // ייצוא הקומפוננטה וקביעת אפשרויות טעינת הנתונים בצד שרת
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
+
 export default AboutUs;
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";

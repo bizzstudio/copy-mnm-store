@@ -1,7 +1,7 @@
 // src/component/checkout/PersonalDetails.jsx
 import React from "react";
 import { CiUser } from "react-icons/ci";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import GuestAddressForm from "@component/guestAddress/GuestAddressForm";
 import NoDeliveryWarning from "@component/checkout/NoDeliveryWarning";
 
@@ -23,7 +23,7 @@ const PersonalDetails = ({
     guestChosenCity,
     setGuestChosenCity,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     return (
         <div className="w-full">
@@ -32,12 +32,12 @@ const PersonalDetails = ({
                 <div className="bg-white border border-gray-200 rounded-lg">
                     <div className="p-4 sm:p-6">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0">
+                            <div className="shrink-0">
                                 <div className="w-12 h-12 bg-mainColor-light rounded-full flex items-center justify-center">
                                     <CiUser className="text-2xl text-mainColor-dark" />
                                 </div>
                             </div>
-                            <div className="flex-grow min-w-0">
+                            <div className="grow min-w-0">
                                 <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2">
                                     <h2 className="text-lg font-semibold text-gray-900 truncate">
                                         {userInfo?.name}
@@ -59,10 +59,10 @@ const PersonalDetails = ({
                                     </h2>
                                     <button
                                         type="button"
-                                        className="text-sm text-stone-700 hover:text-mainColor-dark font-medium underline flex-shrink-0 transition-colors"
+                                        className="text-sm text-stone-700 hover:text-mainColor-dark font-medium underline shrink-0 transition-colors"
                                         onClick={() => setModalOpen(true)}
                                     >
-                                        {t("common:changeAddress")}
+                                        {t('changeAddress')}
                                     </button>
                                 </div>
 

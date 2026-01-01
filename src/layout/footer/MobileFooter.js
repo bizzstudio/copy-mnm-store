@@ -8,7 +8,7 @@ import { MdOutlineSettingsBackupRestore } from "react-icons/md";
 import { FaList } from "react-icons/fa6";
 import { RiHome6Line, RiShoppingCartLine, RiUserAddLine } from "react-icons/ri";
 import { HiOutlineUser } from "react-icons/hi";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 import { UserContext } from "@context/UserContext";
 import LoginModal from "@component/modal/LoginModal";
@@ -29,15 +29,15 @@ const MobileFooter = () => {
     state: { userInfo },
   } = useContext(UserContext);
 
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // Fallbacks לטקסטים אם אין מפתח i18n קיים
-  const lblAllProducts = t("common:allProducts");
-  const lblDeals = t("common:deals");
-  const lblCart = t("common:cart");
-  const lblLogin = t("common:login");
-  const lblRestore = t("common:restoreOrderBTN");
-  const lblHome = t("common:homeBTN");
+  const lblAllProducts = t('allProducts');
+  const lblDeals = t('deals');
+  const lblCart = t('cart');
+  const lblLogin = t('login');
+  const lblRestore = t('restoreOrderBTN');
+  const lblHome = t('homeBTN');
 
   // מציאת קטגוריית המבצעים
   const offersCategory = categories?.[0]?.children 
@@ -48,7 +48,7 @@ const MobileFooter = () => {
   return (
     <>
       <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      <div className="flex flex-col h-full justify-between align-middle bg-white rounded cursor-pointer overflow-y-scroll flex-grow scrollbar-hide w-full">
+      <div className="flex flex-col h-full justify-between align-middle bg-white rounded cursor-pointer overflow-y-scroll grow scrollbar-hide w-full">
         <CategoryDrawer className="w-6 h-6 drop-shadow-xl" />
       </div>
 

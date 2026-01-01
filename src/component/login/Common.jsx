@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import Cookies from "js-cookie";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import useAsync from "@hooks/useAsync";
@@ -21,7 +21,7 @@ const Common = ({ setModalOpen }) => {
 
   const { handleGoogleSignIn } = useLoginSubmit(setModalOpen, newsletterOptIn);
   const { data: storeSetting } = useAsync(SettingServices.getStoreSetting);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const handleModal = () => {
     setShowRegister(!showRegister);
@@ -62,7 +62,7 @@ const Common = ({ setModalOpen }) => {
               onChange={(e) => setNewsletterOptIn(e.target.checked)}
             />
             <label htmlFor="newsletterOptIn" className="text-sm text-gray-700 cursor-pointer">
-              {t("common:newsletterOptInLabel")}
+              {t('newsletterOptInLabel')}
             </label>
           </div>
         )}
@@ -71,7 +71,7 @@ const Common = ({ setModalOpen }) => {
           {storeSetting?.google_login_status && !showRegister && (
             <>
               <div className="mt-7 mb-3 after:bg-gray-100 before:bg-gray-100 fo10t-sans text-center font-medium">
-                {t("common:orGoogle")}
+                {t('orGoogle')}
               </div>
               <div className="flex items-center justify-center">
                 <GoogleLogin
@@ -95,12 +95,12 @@ const Common = ({ setModalOpen }) => {
         </div>
         <div className="text-center text-sm text-gray-900 mt-4">
           <div className="text-gray-500 mt-2.5">
-            {showRegister ? t("common:alreadyHaveAccount") : t("common:notAccount")}
+            {showRegister ? t('alreadyHaveAccount') : t('notAccount')}
             <button
               onClick={handleModal}
               className="text-gray-800 hover:text-blackfont-bold mx-1 underline"
             >
-              {showRegister ? t("common:loginBtn") : t("common:register")}
+              {showRegister ? t('loginBtn') : t('register')}
             </button>
           </div>
         </div>

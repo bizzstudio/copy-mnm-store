@@ -1,6 +1,7 @@
 // src/pages/_document.js
 import SettingServices from "@services/SettingServices";
 import Document, { Html, Head, Main, NextScript } from "next/document";
+import { getI18nProps } from "@utils/i18n";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -155,6 +156,13 @@ class MyDocument extends Document {
       </Html>
     );
   }
+}
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
 }
 
 export default MyDocument;

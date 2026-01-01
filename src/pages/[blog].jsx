@@ -22,6 +22,7 @@ const HEBREW_ROUTES = {
 };
 
 // Dynamic import for ReactQuill to avoid SSR issues
+import { getI18nProps } from "@utils/i18n";
 const ReactQuill = dynamic(() => import('react-quill-new'), {
     ssr: false,
     loading: () => <div className="animate-pulse bg-gray-200 h-40 rounded"></div>
@@ -125,6 +126,7 @@ export const getServerSideProps = async (context) => {
     const { blog } = context.params;
 
     try {
+        const i18nProps = await getI18nProps(context);
 
         // טיפול בעמודים סטטיים
         const hardCodedSlugs = Object.keys(HEBREW_ROUTES);
@@ -132,13 +134,12 @@ export const getServerSideProps = async (context) => {
             return {
                 props: {
                     pageKey: blog,
+                    ...i18nProps,
                 },
             };
         }
 
-        const [blogData] = await Promise.all([
-            BlogServices.getPublishedBlogBySlug(blog),
-        ]);
+        const blogData = await BlogServices.getPublishedBlogBySlug(blog);
 
         if (!blogData) {
             return {
@@ -149,6 +150,7 @@ export const getServerSideProps = async (context) => {
         return {
             props: {
                 blog: blogData,
+                ...i18nProps,
             },
         };
     } catch (error) {

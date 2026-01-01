@@ -1,7 +1,7 @@
 // src/component/checkout/OrderCosts.jsx
 import React from "react";
 import { IoReceiptOutline } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import MainBT from "@component/button/MainBT";
 import Calculating from "@component/cart/Calculating";
 import useCart from "@hooks/useCart";
@@ -25,7 +25,7 @@ const OrderCosts = ({
     newsletterOptIn,
     setNewsletterOptIn,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { thresholdDiscount, appliedOffers } = useCart();
 
     // מציאת מבצע THRESHOLD_DISCOUNT שחל
@@ -38,7 +38,7 @@ const OrderCosts = ({
                     <IoReceiptOutline className="text-mainColor-dark text-xl" />
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.order_costs
-                    ) || t("common:orderCosts")}
+                    ) || t('orderCosts')}
                 </h2>
 
                 {/* קוד קופון */}
@@ -46,7 +46,7 @@ const OrderCosts = ({
                     {couponInfo.couponCode ? (
                         <span className="bg-mainColor-superLight px-4 py-3 leading-tight w-full rounded-md flex justify-between">
                             {" "}
-                            <p className="text-mainColor-dark">{t("common:couponApplied")} </p>{" "}
+                            <p className="text-mainColor-dark">{t('couponApplied')} </p>{" "}
                             <span className="text-red-500 text-right">
                                 {couponInfo.couponCode}
                             </span>
@@ -56,7 +56,7 @@ const OrderCosts = ({
                             <input
                                 ref={couponRef}
                                 type="text"
-                                placeholder={t("common:couponCode")}
+                                placeholder={t('couponCode')}
                                 className="form-input py-2 px-3 md:px-4 w-full appearance-none transition ease-in-out border text-input text-sm rounded-md h-12 duration-200 bg-white border-gray-200 focus:ring-0 focus:outline-none focus:border-mainColor placeholder-gray-500 placeholder-opacity-75"
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
@@ -83,7 +83,7 @@ const OrderCosts = ({
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.sub_total
                     )}
-                    <span className="flex-shrink-0 text-gray-800 font-bold">
+                    <span className="shrink-0 text-gray-800 font-bold">
                         {typeof customCartTotal === 'number' ?
                             <>
                                 <small>{currency}</small>
@@ -93,7 +93,7 @@ const OrderCosts = ({
                     </span>
                     {customCartTotal < minimumOrderAmount && (
                         <span className="text-xs text-red-500 mb-[1px]">
-                            ({t("common:minimumPurchaseAmount", { amount: minimumOrderAmount })})
+                            ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
                         </span>
                     )}
                 </div>
@@ -104,7 +104,7 @@ const OrderCosts = ({
                         {showingTranslateValue(
                             storeCustomizationSetting?.checkout?.shipping_cost
                         )}
-                        <span className="flex-shrink-0 text-gray-800 font-bold">
+                        <span className="shrink-0 text-gray-800 font-bold">
                             {currency}
                             {shippingCost?.toFixed(2)}
                         </span>
@@ -116,7 +116,7 @@ const OrderCosts = ({
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.discount
                     )}
-                    <span className="ml-auto flex-shrink-0 font-bold text-orange-400">
+                    <span className="ml-auto shrink-0 font-bold text-orange-400">
                         {currency}
                         {discountAmount?.toFixed(2)}
                     </span>
@@ -125,8 +125,8 @@ const OrderCosts = ({
                 {/* הנחת מבצע קניה מעל סכום */}
                 {thresholdDiscount > 0 && thresholdDiscountOffer && (
                     <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0 gap-1.5">
-                        {t("common:thresholdDiscount")}
-                        <span className="ml-auto flex-shrink-0 font-bold text-orange-400">
+                        {t('thresholdDiscount')}
+                        <span className="ml-auto shrink-0 font-bold text-orange-400">
                             {currency}
                             {thresholdDiscount?.toFixed(2)}
                             <span className="text-xs ms-1 font-normal text-gray-500">
@@ -162,7 +162,7 @@ const OrderCosts = ({
                         onChange={(e) => setNewsletterOptIn(e.target.checked)}
                     />
                     <label htmlFor="checkoutNewsletterOptIn" className="text-sm text-gray-700 cursor-pointer">
-                        {t("common:newsletterOptInLabel")}
+                        {t('newsletterOptInLabel')}
                     </label>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { IoBagHandle, IoWalletSharp } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 // Internal import
@@ -22,6 +22,7 @@ import MainModal from "@component/modal/MainModal";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useGetSetting from "@hooks/useGetSetting";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const CashierDesk = () => {
     const {
@@ -53,7 +54,7 @@ const CashierDesk = () => {
     const { storeCustomizationSetting } = useGetSetting();
 
     const router = useRouter();
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { state: { userInfo } } = useContext(UserContext);
 
     const [customerName, setCustomerName] = useState("");
@@ -126,7 +127,7 @@ const CashierDesk = () => {
             setTimeout(() => {
                 // מחיקת הנתונים מה-localStorage לאחר הצגת ההודעה
                 localStorage.removeItem("offerConflicts");
-                notifyError(t("common:pleaseNote"));
+                notifyError(t('pleaseNote'));
             }, 300);
         }
     }, [isCheckoutSubmit]);
@@ -168,7 +169,7 @@ const CashierDesk = () => {
                 </MainModal>
             )}
 
-            <Layout title={t("common:cashierDesk")} description={t("common:cashierPageDescription")} cashierPage={true}>
+            <Layout title={t('cashierDesk')} description={t('cashierPageDescription')} cashierPage={true}>
                 <div className="mx-auto px-3 sm:px-6 lg:px-8 max-w-screen-2xl">
                     <div className="py-3 lg:py-6">
                         {/* כותרת העמוד */}
@@ -181,7 +182,7 @@ const CashierDesk = () => {
                             className="-mt-10 -mb-4 lg:hidden block"
                         />
                             <p className="text-gray-600 text-center">
-                                {t("common:welcome")} <u>{userInfo?.name}</u>, {t("common:createOrderForCustomer")}
+                                {t('welcome')} <u>{userInfo?.name}</u>, {t('createOrderForCustomer')}
                             </p>
                         </div> */}
 
@@ -197,7 +198,7 @@ const CashierDesk = () => {
                                         <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-[150px]">
                                             <h2 className="text-xl font-semibold text-blackmb-4 flex items-center">
                                                 <IoBagHandle className="ml-2" />
-                                                {t("common:orderSummary")}
+                                                {t('orderSummary')}
                                             </h2>
 
                                             {/* פריטים בעגלה */}
@@ -205,8 +206,8 @@ const CashierDesk = () => {
                                                 {isEmpty ? (
                                                     <div className="text-center py-8 text-gray-500">
                                                         <IoBagHandle className="mx-auto w-12 h-12 mb-3 text-gray-300" />
-                                                        <p>{t("common:noProductsInCart")}</p>
-                                                        <p className="text-sm mt-1">{t("common:useVoiceToAddProducts")}</p>
+                                                        <p>{t('noProductsInCart')}</p>
+                                                        <p className="text-sm mt-1">{t('useVoiceToAddProducts')}</p>
                                                     </div>
                                                 ) : (
                                                     items.map((item) => (
@@ -220,18 +221,18 @@ const CashierDesk = () => {
                                                     {/* חישוב מחירים */}
                                                     <div className="border-t border-gray-200 mt-4 pt-4 space-y-2">
                                                         <div className="flex justify-between text-sm">
-                                                            <span>{t("common:productsTotal")}:</span>
+                                                            <span>{t('productsTotal')}:</span>
                                                             <span>{currency}{customCartTotal.toFixed(2)}</span>
                                                         </div>
 
                                                         <div className={`flex justify-between text-sm ${discountAmount > 0 ? "text-green-600" : ""}`}>
-                                                            <span>{t("common:discount")}:</span>
+                                                            <span>{t('discount')}:</span>
                                                             <span>{currency}{discountAmount.toFixed(2)}</span>
                                                         </div>
 
                                                         <div className="border-t border-gray-200 pt-2">
                                                             <div className="flex justify-between font-bold text-lg">
-                                                                <span>{t("common:totalPayment")}:</span>
+                                                                <span>{t('totalPayment')}:</span>
                                                                 <span>{currency}{total.toFixed(2)}</span>
                                                             </div>
                                                         </div>
@@ -247,14 +248,14 @@ const CashierDesk = () => {
                                                         {isCheckoutSubmit ? (
                                                             <>
                                                                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                                                {t("common:creatingOrder")}
+                                                                {t('creatingOrder')}
                                                             </>
                                                         ) : (
                                                             <>
                                                                 <IoWalletSharp />
                                                                 {customerName.trim()
-                                                                    ? t("common:createOrderFor", { customerName: customerName })
-                                                                    : t("common:createOrder")}
+                                                                    ? t('createOrderFor', { customerName: customerName })
+                                                                    : t('createOrder')}
                                                             </>
                                                         )}
                                                     </button>
@@ -273,12 +274,12 @@ const CashierDesk = () => {
                                     {/* פרטי הלקוח */}
                                     <div className="bg-white p-6 border border-gray-200 rounded-lg">
                                         <h2 className="text-xl font-semibold text-blackmb-4">
-                                            {t("common:customerDetails")}
+                                            {t('customerDetails')}
                                         </h2>
 
                                         <div className="space-y-4">
                                             <div>
-                                                <Label label={t("common:customerNameLabel")} />
+                                                <Label label={t('customerNameLabel')} />
                                                 <CustomerNameVoiceInput
                                                     value={customerName}
                                                     onChange={handleCustomerNameChange}
@@ -291,10 +292,10 @@ const CashierDesk = () => {
                                             <div>
                                                 <InputArea
                                                     register={register}
-                                                    label={t("common:customerPhoneOptional")}
+                                                    label={t('customerPhoneOptional')}
                                                     name="customerPhone"
                                                     type="tel"
-                                                    placeholder={t("common:enterPhoneNumber")}
+                                                    placeholder={t('enterPhoneNumber')}
                                                     disabled={isCheckoutSubmit}
                                                     isRequired={false}
                                                 />
@@ -306,12 +307,12 @@ const CashierDesk = () => {
                                     {/* קופון הנחה */}
                                     {/* <div className="bg-white p-6 border border-gray-200 rounded-lg">
                                         <h2 className="text-xl font-semibold text-blackmb-4">
-                                            {t("common:discountCoupon")}
+                                            {t('discountCoupon')}
                                         </h2>
                                         {couponInfo.couponCode ? (
                                             <span className="bg-mainColor-superLight px-4 py-3 leading-tight w-full rounded-md flex justify-between">
                                                 {" "}
-                                                <p className="text-mainColor-dark">{t("common:couponApplied")} </p>{" "}
+                                                <p className="text-mainColor-dark">{t('couponApplied')} </p>{" "}
                                                 <span className="text-red-500 text-right">
                                                     {couponInfo.couponCode}
                                                 </span>
@@ -321,7 +322,7 @@ const CashierDesk = () => {
                                                 <input
                                                     ref={couponRef}
                                                     type="text"
-                                                    placeholder={t("common:couponCode")}
+                                                    placeholder={t('couponCode')}
                                                     className="form-input py-2 px-3 md:px-4 w-full appearance-none transition ease-in-out border text-input text-sm rounded-md h-12 duration-200 bg-white border-gray-200 focus:ring-0 focus:outline-none focus:border-mainColor placeholder-gray-500 placeholder-opacity-75"
                                                     onKeyDown={(e) => {
                                                         if (e.key === "Enter") {
@@ -350,7 +351,7 @@ const CashierDesk = () => {
                                 <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-[150px]">
                                     <h2 className="text-xl font-semibold text-blackmb-4 flex items-center">
                                         <IoBagHandle className="ml-2" />
-                                        {t("common:orderSummary")}
+                                        {t('orderSummary')}
                                     </h2>
 
                                     {/* פריטים בעגלה */}
@@ -358,8 +359,8 @@ const CashierDesk = () => {
                                         {isEmpty ? (
                                             <div className="text-center py-8 text-gray-500">
                                                 <IoBagHandle className="mx-auto w-12 h-12 mb-3 text-gray-300" />
-                                                <p>{t("common:noProductsInCart")}</p>
-                                                <p className="text-sm mt-1">{t("common:useVoiceToAddProducts")}</p>
+                                                <p>{t('noProductsInCart')}</p>
+                                                <p className="text-sm mt-1">{t('useVoiceToAddProducts')}</p>
                                             </div>
                                         ) : (
                                             items.map((item) => (
@@ -373,18 +374,18 @@ const CashierDesk = () => {
                                             {/* חישוב מחירים */}
                                             <div className="border-t border-gray-200 mt-4 pt-4 space-y-2">
                                                 <div className="flex justify-between text-sm">
-                                                    <span>{t("common:productsTotal")}:</span>
+                                                    <span>{t('productsTotal')}:</span>
                                                     <span>{currency}{customCartTotal.toFixed(2)}</span>
                                                 </div>
 
                                                 <div className={`flex justify-between text-sm ${discountAmount > 0 ? "text-green-600" : ""}`}>
-                                                    <span>{t("common:discount")}:</span>
+                                                    <span>{t('discount')}:</span>
                                                     <span>{currency}{discountAmount.toFixed(2)}</span>
                                                 </div>
 
                                                 <div className="border-t border-gray-200 pt-2">
                                                     <div className="flex justify-between font-bold text-lg">
-                                                        <span>{t("common:totalPayment")}:</span>
+                                                        <span>{t('totalPayment')}:</span>
                                                         <span>{currency}{total.toFixed(2)}</span>
                                                     </div>
                                                 </div>
@@ -400,14 +401,14 @@ const CashierDesk = () => {
                                                 {isCheckoutSubmit ? (
                                                     <>
                                                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                                        {t("common:creatingOrder")}
+                                                        {t('creatingOrder')}
                                                     </>
                                                 ) : (
                                                     <>
                                                         <IoWalletSharp />
                                                         {customerName.trim()
-                                                            ? t("common:createOrderFor", { customerName: customerName })
-                                                            : t("common:createOrder")}
+                                                            ? t('createOrderFor', { customerName: customerName })
+                                                            : t('createOrder')}
                                                     </>
                                                 )}
                                             </button>
@@ -429,5 +430,12 @@ const CashierDesk = () => {
         </>
     );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default CashierDesk; 

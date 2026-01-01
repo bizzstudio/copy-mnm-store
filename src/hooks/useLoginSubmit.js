@@ -8,7 +8,7 @@ import { set, useForm } from "react-hook-form";
 import { UserContext } from "@context/UserContext";
 import { notifyError, notifySuccess } from "@utils/toast";
 import CustomerServices from "@services/CustomerServices";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import { trackNewsletterSignup } from "@services/flashy";
 import notifyApiResponse from "@utils/notifyApiResponse";
 
@@ -16,7 +16,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
   const router = useRouter();
   const { redirect } = router.query;
   const { dispatch } = useContext(UserContext);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +56,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
     if (registerEmail && password) {
       if (localStorage.getItem("plsRegisterAgain")) {
         setLoading(false);
-        notifyError(t("common:pls_register_again"));
+        notifyError(t('pls_register_again'));
         return;
       } else {
         CustomerServices.customerLogin({
@@ -74,7 +74,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
               localStorage.setItem("firstTime", true);
             }
             router.push(redirect || "/");
-            notifySuccess(t("common:loginSuccess"));
+            notifySuccess(t('loginSuccess'));
             dispatch({ type: "USER_LOGIN", payload: res });
             Cookies.set("userInfo", JSON.stringify(res), {
               expires: cookieTimeOut,
@@ -91,7 +91,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
             // בדיקה אם המשתמש כבר נרשם וממתין לאימות
             if (localStorage.getItem("waitingForVerification") == registerEmail) {
               setLoading(false);
-              notifyError(t("common:waiting_for_verification"));
+              notifyError(t('waiting_for_verification'));
               return;
             } else {
               notifyError(err ? err.response.data.message : err.message);
@@ -107,7 +107,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
       // const usernameWords = name.trim().split(" ");
       // if (usernameWords.length < 2) {
       //   setLoading(false);
-      //   notifyError(t("common:username_at_least_two_words"));
+      //   notifyError(t('username_at_least_two_words'));
       //   return;
       // }
       CustomerServices.verifyEmailAddress({ name, lastName, email, password, phone })
@@ -187,7 +187,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
       })
         .then((res) => {
           setModalOpen(false);
-          notifySuccess(t("common:loginSuccess"));
+          notifySuccess(t('loginSuccess'));
           router.push(redirect || "/");
           dispatch({ type: "USER_LOGIN", payload: res });
           Cookies.set("userInfo", JSON.stringify(res), {

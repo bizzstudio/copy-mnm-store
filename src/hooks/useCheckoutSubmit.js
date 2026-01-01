@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CardElement, useElements } from "@stripe/react-stripe-js";
 
 // Internal import
 import useAsync from "@hooks/useAsync";
@@ -14,7 +13,7 @@ import CouponServices from "@services/CouponServices";
 import { notifyError, notifySuccess } from "@utils/toast";
 import SettingServices from "@services/SettingServices";
 import NotificationServices from "@services/NotificaitonServices";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useCart from "./useCart";
 import useAddToCart from "./useAddToCart";
 import { SidebarContext } from "@context/SidebarContext";
@@ -27,7 +26,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     dispatch,
   } = useContext(UserContext);
   const { refreshOffers } = useContext(SidebarContext);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [error, setError] = useState("");
   const [total, setTotal] = useState("");
@@ -61,8 +60,6 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
   const guestAddressFormRef = useRef(null);
 
   const router = useRouter();
-  // const stripe = useStripe();
-  // const elements = useElements();
   const couponRef = useRef("");
   const {
     isEmpty,
@@ -137,7 +134,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       // רק אם לא במצב קופה - מציגים הודעה
       if (!isCashierMode) {
-        notifyError(t("common:couponRemovedDueToHighDiscount"));
+        notifyError(t('couponRemovedDueToHighDiscount'));
       }
     }
   }, [customCartTotal, discountAmount, isCashierMode]);
@@ -213,7 +210,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestName?.trim()) {
           setFormError("guestName", {
             type: "manual",
-            message: t("common:invalidName"),
+            message: t('invalidName'),
           });
           hasError = true;
         }
@@ -221,7 +218,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestLastName?.trim()) {
           setFormError("guestLastName", {
             type: "manual",
-            message: t("common:invalidLastName"),
+            message: t('invalidLastName'),
           });
           hasError = true;
         }
@@ -229,7 +226,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestPhone || !phoneRegex.test(data.guestPhone)) {
           setFormError("guestPhone", {
             type: "manual",
-            message: t("common:invalidPhone"),
+            message: t('invalidPhone'),
           });
           hasError = true;
         }
@@ -237,7 +234,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestEmail || !emailRegex.test(data.guestEmail)) {
           setFormError("guestEmail", {
             type: "manual",
-            message: t("common:invalidEmail"),
+            message: t('invalidEmail'),
           });
           hasError = true;
         }
@@ -245,7 +242,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!guestChosenCity) {
           setFormError("guestCity", {
             type: "manual",
-            message: t("common:invalidCity"),
+            message: t('invalidCity'),
           });
           hasError = true;
         }
@@ -253,7 +250,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestStreet?.trim()) {
           setFormError("guestStreet", {
             type: "manual",
-            message: t("common:invalidStreet"),
+            message: t('invalidStreet'),
           });
           hasError = true;
         }
@@ -261,7 +258,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestHouseNumber?.trim()) {
           setFormError("guestHouseNumber", {
             type: "manual",
-            message: t("common:invalidHouseNumber"),
+            message: t('invalidHouseNumber'),
           });
           hasError = true;
         }
@@ -269,7 +266,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         if (!data.guestApartmentNumber?.trim()) {
           setFormError("guestApartmentNumber", {
             type: "manual",
-            message: t("common:invalidApartmentNumber"),
+            message: t('invalidApartmentNumber'),
           });
           hasError = true;
         }
@@ -298,19 +295,19 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       // וולידציות כלליות (לכל המשתמשים)
       if (isDeliverable !== undefined && !isDeliverable) {
-        notifyError(t("common:noDeliveryToAddress"));
+        notifyError(t('noDeliveryToAddress'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return; // עצור את הביצוע
       }
 
       if (isDeliveryMetod !== undefined && !isDeliveryMetod) {
-        notifyError(t("common:selectDeliveryMethod"));
+        notifyError(t('selectDeliveryMethod'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return; // עצור את הביצוע
       }
 
       if (minimumOrderAmount !== undefined && customCartTotal < minimumOrderAmount) {
-        notifyError(t("common:minimumOrderAmount", { amount: minimumOrderAmount }));
+        notifyError(t('minimumOrderAmount', { amount: minimumOrderAmount }));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return; // עצור את הביצוע
       }
@@ -616,7 +613,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
       case "customerAlreadyRegistered": {
         // לקוח רשום שמנסה לקנות כאורח
         setShowLoginModal(true);
-        notifyError(errorData.message || t("common:customerAlreadyRegistered") || "האימייל כבר רשום במערכת. יש להתחבר לפני הרכישה.");
+        notifyError(errorData.message || t('customerAlreadyRegistered') || "האימייל כבר רשום במערכת. יש להתחבר לפני הרכישה.");
         break;
       }
 
@@ -657,7 +654,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     const value = couponRef.current.value ? couponRef.current.value.trim() : '';
 
     if (!value) {
-      notifyError(t("common:enterCouponCode"));
+      notifyError(t('enterCouponCode'));
       return;
     }
 
@@ -666,7 +663,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       // בדיקה אם ההנחה היא סכום קבוע וגבוהה מהסכום הכולל של העגלה
       if (data.discountType.type === "fixed" && data.discountType.value >= customCartTotal) {
-        notifyError(t("common:couponTooHighForTotal"));
+        notifyError(t('couponTooHighForTotal'));
         return; // מסיימים את הפונקציה מבלי להחיל את הקופון
       }
 
@@ -686,7 +683,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
     } catch (error) {
       console.log('error: ', error);
-      notifyError(error?.response?.data?.message || t("common:errorOccurred"));
+      notifyError(error?.response?.data?.message || t('errorOccurred'));
     }
   };
 
@@ -702,7 +699,6 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     showCard,
     setShowCard,
     error,
-    // stripe,
     couponInfo,
     couponRef,
     handleCouponCode,

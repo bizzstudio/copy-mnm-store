@@ -18,7 +18,7 @@ const FooterTop = () => {
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-2 md:gap-3 lg:gap-3 items-center">
-          <div className="flex-grow hidden lg:flex md:flex md:justify-items-center lg:justify-start">
+          <div className="grow hidden lg:flex md:flex md:justify-items-center lg:justify-start">
             <Image
               src={
                 storeCustomizationSetting?.home?.daily_need_img_left ||
@@ -100,7 +100,7 @@ const FooterTop = () => {
             </div> */}
           </div>
           <div className="md:hidden lg:block">
-            <div className="flex-grow hidden lg:flex md:flex lg:justify-end">
+            <div className="grow hidden lg:flex md:flex lg:justify-end">
               <Image
                 src={
                   storeCustomizationSetting?.home?.daily_need_img_right ||

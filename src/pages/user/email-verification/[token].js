@@ -8,7 +8,8 @@ import { notifySuccess } from "@utils/toast";
 import CustomerServices from "@services/CustomerServices";
 import { UserContext } from "@context/UserContext";
 import Loading from "@component/preloader/Loading";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
+import { getI18nProps } from "@utils/i18n";
 
 const EmailVerification = ({ params }) => {
   const [success, setSuccess] = useState("");
@@ -16,7 +17,7 @@ const EmailVerification = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { dispatch } = useContext(UserContext);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   // console.log("params", params);
 
@@ -28,7 +29,7 @@ const EmailVerification = ({ params }) => {
         router.push("/");
         setLoading(false);
         setSuccess(res.message);
-        notifySuccess(t("common:registerSuccess"));
+        notifySuccess(t('registerSuccess'));
         dispatch({ type: "USER_LOGIN", payload: res });
         Cookies.set("userInfo", JSON.stringify(res), {
           expires: 10, // 10 days
@@ -60,8 +61,12 @@ const EmailVerification = ({ params }) => {
 };
 
 export const getServerSideProps = async ({ params }) => {
+  const i18nProps = await getI18nProps(context);
+
   return {
-    props: { params },
+    props: { params ,
+      ...i18nProps,
+    },
   };
 };
 

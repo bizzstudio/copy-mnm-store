@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRef } from "react";
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5"; // requires a loader
-import { Navigation } from "swiper";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -27,7 +27,7 @@ const ImageCarousel = ({ images, handleChangeImage }) => {
       className="mySwiper image-carousel select-none"
     >
       {images?.map((img, i) => (
-        <SwiperSlide key={i + 1} className="group !w-auto flex-shrink-0">
+        <SwiperSlide key={i + 1} className="group w-auto! shrink-0">
           <button onClick={() => handleChangeImage(img)}>
             <div className="w-[100px] h-[100px] overflow-hidden border inline-flex items-center justify-center px-2 py-1 mt-2">
               <Image

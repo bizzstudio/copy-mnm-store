@@ -1,6 +1,6 @@
 // src/pages/terms-and-conditions.js
 import React from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -8,17 +8,18 @@ import useGetSetting from "@hooks/useGetSetting";
 import PageHeader from "@component/header/PageHeader";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import { getI18nProps } from "@utils/i18n";
 
 const TermAndConditions = () => {
   const { storeCustomizationSetting, loading, error } = useGetSetting();
   // console.log('storeCustomizationSetting :>> ', storeCustomizationSetting);
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <Layout
-      title={t("common:termsAndConditions")}
-      description={t("common:termsAndConditionsDescription")}
+      title={t('termsAndConditions')}
+      description={t('termsAndConditionsDescription')}
     >
       <PageHeader
         headerBg={storeCustomizationSetting?.term_and_condition?.header_bg}
@@ -45,5 +46,12 @@ const TermAndConditions = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default TermAndConditions;

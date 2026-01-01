@@ -1,6 +1,6 @@
 // OfferCard.js
 import React, { useContext, useRef } from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Coupon from "@component/coupon/Coupon";
@@ -16,7 +16,7 @@ const OfferCard = ({ discountProducts, height }) => {
   const { storeCustomizationSetting } = useGetSetting();
   const { offers } = useContext(SidebarContext);
   const headerRef = useRef(null);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const isProductWithDiscount = (product) => {
     const offerName = getOfferNames(offers, product);
@@ -46,7 +46,7 @@ const OfferCard = ({ discountProducts, height }) => {
       <div className="transition duration-150 ease-linear transform border-mainColor">
         <div className="text-gray-900 pb-2 border-b rounded-t flex items-center justify-center" ref={headerRef}>
           <div className="w-full bg-white rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-            <MinimalTitle title={t('common:lastOffers')} />
+            <MinimalTitle title={t('lastOffers')} />
           </div>
         </div>
         <div className="scroll-container" style={{ height: height - headerRef.current?.offsetHeight || 0 }}>

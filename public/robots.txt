@@ -15,4 +15,4 @@ Disallow: /user/update-profile
 Disallow: /user/change-password
 
 # Sitemap location
-Sitemap: https://tmarim-betomer.com/api/sitemap
+Sitemap: https://mnm-store.vercel.app/api/sitemap

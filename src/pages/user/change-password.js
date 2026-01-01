@@ -1,3 +1,4 @@
+// src/pages/user/change-password.js
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
@@ -10,8 +11,9 @@ import CustomerServices from "@services/CustomerServices";
 import { notifyError, notifySuccess } from "@utils/toast";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import MainBT from "@component/button/MainBT";
+import { getI18nProps } from "@utils/i18n";
 
 const ChangePassword = () => {
   const {
@@ -24,7 +26,7 @@ const ChangePassword = () => {
 
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const onSubmit = ({ email, currentPassword, newPassword }) => {
     // return notifySuccess("This Feature is disabled for demo!");
@@ -128,7 +130,7 @@ const ChangePassword = () => {
                   height={10}
                   className="saturate-0"
                 />
-                {t("common:Processing")}
+                {t('Processing')}
               </div>
             </MainBT>
           ) : (
@@ -146,5 +148,12 @@ const ChangePassword = () => {
     </Dashboard>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default ChangePassword;

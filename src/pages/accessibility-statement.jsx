@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -12,18 +12,19 @@ import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import accessibilityStatement from 'public/Accessibility Statement.svg'
 import MinimalTitle from "@component/common/MinimalTitle";
+import { getI18nProps } from "@utils/i18n";
 
 const AccessibilityStatement = () => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const { storeCustomizationSetting, loading, error } = useGetSetting();
   // console.log('storeCustomizationSetting :>> ', storeCustomizationSetting);
 
   return (
-    <Layout title={t("common:accessibilityStatementTitle")} description={t("common:accessibilityStatementDescription")}>
+    <Layout title={t('accessibilityStatementTitle')} description={t('accessibilityStatementDescription')}>
       <PageHeader
         headerBg={storeCustomizationSetting?.contact_us?.header_bg}
-        title={t("common:accessibilityStatementTitle")}
+        title={t('accessibilityStatementTitle')}
       />
 
       <div className="sm:py-10 py-5 px-5 sm:px-10">
@@ -80,5 +81,12 @@ const AccessibilityStatement = () => {
     </Layout>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default AccessibilityStatement;

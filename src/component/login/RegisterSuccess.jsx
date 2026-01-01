@@ -1,5 +1,5 @@
 // src/component/login/RegisterSuccess.jsx
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import { useEffect } from "react";
@@ -7,7 +7,7 @@ import MainBT from "@component/button/MainBT";
 import MinimalTitle from "@component/common/MinimalTitle";
 
 const RegisterSuccess = () => {
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   useEffect(() => {
     return () => {
@@ -18,15 +18,15 @@ const RegisterSuccess = () => {
   return (
     <>
       <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:registerSuccessTitle")} />
+        <MinimalTitle title={t('registerSuccessTitle')} />
       </div>
       <div className="flex flex-col justify-center gap-3">
-        <p className="text-center"><b>{t("common:registerMessage1")}</b> {t("common:registerMessage2")}</p>
+        <p className="text-center"><b>{t('registerMessage1')}</b> {t('registerMessage2')}</p>
         <a
           href="https://mail.google.com"
           target="_blank">
           <MainBT>
-            {t("common:goToEmail")}
+            {t('goToEmail')}
           </MainBT>
         </a>
       </div>

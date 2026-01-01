@@ -1,7 +1,7 @@
 // src/component/checkout/NoDeliveryWarning.jsx
 import React from "react";
 import { IoWarningOutline } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 
 const NoDeliveryWarning = ({
@@ -12,7 +12,7 @@ const NoDeliveryWarning = ({
     availableDays,
     setDeliveriesPopupOpen,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     // אם יש משלוח זמין או אין עיר נבחרת, לא להציג כלום
     if (isDeliverable || (!city && !guestChosenCity)) return null;
@@ -24,22 +24,22 @@ const NoDeliveryWarning = ({
         <div className="mt-4">
             <div className="bg-mainColor/5 border border-mainColor-dark rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                    <div className="flex-grow">
+                    <div className="grow ">
                         <h3 className="flex items-center gap-1.5 text-sm font-semibold text-stone-700 mb-2">
                             <IoWarningOutline className="text-[22px] mb-[1px] text-mainColor-dark" />
-                            {t("common:noDeliveryToAddress")}
+                            {t('noDeliveryToAddress')}
                         </h3>
 
                         {/* {nextTime && (
                             <p className="text-xs text-stone-700 mb-2">
-                                {t("common:nextAvailable")}{" "}
+                                {t('nextAvailable')}{" "}
                                 {nextTime.toLocaleDateString(isHebrew ? "he-IL" : "en-US")}
                             </p>
                         )} */}
 
                         {/* {availableDays && availableDays.length > 0 && (
                             <p className="text-xs text-stone-700 mb-3">
-                                {t("common:availableDays")}: {availableDays.join(", ")}
+                                {t('availableDays')}: {availableDays.join(", ")}
                             </p>
                         )} */}
 
@@ -49,7 +49,7 @@ const NoDeliveryWarning = ({
                                 onClick={() => setDeliveriesPopupOpen(true)}
                                 className="text-stone-700 hover:text-mainColor-dark font-medium underline transition-colors"
                             >
-                                {t("common:viewDeliveryAreas")}
+                                {t('viewDeliveryAreas')}
                             </button>
                             <span className="hidden sm:inline text-orange-300">|</span>
                             <a
@@ -58,7 +58,7 @@ const NoDeliveryWarning = ({
                                 rel="noopener noreferrer"
                                 className="text-stone-700 hover:text-mainColor-dark font-medium underline transition-colors"
                             >
-                                {t("common:contactSupport")}
+                                {t('contactSupport')}
                             </a>
                         </div>
                     </div>

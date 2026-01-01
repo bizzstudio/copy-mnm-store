@@ -1,0 +1,125 @@
+/* src/styles/tailwind.css */
+/* Ensure Tailwind loads our config (content/plugins) in v4 CSS-first mode */
+@config "../../tailwind.config.js";
+
+/* Dark Mode Variant - Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+/* Tailwind CSS v4 - Custom Theme */
+@theme {
+    /* Colors */
+    --color-customBrown-light: rgb(243, 244, 246);
+    --color-customBrown: #845333;
+    --color-customBrown-dark: #845333;
+
+    --color-customGreen-superLight: rgb(252, 255, 244);
+    --color-customGreen-light: rgb(244, 252, 223);
+    --color-customGreen: #3c6d16;
+    --color-customGreen-dark: #2c510f;
+    --color-customGreen-leaf: #afdc34;
+
+    --color-mainColor-superLight: #f7f9ff;
+    --color-mainColor-light: #d0daf5;
+    --color-mainColor: #3961ce;
+    --color-mainColor-DEFAULT: #3961ce;
+    --color-mainColor-dark: #3961ce;
+    --color-mainColor-superDark: #1f3573;
+    --color-mainColor-leaf: #f21e27;
+
+    --color-customRed-superLight: #ffd6d6;
+    --color-customRed-light: #ffa1a1;
+    --color-customRed: #ff4d4d;
+    --color-customRed-darker: #e04646;
+    --color-customRed-dark: #470000;
+
+    /* Font Family */
+    --font-family-sans: "Assistant", "Arial", sans-serif;
+    --font-family-serif: "Assistant", sans-serif;
+    --font-family-DejaVu: "Assistant", "Arial", sans-serif;
+
+    /* Box Shadow */
+    --shadow-popup: #3961ce 0 3px 0, #3961ce 3px 0px 0, #3961ce 3px 3px 0, rgba(0, 0, 0, 0.432) 3px 3px 3px;
+
+    /* Screens/Breakpoints (define the full set used across the app) */
+    --breakpoint-xss: 320px;
+    --breakpoint-xs: 420px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+    --breakpoint-3xl: 1670px;
+
+    /* Height */
+    --height-header: 560px;
+
+    /* Background Images */
+    --bg-image-page-header: url('/page-header-bg.jpg');
+    --bg-image-contact-header: url('/page-header-bg-2.jpg');
+    --bg-image-subscribe: url('/subscribe-bg.jpg');
+    --bg-image-app-download: url('/app-download.jpg');
+    --bg-image-cta: url('/cta-bg.png');
+    --bg-image-cta-1: url('/cta/cta-bg-1.png');
+    --bg-image-cta-2: url('/cta/cta-bg-2.png');
+    --bg-image-cta-3: url('/cta/cta-bg-3.png');
+
+    /* Keyframes */
+    --animate-fadeIn: fadeIn 1s ease-in forwards;
+    --animate-fadeOut: fadeOut 1s ease-out forwards;
+
+    /* CSS Variables for backward compatibility */
+    --custom-brown-light: var(--color-customBrown-light);
+    --custom-brown: var(--color-customBrown);
+    --custom-brown-dark: var(--color-customBrown-dark);
+
+    --custom-green-super-light: var(--color-customGreen-superLight);
+    --custom-green-light: var(--color-customGreen-light);
+    --custom-green: var(--color-customGreen);
+    --custom-green-dark: var(--color-customGreen-dark);
+    --custom-green-leaf: var(--color-customGreen-leaf);
+
+    --main-color-super-light: var(--color-mainColor-superLight);
+    --main-color-light: var(--color-mainColor-light);
+    --main-color: var(--color-mainColor);
+    --main-color-dark: var(--color-mainColor-dark);
+    --main-color-super-dark: var(--color-mainColor-superDark);
+    --main-color-leaf: var(--color-mainColor-leaf);
+
+    --custom-red-super-light: var(--color-customRed-superLight);
+    --custom-red-light: var(--color-customRed-light);
+    --custom-red: var(--color-customRed);
+    --custom-red-darker: var(--color-customRed-darker);
+    --custom-red-dark: var(--color-customRed-dark);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Tailwind CSS v4 - must be imported at the end */
+@import "tailwindcss";
+
+/* Set default border color to gray-200 - must be after @import */
+@layer base {
+    *,
+    *::before,
+    *::after {
+        border-color: #e5e7eb; /* gray-200 */
+    }
+}

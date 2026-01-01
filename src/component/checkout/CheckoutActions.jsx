@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { IoReturnUpBackOutline, IoArrowForward } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import MainBT from "@component/button/MainBT";
 import Calculating from "@component/cart/Calculating";
@@ -15,7 +15,7 @@ const CheckoutActions = ({
     showingTranslateValue,
     minimumOrderAmount,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     let currentLang = Cookies.get('_lang');
     switch (currentLang) {
@@ -59,7 +59,7 @@ const CheckoutActions = ({
                     ) : isCheckoutSubmit ? (
                         <span className="flex flex-row-reverse justify-center text-center">
                             <span className="ms-1">
-                                {t("common:processing")}
+                                {t('processing')}
                             </span>
                             <img
                                 src="/loader/spinner.gif"
@@ -76,7 +76,7 @@ const CheckoutActions = ({
                                     ?.confirm_button
                             )}
                             <span className="text-xs text-gray-500 mb-[1px]">
-                                ({t("common:minimumPurchaseAmount", { amount: minimumOrderAmount })})
+                                ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
                             </span>
                             <span className="text-xl">
                                 {" "}

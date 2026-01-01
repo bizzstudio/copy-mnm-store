@@ -1,7 +1,7 @@
 // src/pages/product-category/[categoryName]/[subCategoryName].jsx
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -15,9 +15,10 @@ import MinimalTitle from "@component/common/MinimalTitle";
 import MainBT from "@component/button/MainBT";
 import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import { getI18nProps } from "@utils/i18n";
 
 const SubCategoryPage = ({ products }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { isLoading, setIsLoading, offers, categories } = useContext(SidebarContext);
     const [visibleProduct, setVisibleProduct] = useState(24);
     const router = useRouter();
@@ -57,9 +58,9 @@ const SubCategoryPage = ({ products }) => {
                                     <MinimalTitle title={displayCategoryName} subtitle={displaySubCategoryName} />
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                                         <h6 className="text-sm font-serif text-right">
-                                            {t("common:totalI")}{" "}
+                                            {t('totalI')}{" "}
                                             <span className="font-bold">{productData?.length}</span>{" "}
-                                            {t("common:itemsFound")}
+                                            {t('itemsFound')}
                                         </h6>
 
                                         {/* הוספת רכיב המיון */}
@@ -85,7 +86,7 @@ const SubCategoryPage = ({ products }) => {
                                         height={380}
                                     />
                                     <h2 className="text-lg md:text-xl lg:text-2xl xl:text-2xl text-center mt-2 font-medium font-serif text-gray-600">
-                                        {t("common:sorryText")}
+                                        {t('sorryText')}
                                     </h2>
                                 </div>
                             )}
@@ -120,9 +121,9 @@ const SubCategoryPage = ({ products }) => {
                                         <div className="w-full flex justify-center mt-5">
                                             <MainBT
                                                 onClick={() => setVisibleProduct((pre) => pre + 36)}
-                                                className="!w-auto px-6"
+                                                className="w-auto! px-6"
                                             >
-                                                {t("common:loadMoreBtn")}
+                                                {t('loadMoreBtn')}
                                             </MainBT>
                                         </div>
                                     )}
@@ -145,9 +146,13 @@ export const getServerSideProps = async (context) => {
         category: subCategoryName,
     });
 
-    return {
-        props: {
+    const i18nProps = await getI18nProps(context);
+
+  return {
+    props: {
             products: data?.products,
-        },
+        ,
+      ...i18nProps,
+    },
     };
 };

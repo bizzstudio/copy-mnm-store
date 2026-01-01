@@ -1,7 +1,7 @@
 // src/component/cart/ThresholdDiscountSlider.jsx
 import React, { useContext, useState, useEffect, useMemo, useRef } from "react";
 import Confetti from "react-confetti";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import { SidebarContext } from "@context/SidebarContext";
 import useCart from "@hooks/useCart";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -9,7 +9,7 @@ import { IoSparkles, IoGift } from "react-icons/io5";
 import { AiFillFire } from "react-icons/ai";
 
 const ThresholdDiscountSlider = () => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { offers } = useContext(SidebarContext);
     const { customCartTotal, thresholdDiscount } = useCart();
     const { currency, showingTranslateValue } = useUtilsFunction();
@@ -143,23 +143,23 @@ const ThresholdDiscountSlider = () => {
     // קביעת ההודעה המתאימה לפי הכמות שנשארה
     const getEncouragementMessage = () => {
         if (!nextOffer || amountRemaining <= 0) {
-            return t("common:almostThere");
+            return t('almostThere');
         }
 
         if (amountRemaining > 100) {
-            return t("common:moreThan100Left", {
+            return t('moreThan100Left', {
                 amount: amountRemaining.toFixed(0),
                 currency,
             });
         } else if (amountRemaining >= 50) {
-            return t("common:onlyXLeft", {
+            return t('onlyXLeft', {
                 amount: amountRemaining.toFixed(0),
                 currency,
             });
         } else if (amountRemaining >= 20) {
-            return t("common:littleMoreLeft");
+            return t('littleMoreLeft');
         } else {
-            return t("common:almostThere");
+            return t('almostThere');
         }
     };
 
@@ -241,7 +241,7 @@ const ThresholdDiscountSlider = () => {
                         )}
                         <span className={`text-sm font-medium ${isAchieved ? 'text-green-700' : 'text-gray-700'}`}>
                             {isAchieved
-                                ? t("common:discountUnlocked")
+                                ? t('discountUnlocked')
                                 : showingTranslateValue(targetOffer?.name)}
                         </span>
                     </div>

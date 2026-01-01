@@ -1,6 +1,6 @@
 // src/component/voice-search/VoiceSearchModal.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import MainModal from '@component/modal/MainModal';
 import VoiceRecognition from './VoiceRecognition';
 import RecognizedProducts from './RecognizedProducts';
@@ -12,7 +12,7 @@ import notifyApiResponse from '@utils/notifyApiResponse';
 import useCart from '@hooks/useCart';
 
 const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { handleAddItem } = useAddToCart();
     const { updateItemQuantity, inCart, addItem } = useCart();
 
@@ -80,11 +80,11 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
             try {
                 // בדיקת מלאי
                 if (product.stock < 1) {
-                    notifyError(t('common:productOutOfStock', { product: product.title?.he || product.title?.en }));
+                    notifyError(t('productOutOfStock', { product: product.title?.he || product.title?.en }));
                     return;
                 }
                 if (product.quantity > product.stock) {
-                    notifyError(t('common:maxQuantityExceeded', { stock: product.stock, product: product.title?.he || product.title?.en }));
+                    notifyError(t('maxQuantityExceeded', { stock: product.stock, product: product.title?.he || product.title?.en }));
                     return;
                 }
 
@@ -117,7 +117,7 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
         });
 
         if (addedCount > 0) {
-            notifySuccess(`${addedCount} ${t('common:productsAddedToCart')}!`);
+            notifySuccess(`${addedCount} ${t('productsAddedToCart')}!`);
             setModalOpen(false);
         }
     };
@@ -151,7 +151,7 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
         <MainModal modalOpen={modalOpen} setModalOpen={setModalOpen} onClose={handleClose}>
             <div className="flex flex-col w-full max-w-lg h-[80vh] p-6 overflow-y-auto">
                 {/* תמונה וכותרת */}
-                <div className="flex flex-col items-center mb-3 flex-shrink-0">
+                <div className="flex flex-col items-center mb-3 shrink-0">
                     <img
                         src={microphoneImage.src}
                         alt="Voice Search"
@@ -163,15 +163,15 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
                 </div>
 
                 {/* הסבר איך להשתמש */}
-                <div className="mb-5 p-4 bg-mainColor-superLight rounded-lg flex-shrink-0">
+                <div className="mb-5 p-4 bg-mainColor-superLight rounded-lg shrink-0">
                     <p className="text-gray-700 text-center leading-relaxed">
-                        {t('common:voiceSearchInstructions')}
+                        {t('voiceSearchInstructions')}
                     </p>
                 </div>
 
                 <div className="flex flex-col gap-4 flex-1 min-h-fit">
                     {/* קומפוננטת הזיהוי הקולי */}
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                         <VoiceRecognition
                             transcript={transcript}
                             setTranscript={setTranscript}
@@ -193,12 +193,12 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
                 </div>
 
                 {/* כפתורים */}
-                <div className="flex justify-between mt-6 gap-4 flex-shrink-0">
+                <div className="flex justify-between mt-6 gap-4 shrink-0">
                     <button
                         onClick={handleClose}
                         className="flex-1 py-3 px-6 border border-gray-300 rounded-lg text-gray-700 hover:bg-mainColor-superLight transition-colors"
                     >
-                        {t('common:closeBtn')}
+                        {t('closeBtn')}
                     </button>
 
                     {recognizedProducts.length > 0 && (
@@ -206,7 +206,7 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
                             onClick={handleAddAllToCart}
                             className="flex-1 py-3 px-6 bg-mainColor text-white rounded-lg hover:bg-mainColor-dark transition-colors font-medium"
                         >
-                            {t('common:voiceSearchFinished')} ({recognizedProducts.length} {t('common:products')})
+                            {t('voiceSearchFinished')} ({recognizedProducts.length} {t('products')})
                         </button>
                     )}
                 </div>

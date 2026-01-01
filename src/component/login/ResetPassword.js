@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { FiMail } from "react-icons/fi";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import Error from "@component/form/Error";
@@ -13,12 +13,12 @@ import MainBT from "@component/button/MainBT";
 const ResetPassword = ({ setShowResetPassword, setModalOpen }) => {
   const { handleSubmit, submitHandler, register, errors, loading } =
     useLoginSubmit(setModalOpen);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <>
       <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:recoverPasswordTitle")} />
+        <MinimalTitle title={t('recoverPasswordTitle')} />
       </div>
       <form
         onSubmit={handleSubmit(submitHandler)}
@@ -28,10 +28,10 @@ const ResetPassword = ({ setShowResetPassword, setModalOpen }) => {
           <div className="form-group">
             <InputArea
               register={register}
-              label={t("common:email")}
+              label={t('email')}
               name="verifyEmail"
               type="email"
-              placeholder={t("common:registerEmail")}
+              placeholder={t('registerEmail')}
               Icon={FiMail}
             />
             <Error errorName={errors.verifyEmail} />
@@ -50,7 +50,7 @@ const ResetPassword = ({ setShowResetPassword, setModalOpen }) => {
                   height={10}
                   className="saturate-0"
                 />
-                <span>{t("common:processing")}</span>
+                <span>{t('processing')}</span>
               </div>
             </MainBT>
           ) : (
@@ -58,7 +58,7 @@ const ResetPassword = ({ setShowResetPassword, setModalOpen }) => {
               disabled={loading}
               type="submit"
             >
-              {t("common:recoverPassword")}
+              {t('recoverPassword')}
             </MainBT>
           )}
         </div>

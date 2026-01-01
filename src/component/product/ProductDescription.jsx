@@ -1,10 +1,10 @@
 // src/component/product/ProductDescription.jsx
 import { useState, useEffect, useRef } from 'react';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import useUtilsFunction from '@hooks/useUtilsFunction';
 
 const ProductDescription = ({ description }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const { showingTranslateValue, lang } = useUtilsFunction();
     const [isReadMore, setIsReadMore] = useState(true);
     const [shouldShowButton, setShouldShowButton] = useState(false);
@@ -86,8 +86,8 @@ const ProductDescription = ({ description }) => {
                             className="read-or-hide cursor-pointer text-customRed hover:text-customRed-dark transition-colors duration-200 font-medium"
                         >
                             {isReadMore
-                                ? t('common:moreInfo')
-                                : t('common:showLess')}
+                                ? t('moreInfo')
+                                : t('showLess')}
                         </span>
                     </div>
                 )}

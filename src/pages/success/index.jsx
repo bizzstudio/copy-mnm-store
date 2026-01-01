@@ -1,6 +1,6 @@
 // src/pages/success/index.jsx
 import React, { useContext, useEffect, useState } from "react";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import { IoHome } from "react-icons/io5";
 import { PiListMagnifyingGlassBold } from "react-icons/pi";
 import { useRouter } from "next/router";
@@ -21,11 +21,12 @@ import googleAnalytics, { trackPurchase } from "@services/googleAnalytics";
 import { trackFbPurchase } from "@services/facebookPixel";
 import OrderServices from "@services/OrderServices";
 import { UserContext } from "@context/UserContext";
+import { getI18nProps } from "@utils/i18n";
 
 const Success = () => {
   const { isLoading, setIsLoading } = useContext(SidebarContext);
   const { state: { userInfo }, dispatch } = useContext(UserContext);
-  const { t } = useTranslation();
+  const t = useTranslations();
   const router = useRouter();
   const [order, setOrder] = useState(null);
   const [purchaseTracked, setPurchaseTracked] = useState(false);
@@ -107,26 +108,26 @@ const Success = () => {
 
   return (
     <>
-      <Layout title={t("common:orderCompletedSuccessfully")} description={t("common:orderCompletedDescription")}>
+      <Layout title={t('orderCompletedSuccessfully')} description={t('orderCompletedDescription')}>
         {isLoading ? (
           <Loading loading={isLoading} />
         ) : (
           <div className='w-full mx-auto flex flex-col justify-center items-center gap-5 py-20 px-10 lg:px-0'>
             <img className="md:w-1/5 w-2/3 mr-8" src={cartSuccess.src} alt="הרכישה הושלמה בהצלחה" />
-            <h1 className="text-4xl text-center font-bold">{t("common:thankYouForPurchase")}</h1>
-            {/* <h3 className="text-xl font-bold text-center">{t("common:orsderInProcess")}</h3> */}
+            <h1 className="text-4xl text-center font-bold">{t('thankYouForPurchase')}</h1>
+            {/* <h3 className="text-xl font-bold text-center">{t('orsderInProcess')}</h3> */}
             <div className="flex items-center justify-center flex-wrap gap-5 mt-3 h-11">
               <Link href="/" target="_top">
                 <MainBT className='!w-fit px-6'>
                   <div className="flex items-center gap-2">
-                    <IoHome /> {t("common:backToHome")}
+                    <IoHome /> {t('backToHome')}
                   </div>
                 </MainBT>
               </Link>
               <Link href="/user/my-orders" target="_top">
                 <MainBT className='!w-fit px-6'>
                   <div className="flex items-center gap-2">
-                    <PiListMagnifyingGlassBold size={20} /> {t("common:viewOrder")}
+                    <PiListMagnifyingGlassBold size={20} /> {t('viewOrder')}
                   </div>
                 </MainBT>
               </Link>
@@ -144,5 +145,12 @@ const Success = () => {
     </>
   );
 };
+
+
+export async function getStaticProps(context) {
+  return {
+    props: await getI18nProps(context),
+  };
+}
 
 export default Success;

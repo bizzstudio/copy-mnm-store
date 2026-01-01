@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FiPlus, FiMinus, FiTrash2, FiGift } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import useAddToCart from "@hooks/useAddToCart";
@@ -18,7 +18,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
   const router = useRouter();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const [totalPrice, setTotalPrice] = useState(item.prices?.price * item.quantity);
   const [offerTitle, setOfferTitle] = useState('');
@@ -107,7 +107,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
 
   return (
     <div className={`group w-full h-auto flex gap-4 justify-start items-center py-3 px-6 border-b hover:bg-mainColor-superLight transition-all border-gray-100 relative last:border-b-0 ${isRewardGift ? 'bg-gradient-to-l from-mainColor/60 to-white' : 'bg-white'}`}>
-      <div onClick={() => router.push(`/product/${item?.slug}`)} className="relative flex justify-between rounded-full border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 cursor-pointer w-[60px] h-[60px]"
+      <div onClick={() => router.push(`/product/${item?.slug}`)} className="relative flex justify-between rounded-full border border-gray-100 shadow-sm overflow-hidden shrink-0 cursor-pointer w-[60px] h-[60px]"
       >
         <img
           key={item.id}
@@ -246,7 +246,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
           <FiGift size={22} className="text-red-500 mt-1" />
           {/* 🎁 */}
           <span className="text-stone-600 font-bold text-sm md:text-base">
-            {t("common:free")}!
+            {t('free')}!
           </span>
         </div>
       )}

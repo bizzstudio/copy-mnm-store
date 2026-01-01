@@ -76,7 +76,7 @@ const DeliveriesPopup = ({ closeCategoryDrawer = () => { } }) => {
             </MainBT>
           </Link>
         </div>
-        <div className="w-1/5 min-w-fit flex-grow hidden lg:flex md:flex flex-col md:justify-items-center lg:justify-end">
+        <div className="w-1/5 min-w-fit grow hidden lg:flex md:flex flex-col md:justify-items-center lg:justify-end">
           <Image
             width={300}
             height={300}

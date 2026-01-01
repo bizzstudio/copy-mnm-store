@@ -16,7 +16,7 @@ import ProductModal from "@component/modal/ProductModal";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { handleLogEvent } from "@utils/analytics";
 import { SidebarContext } from "@context/SidebarContext";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
@@ -28,7 +28,7 @@ const ProductCard = ({ product, offers = [] }) => {
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const currency = globalSetting?.default_currency || "₪";
 
@@ -44,7 +44,7 @@ const ProductCard = ({ product, offers = [] }) => {
 
   const handleAddItem = (p) => {
     const stock = getProductStock(p);
-    if (stock < 1) return notifyError(t("common:productStockOut"));
+    if (stock < 1) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
     const productPrice = p?.prices?.[0];

@@ -1,7 +1,7 @@
 // src/component/checkout/CheckoutItems.jsx
 import React from "react";
 import { IoBagHandle } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import CartItem from "@component/cart/CartItem";
 
 const CheckoutItems = ({
@@ -11,7 +11,7 @@ const CheckoutItems = ({
     isEmpty,
     currency,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     return (
         <div className="w-full flex flex-col h-full">
@@ -20,11 +20,11 @@ const CheckoutItems = ({
                     <IoBagHandle className="text-mainColor-dark text-xl" />
                     {showingTranslateValue(
                         storeCustomizationSetting?.checkout?.order_items
-                    ) || t("common:orderItems")}
+                    ) || t('orderItems')}
                 </h2>
 
                 {/* רשימת מוצרים */}
-                <div className="overflow-y-auto flex-grow scrollbar-hide w-full max-h-64 bg-mainColor-superLight block">
+                <div className="overflow-y-auto grow scrollbar-hide w-full max-h-64 bg-mainColor-superLight block">
                     {items.map((item) => (
                         <CartItem key={item.id} item={item} currency={currency} />
                     ))}
@@ -35,7 +35,7 @@ const CheckoutItems = ({
                                 <IoBagHandle />
                             </span>
                             <h2 className="font-medium font-serif text-sm pt-2 text-gray-600">
-                                {t("common:noItemAdded")}
+                                {t('noItemAdded')}
                             </h2>
                         </div>
                     )}

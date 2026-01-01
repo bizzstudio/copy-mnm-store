@@ -1,6 +1,6 @@
 // src/component/login/Login.js
 import { FiLock, FiMail } from "react-icons/fi";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 //internal  import
 import Error from "@component/form/Error";
@@ -17,12 +17,12 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
     errors,
     loading
   } = useLoginSubmit(setModalOpen, newsletterOptIn);
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   return (
     <>
       <div className="flex justify-between items-center mt-5 mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t("common:loginTitle")} />
+        <MinimalTitle title={t('loginTitle')} />
       </div>
       <form
         onSubmit={handleSubmit(submitHandler)}
@@ -32,10 +32,10 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
           <div className="form-group">
             <InputArea
               register={register}
-              // label={t("common:email")}
+              // label={t('email')}
               name="registerEmail"
               type="email"
-              placeholder={t("common:email")}
+              placeholder={t('email')}
               Icon={FiMail}
             />
             <Error errorName={errors.registerEmail} />
@@ -43,10 +43,10 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
           <div className="form-group">
             <InputArea
               register={register}
-              // label={t("common:password")}
+              // label={t('password')}
               name="password"
               type="password"
-              placeholder={t("common:password")}
+              placeholder={t('password')}
               Icon={FiLock}
             />
 
@@ -60,7 +60,7 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
                 onClick={() => setShowResetPassword(true)}
                 className="text-end text-sm text-heading ps-3 underline hover:no-underline focus:outline-none"
               >
-                {t("common:forgotPassword")}
+                {t('forgotPassword')}
               </button>
             </div>
           </div>
@@ -77,7 +77,7 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
                   height={10}
                   className="saturate-0"
                 />
-                <span>{t("common:processing")}</span>
+                <span>{t('processing')}</span>
               </div>
             </MainBT>
           ) : (
@@ -85,7 +85,7 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
               disabled={loading}
               type="submit"
             >
-              {t("common:loginTitle")}
+              {t('loginTitle')}
             </MainBT>
           )}
         </div>

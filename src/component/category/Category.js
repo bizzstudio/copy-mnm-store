@@ -3,7 +3,7 @@ import { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import { pages } from "@utils/data";
@@ -14,17 +14,16 @@ import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { UserContext } from "@context/UserContext";
 
-const Category = ({ onLinkClick }) => {
+const Category = ({ onLinkClick, onClose }) => {
   const {
     categoryDrawerOpen,
-    closeCategoryDrawer,
     categories,
     setIsLoading,
     isLoading
   } = useContext(SidebarContext);
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const { t } = useTranslation();
+  const t = useTranslations();
 
   const { state: { userInfo } } = useContext(UserContext);
 
@@ -55,7 +54,7 @@ const Category = ({ onLinkClick }) => {
               </Link>
             </h2> */}
             <button
-              onClick={closeCategoryDrawer}
+              onClick={onClose}
               className="absolute left-4 top-4 z-10 inline-flex justify-center px-2 py-2 text-base font-medium text-white bg-mainColor border-none rounded-full outline -outline-offset-1 outline-[8px] outline-white"
               aria-label="close"
             >
@@ -94,6 +93,7 @@ const Category = ({ onLinkClick }) => {
                 nested={category.children} // תתי קטגוריות
                 title={category.name}
                 onLinkClick={onLinkClick}
+                onClose={onClose}
               />
             ))}
           </div>
@@ -111,7 +111,7 @@ const Category = ({ onLinkClick }) => {
                 className="object-contain h-[60px] w-[60px]"
               />
               <h2 className="font-semibold font-serif text-xl mt-3 text-heading">
-                {t("common:Pages")}
+                {t('Pages')}
               </h2>
             </div>
 
@@ -127,15 +127,15 @@ const Category = ({ onLinkClick }) => {
                 <Link
                   key={item.title}
                   href={item.href}
-                  onClick={closeCategoryDrawer} // סוגר את התפריט לפני הניווט
+                  onClick={onClose} // סוגר את התפריט לפני הניווט
                   className="p-2 flex gap-1.5 font-serif items-center justify-center rounded-md hover:bg-mainColor-light w-full hover:text-mainColor-dark"
                 >
                   <item.icon
-                    className="flex-shrink-0 h-4 w-4"
+                    className="shrink-0 h-4 w-4"
                     aria-hidden="true"
                   />
                   <p className="inline-flex items-center justify-between text-sm font-medium w-full mb-[1px]">
-                    {t(`common:${item.title}`)}
+                    {t(item.title)}
                   </p>
                 </Link>
               ))}

@@ -7,9 +7,9 @@ import { persistStore } from "redux-persist";
 import { Provider } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import TawkMessengerReact from "@tawk.to/tawk-messenger-react";
 import Hotjar from '@hotjar/browser';
 import Script from "next/script";
+import { NextIntlClientProvider } from 'next-intl';
 
 // Internal import
 import store from "@redux/store";
@@ -146,33 +146,31 @@ function MyApp({ Component, pageProps }) {
         `}
       </Script>
 
-      {/* Tawk.to Chat */}
-      {!loading && !error && storeSetting?.tawk_chat_status && (
-        <TawkMessengerReact
-          propertyId={storeSetting?.tawk_chat_property_id || ""}
-          widgetId={storeSetting?.tawk_chat_widget_id || ""}
-        />
-      )}
-
       {/* Providers */}
-      <GoogleOAuthProvider clientId={storeSetting?.google_client_id || ""}>
-        <UserProvider>
-          <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <SidebarProvider>
-                <CartProvider>
+      <NextIntlClientProvider
+        locale={router.locale || 'he'}
+        messages={pageProps.messages}
+        timeZone="Asia/Jerusalem"
+      >
+        <GoogleOAuthProvider clientId={storeSetting?.google_client_id || ""}>
+          <UserProvider>
+            <Provider store={store}>
+              <PersistGate loading={null} persistor={persistor}>
+                <SidebarProvider>
+                  <CartProvider>
 
-                  {/* רק בעמודים כלליים, לא בעמודי מוצר */}
-                  {!isProductPage && <DefaultSeo />}
+                    {/* רק בעמודים כלליים, לא בעמודי מוצר */}
+                    {!isProductPage && <DefaultSeo />}
 
-                  <Component {...pageProps} />
+                    <Component {...pageProps} />
 
-                </CartProvider>
-              </SidebarProvider>
-            </PersistGate>
-          </Provider>
-        </UserProvider>
-      </GoogleOAuthProvider>
+                  </CartProvider>
+                </SidebarProvider>
+              </PersistGate>
+            </Provider>
+          </UserProvider>
+        </GoogleOAuthProvider>
+      </NextIntlClientProvider>
     </div>
   );
 }

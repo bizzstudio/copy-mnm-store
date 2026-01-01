@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FiUploadCloud } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from "next-intl";
 import requests from '@services/httpServices';
 import Image from 'next/image';
 
 const Uploader = ({ setImageUrl, imageUrl }) => {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [files, setFiles] = useState([]);
 
   const removeImage = () => {
@@ -25,7 +25,7 @@ const Uploader = ({ setImageUrl, imageUrl }) => {
     onDrop: (acceptedFiles) => {
       const filteredFiles = acceptedFiles.filter((file) => {
         if (file.size > 3 * 1024 * 1024) {
-          alert(t('common:fileToBig'));
+          alert(t('fileToBig'));
           return false;
         }
         return true;

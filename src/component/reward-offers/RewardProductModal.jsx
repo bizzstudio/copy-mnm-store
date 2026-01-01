@@ -2,7 +2,7 @@
 import React from "react";
 import { FiGift, FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { useRouter } from "next/router";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
 import MainBT from "@component/button/MainBT";
@@ -18,7 +18,7 @@ const RewardProductModal = ({
     totalRewards = 1,
     isAutoPopup = false,
 }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const router = useRouter();
     const { showingTranslateValue } = useUtilsFunction();
 
@@ -52,9 +52,9 @@ const RewardProductModal = ({
     const getOfferDescription = () => {
         if (offerType === 'BUY_X_GET_Y' && triggerProduct) {
             const triggerName = showingTranslateValue(triggerProduct?.title) || '';
-            return t("common:buyXGetYDescription", { triggerName, rewardName: productTitle });
+            return t('buyXGetYDescription', { triggerName, rewardName: productTitle });
         } else if (offerType === 'THRESHOLD_GET_ITEM' && offer?.thresholdAmount) {
-            return t("common:thresholdGetItemDescription", { threshold: offer.thresholdAmount, rewardName: productTitle });
+            return t('thresholdGetItemDescription', { threshold: offer.thresholdAmount, rewardName: productTitle });
         }
         return showingTranslateValue(offer?.description) || '';
     };
@@ -77,7 +77,7 @@ const RewardProductModal = ({
                         )}
 
                         {/* Product Image - Large (Header) */}
-                        <div className="relative w-full sm:flex-shrink-0 sm:min-h-0">
+                        <div className="relative w-full sm:shrink-0 sm:min-h-0">
                             <img
                                 src={displayImage}
                                 alt={productTitle}
@@ -86,7 +86,7 @@ const RewardProductModal = ({
                             {/* Gift Badge */}
                             <div className="absolute top-2 left-2 sm:top-3 sm:left-3 lg:top-6 lg:left-6 bg-mainColor text-white px-2.5 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-full shadow-lg flex items-center gap-1.5 sm:gap-2 animate-bounce">
                                 <FiGift size={14} className="sm:!w-4 sm:!h-4 lg:!w-5 lg:!h-5" />
-                                <span className="font-bold text-[10px] sm:text-xs lg:text-sm">{t("common:free")}!</span>
+                                <span className="font-bold text-[10px] sm:text-xs lg:text-sm">{t('free')}!</span>
                             </div>
 
                             {/* כפתורי ניווט אם יש יותר ממוצר אחד */}
@@ -113,13 +113,13 @@ const RewardProductModal = ({
                         </div>
 
                         {/* Content */}
-                        <div className="p-3 sm:p-5 lg:p-8 w-full sm:flex-shrink-0">
+                        <div className="p-3 sm:p-5 lg:p-8 w-full sm:shrink-0">
                             {/* Header - Compact */}
                             <div className="text-center mb-4 sm:mb-5 lg:mb-6">
                                 {/* אם זה פופאפ אוטומטי - כותרת ראשית "יש! קיבלת מתנה!" */}
                                 {isAutoPopup && (
                                     <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-800 mb-1.5 sm:mb-2">
-                                        {t("common:rewardReceivedTitle")}
+                                        {t('rewardReceivedTitle')}
                                     </h2>
                                 )}
                                 {/* כותרת משנה - שם המבצע */}
@@ -148,7 +148,7 @@ const RewardProductModal = ({
                                 >
                                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 !py-2 sm:!py-3 lg:!py-4 text-xs sm:text-base">
                                         <FiGift size={14} className="sm:!w-5 sm:!h-5" />
-                                        <span className="font-semibold">{t("common:viewProduct")}</span>
+                                        <span className="font-semibold">{t('viewProduct')}</span>
                                     </div>
                                 </MainBT>
                             </div>

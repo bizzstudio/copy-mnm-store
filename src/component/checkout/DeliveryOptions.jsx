@@ -2,10 +2,10 @@
 import React from "react";
 import { MdOutlinePhoneEnabled, MdOutlineLocalShipping } from "react-icons/md";
 import { FaDoorOpen } from "react-icons/fa";
-import useTranslation from "next-translate/useTranslation";
+import { useTranslations } from "next-intl";
 
 const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable }) => {
-    const { t } = useTranslation();
+    const t = useTranslations();
 
     if (!isDeliverable) return null;
 
@@ -15,7 +15,7 @@ const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable }) => 
                 <div className="p-4 sm:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <MdOutlineLocalShipping className="text-mainColor-dark text-xl" />
-                        {t("common:deliveryOptions")}
+                        {t('deliveryOptions')}
                     </h3>
                     <div className="flex flex-col sm:flex-row gap-3">
                         <label className={`flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 hover:border-mainColor transition-all duration-200 group flex-1 ${selectedCallOnArrival === "true"
@@ -38,7 +38,7 @@ const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable }) => 
                                     ? "text-stone-700"
                                     : "text-stone-700 group-hover:text-stone-900"
                                     }`}>
-                                    {t("common:callOnArrival")}
+                                    {t('callOnArrival')}
                                 </span>
                             </div>
                         </label>
@@ -62,7 +62,7 @@ const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable }) => 
                                     ? "text-stone-700"
                                     : "text-stone-700 group-hover:text-stone-900"
                                     }`}>
-                                    {t("common:leaveAtDoor")}
+                                    {t('leaveAtDoor')}
                                 </span>
                             </div>
                         </label>

@@ -14,7 +14,7 @@ const MinimalTitle = ({ title, subtitle }) => {
         <div className="flex gap-3 items-stretch h-full overflow-hidden" ref={ref}>
             {/* <div className="w-1.5 min-w-[6px] bg-mainColor rounded self-stretch" /> */}
             
-            <div className={`flex items-center justify-center flex-shrink-0`} style={{ height: subtitle ? '59px' : '33px' }}>
+            <div className={`flex items-center justify-center shrink-0`} style={{ height: subtitle ? '59px' : '33px' }}>
                 <img 
                     src="/categories icons/mnm/M-logo.png" 
                     alt="M Logo" 
