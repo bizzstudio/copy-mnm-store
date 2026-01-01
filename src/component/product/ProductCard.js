@@ -1,12 +1,10 @@
 // src/component/product/ProductCard.jsx
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useContext, useState } from "react";
-import { IoAdd, IoBagAddSharp, IoRemove } from "react-icons/io5";
+import { IoAdd, IoRemove } from "react-icons/io5";
 
 // Internal import
 import Price from "@component/common/Price";
-import Stock from "@component/common/Stock";
 import { notifyError } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import useGetSetting from "@hooks/useGetSetting";
@@ -15,15 +13,16 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import ProductModal from "@component/modal/ProductModal";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { handleLogEvent } from "@utils/analytics";
-import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import { useTranslations } from "next-intl";
 import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
+import { getUserPrice } from "@utils/priceUtils";
 
 const ProductCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const { toggleCartDrawer, closeCartDrawer } = useContext(SidebarContext)
+  const { state: { userInfo } } = useContext(UserContext);
   const { items, addItem, updateItemQuantity, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
@@ -31,6 +30,9 @@ const ProductCard = ({ product, offers = [] }) => {
   const t = useTranslations();
 
   const currency = globalSetting?.default_currency || "₪";
+
+  // קבלת המחיר המדוייק ללקוח
+  const productPricing = getUserPrice(product, userInfo);
 
   // חישוב מלאי המוצר
   const getProductStock = (p) => {
@@ -47,13 +49,13 @@ const ProductCard = ({ product, offers = [] }) => {
     if (stock < 1) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
-    const productPrice = p?.prices?.[0];
     const newItem = {
       ...updatedProduct,
       title: p.title,
       id: p._id,
-      price: productPrice?.salePrice || productPrice?.price || 0,
-      originalPrice: productPrice?.price || 0,
+      price: productPricing.salePrice || productPricing.price,
+      originalPrice: productPricing.originalPrice,
+      purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
       image: p?.image?.[0],
     };
@@ -65,24 +67,6 @@ const ProductCard = ({ product, offers = [] }) => {
   };
 
   const offerName = getOfferNames(offers, product, <br />);
-  // פונקציות מבצעים ישנים
-  // const getOfferName = (product) => {
-  //   if (product.isCombination) {
-  //     return getFirstOfferName(product?.variants);
-  //   } else {
-  //     return product?.prices?.offers[0]?.name;
-  //   }
-  // }
-
-  // const getFirstOfferName = (variants) => {
-  //   for (let variant of variants) {
-  //     let offer = variant.offers?.find(offer => offer.name);
-  //     if (offer) {
-  //       return offer.name;
-  //     }
-  //   }
-  //   return null; // במקרה שאין אף offer עם שם
-  // };
 
   return (
     <>
@@ -138,8 +122,6 @@ const ProductCard = ({ product, offers = [] }) => {
               card
               product={product}
               currency={currency}
-              price={product?.prices?.[0]?.salePrice || product?.prices?.[0]?.price || 0}
-              originalPrice={product?.prices?.[0]?.price || 0}
             />
 
             <div className="h-8 sm:h-9 ms-auto">

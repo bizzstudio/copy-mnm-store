@@ -1,5 +1,5 @@
 // src/component/voice-search/CashierVoicePanel.jsx
-import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle, useContext } from 'react';
 import { useTranslations } from "next-intl";
 import VoiceRecognition from './VoiceRecognition';
 import RecognizedProducts from './RecognizedProducts';
@@ -10,10 +10,13 @@ import notifyApiResponse from '@utils/notifyApiResponse';
 import useCart from '@hooks/useCart';
 import { HiStop } from 'react-icons/hi';
 import { HiMicrophone } from 'react-icons/hi2';
+import { UserContext } from '@context/UserContext';
+import { getUserPrice } from '@utils/priceUtils';
 
 const CashierVoicePanel = forwardRef((props, ref) => {
     const t = useTranslations();
     const { updateItemQuantity, inCart, addItem } = useCart();
+    const { state: { userInfo } } = useContext(UserContext);
 
     // סטייטים לניהול התמלול והמוצרים
     const [transcript, setTranscript] = useState('');
@@ -91,13 +94,17 @@ const CashierVoicePanel = forwardRef((props, ref) => {
                 // עיבוד המוצר לפורמט הנכון לעגלה
                 const { slug, variants, categories, description, ...updatedProduct } = product;
 
+                // קבלת המחיר המדוייק ללקוח
+                const productPricing = getUserPrice(product, userInfo);
+
                 const newItem = {
                     ...updatedProduct,
                     title: product.title,
                     id: product._id,
                     variant: product.prices,
-                    price: product.prices.price,
-                    originalPrice: product.prices?.originalPrice,
+                    price: productPricing.salePrice || productPricing.price,
+                    originalPrice: productPricing.originalPrice,
+                    purchaseLimit: productPricing.purchaseLimit,
                     slug: product.slug,
                 };
 

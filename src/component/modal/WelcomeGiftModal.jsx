@@ -11,6 +11,7 @@ import useAddToCart from "@hooks/useAddToCart";
 import { UserContext } from "@context/UserContext";
 import { notifySuccess } from "@utils/toast";
 import MainModal from "@component/modal/MainModal";
+import { getUserPrice } from "@utils/priceUtils";
 
 const WelcomeGiftModal = ({ isOpen, onClose }) => {
     const t = useTranslations();
@@ -52,12 +53,16 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
         // הכנת המוצר בפורמט הנכון כמו בשאר המקומות
         const { slug, variants, categories, description, ...updatedProduct } = giftProduct;
 
+        // קבלת המחיר המדוייק ללקוח
+        const productPricing = getUserPrice(giftProduct, userInfo);
+
         const giftProductWithFlag = {
             ...updatedProduct,
             id: giftProduct._id,
             title: giftProduct.title,
-            price: giftProduct.prices.price,
-            originalPrice: giftProduct.prices?.originalPrice,
+            price: productPricing.salePrice || productPricing.price,
+            originalPrice: productPricing.originalPrice,
+            purchaseLimit: productPricing.purchaseLimit,
             image: giftProduct.image?.[0] || giftProduct.image,
             slug: giftProduct.slug,
             variant: giftProduct.prices,
@@ -105,7 +110,7 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                 />
                                 {/* Gift Badge */}
                                 <div className="absolute top-2 left-2 md:top-3 md:left-3 lg:top-6 lg:left-6 bg-mainColor text-white px-2.5 py-1 md:px-3 md:py-1.5 lg:px-4 lg:py-2 rounded-full shadow-lg flex items-center gap-1.5 md:gap-2 animate-bounce">
-                                    <FiGift size={14} className="md:!w-4 md:!h-4 lg:!w-5 lg:!h-5" />
+                                    <FiGift size={14} className="md:w-4! md:h-4! lg:w-5! lg:h-5!" />
                                     <span className="font-bold text-[10px] md:text-xs lg:text-sm">{t('free')}!</span>
                                 </div>
                             </div>
@@ -140,7 +145,7 @@ const WelcomeGiftModal = ({ isOpen, onClose }) => {
                                         className="w-full"
                                     >
                                         <div className="flex items-center justify-center gap-1.5 md:gap-2 !py-2 md:!py-3 lg:!py-4 text-xs md:text-base">
-                                            <FiGift size={14} className="md:!w-5 md:!h-5" />
+                                            <FiGift size={14} className="md:w-5! md:h-5!" />
                                             <span className="font-semibold">{t('addGiftToCart')}</span>
                                         </div>
                                     </MainBT>

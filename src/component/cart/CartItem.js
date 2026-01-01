@@ -9,18 +9,24 @@ import { useTranslations } from "next-intl";
 // Internal import
 import useAddToCart from "@hooks/useAddToCart";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import useCart from "@hooks/useCart";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import { getUserPrice } from "@utils/priceUtils";
 
 const CartItem = ({ item, currency, updateTotalPrice }) => {
   const { updateItemQuantity, removeItem, updateItem, items } = useCart();
   const { closeCartDrawer } = useContext(SidebarContext);
+  const { state: { userInfo } } = useContext(UserContext);
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
   const router = useRouter();
   const t = useTranslations();
 
-  const [totalPrice, setTotalPrice] = useState(item.prices?.price * item.quantity);
+  // קבלת המחיר המדוייק ללקוח
+  const { price: itemPrice } = getUserPrice(item, userInfo);
+
+  const [totalPrice, setTotalPrice] = useState(itemPrice * item.quantity);
   const [offerTitle, setOfferTitle] = useState('');
   const [offerDetails, setOfferDetails] = useState([]);
 
@@ -33,7 +39,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
     const thisItem = items.find((i) => i.id === item.id);
 
     if (!thisItem) {
-      setTotalPrice(item.prices?.price * item.quantity);
+      setTotalPrice(itemPrice * item.quantity);
       setOfferTitle('');
       setOfferDetails([]);
       return;
@@ -49,7 +55,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
         quantity: thisItem.quantity,
         price: thisItem.rewardPrice
       }];
-      
+
       setTotalPrice(newPrice);
       setOfferTitle(newOfferTitle);
       setOfferDetails(newOfferDetails);
@@ -68,7 +74,6 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
         );
         // חישוב הכמות במחיר רגיל
         const regularQuantity = thisItem.quantity - totalQuantityInOffers;
-        const regularUnitPrice = thisItem.prices?.price;
 
         const newOfferDetails = thisItem.appliedOffers.map(offer => ({
           type: offer.type,
@@ -76,9 +81,9 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
           quantityInOffer: offer.quantityInOffer,
           unitPrice: offer.unitPrice,
           regularQuantity: regularQuantity, // הכמות הכוללת במחיר רגיל
-          regularUnitPrice: regularUnitPrice
+          regularUnitPrice: itemPrice
         }));
-        
+
         setTotalPrice(newPrice);
         setOfferTitle(newOfferTitle);
         setOfferDetails(newOfferDetails);
@@ -90,13 +95,13 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
     }
     // מחיר רגיל
     else {
-      const newPrice = item.prices?.price * item.quantity;
+      const newPrice = itemPrice * item.quantity;
       setTotalPrice(newPrice);
       setOfferTitle('');
       setOfferDetails([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, item.id, item.prices?.price, item.quantity]);
+  }, [items, item.id, itemPrice, item.quantity]);
 
   // console.log('item :>> ', item);
 
@@ -106,7 +111,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
     : (item?.image || placeholderImage);
 
   return (
-    <div className={`group w-full h-auto flex gap-4 justify-start items-center py-3 px-6 border-b hover:bg-mainColor-superLight transition-all border-gray-100 relative last:border-b-0 ${isRewardGift ? 'bg-gradient-to-l from-mainColor/60 to-white' : 'bg-white'}`}>
+    <div className={`group w-full h-auto flex gap-4 justify-start items-center py-3 px-6 border-b hover:bg-mainColor-superLight transition-all border-gray-100 relative last:border-b-0 ${isRewardGift ? 'bg-linear-to-l from-mainColor/60 to-white' : 'bg-white'}`}>
       <div onClick={() => router.push(`/product/${item?.slug}`)} className="relative flex justify-between rounded-full border border-gray-100 shadow-sm overflow-hidden shrink-0 cursor-pointer w-[60px] h-[60px]"
       >
         <img
@@ -138,14 +143,14 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
                   // יחידה אחת - הכל חינם
                   <div className="flex items-center gap-2">
                     <del className="text-xs font-normal text-gray-400">
-                      {currency}{item.prices?.price.toFixed(2)}
+                      {currency}{itemPrice.toFixed(2)}
                     </del>
                   </div>
                 ) : (
                   // יותר מיחידה - כל הכמות בחינם
                   <div className="flex items-center gap-2">
                     <del className="text-xs font-normal text-gray-400">
-                      {currency}{(item.prices?.price * item.quantity).toFixed(2)}
+                      {currency}{(itemPrice * item.quantity).toFixed(2)}
                     </del>
                     <span className="text-xs text-gray-500">{item.quantity}x</span>
                   </div>
@@ -158,9 +163,9 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
               <div>
                 <span>
                   {/* אם יש הנחה מופיע בקטן המחיר המקורי */}
-                  {totalPrice < item.prices?.price * item.quantity &&
+                  {totalPrice < itemPrice * item.quantity &&
                     <del className="text-xs font-normal text-gray-400 mr-1">
-                      {(item.prices?.price * item.quantity).toFixed(2)}
+                      {(itemPrice * item.quantity).toFixed(2)}
                     </del>}
                   {currency}
                   {totalPrice.toFixed(2)}
@@ -194,7 +199,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
                         {offerDetails.length > 0 && offerDetails[0]?.regularQuantity > 0 && (
                           <div className="flex items-center gap-1 mt-0.5 font-light">
                             <span>
-                              x{offerDetails[0].regularQuantity} {showingTranslateValue(item.title)} {currency}{(offerDetails[0].regularUnitPrice || item.prices?.price || 0).toFixed(2)}
+                              x{offerDetails[0].regularQuantity} {showingTranslateValue(item.title)} {currency}{(offerDetails[0].regularUnitPrice || itemPrice || 0).toFixed(2)}
                             </span>
                           </div>
                         )}
@@ -239,7 +244,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
           )}
         </div>
       </div>
-      
+
       {/* צד ימין - כיתוב "חינם" בולט למוצרי מתנה */}
       {isRewardGift && (
         <div className="flex flex-col items-center">

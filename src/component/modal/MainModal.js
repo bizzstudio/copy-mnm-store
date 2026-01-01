@@ -1,11 +1,9 @@
 // src/component/modal/MainModal.js
-import React, { Fragment, useRef } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React from "react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { IoClose } from "react-icons/io5";
 
 const MainModal = ({ modalOpen, setModalOpen, children, z = null, onClose }) => {
-  const cancelButtonRef = useRef();
-
   const handleClose = () => {
     if (onClose) {
       onClose(); // השתמש בפונקציה שהועברה ב-onClose
@@ -15,60 +13,32 @@ const MainModal = ({ modalOpen, setModalOpen, children, z = null, onClose }) => 
   };
 
   return (
-    <>
-      <Transition appear show={modalOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className={`fixed inset-0 z-30 overflow-y-auto text-center`}
-          onClose={handleClose}
-          initialFocus={cancelButtonRef}
-          style={{ zIndex: z ? z : 30 }}
-        >
-          <div className="min-h-dvh sm:px-8 px-2">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-            // leaveFrom="opacity-100 scale-100"
-            // leaveTo="opacity-80"
-            >
-              <Dialog.Overlay className="fixed inset-0 bg-black opacity-60" />
-            </Transition.Child>
+    <Dialog
+      open={modalOpen}
+      onClose={handleClose}
+      className="relative z-50"
+      dir="rtl"
+      style={{ zIndex: z ? z : 50 }}
+    >
+      <DialogBackdrop className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
 
-            <span className="inline-block h-screen align-middle" aria-hidden="true">
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+      <div className="fixed inset-0 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <DialogPanel
+            className="w-full max-w-none sm:w-auto sm:max-w-6xl transform overflow-hidden rounded-2xl bg-white align-middle shadow-xl transition-all relative"
+          >
+            {children}
+            <button
+              onClick={handleClose}
+              type="button"
+              className="absolute sm:end-5 sm:top-5 end-2 top-2 inline-flex justify-center p-1 sm:p-2 sm:text-base text-sm font-medium text-white bg-mainColor border-none rounded-full -outline-offset-1 sm:outline-8 outline-4 outline-white z-10 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-mainColor-leaf focus:ring-offset-2 hover:ring-2 hover:ring-mainColor-leaf hover:ring-offset-2 active:scale-95 active:translate-y-0.5"
             >
-              <div
-                className="inline-block w-full max-w-none sm:w-auto sm:max-w-6xl overflow-hidden text-left align-middle transition-all transform bg-white rounded-2xl xl:max-w-6xl shadow-popup my-8"
-              >
-                {children}
-                <div className="absolute sm:right-5 sm:top-5 right-2 top-1 z-10">
-                  <button
-                    ref={cancelButtonRef}
-                    onClick={handleClose}
-                    type="button"
-                    className="inline-flex justify-center p-1 sm:p-2 sm:text-base text-sm font-medium text-white bg-mainColor border-none rounded-full -outline-offset-1 sm:outline-8 outline-4 outline-white"
-                  >
-                    <IoClose />
-                  </button>
-                </div>
-              </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
+              <IoClose />
+            </button>
+          </DialogPanel>
+        </div>
+      </div>
+    </Dialog>
   );
 };
 

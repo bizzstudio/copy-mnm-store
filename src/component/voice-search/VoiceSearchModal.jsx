@@ -1,20 +1,21 @@
 // src/component/voice-search/VoiceSearchModal.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useTranslations } from "next-intl";
 import MainModal from '@component/modal/MainModal';
 import VoiceRecognition from './VoiceRecognition';
 import RecognizedProducts from './RecognizedProducts';
 import { notifyError, notifySuccess } from '@utils/toast';
-import useAddToCart from '@hooks/useAddToCart';
 import microphoneImage from 'public/microphone2.svg';
 import ProductServices from '@services/ProductServices';
 import notifyApiResponse from '@utils/notifyApiResponse';
 import useCart from '@hooks/useCart';
+import { UserContext } from '@context/UserContext';
+import { getUserPrice } from '@utils/priceUtils';
 
 const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
     const t = useTranslations();
-    const { handleAddItem } = useAddToCart();
     const { updateItemQuantity, inCart, addItem } = useCart();
+    const { state: { userInfo } } = useContext(UserContext);
 
     // סטייטים לניהול התמלול והמוצרים
     const [transcript, setTranscript] = useState('');
@@ -91,13 +92,17 @@ const VoiceSearchModal = ({ modalOpen, setModalOpen, titleMessage }) => {
                 // עיבוד המוצר לפורמט הנכון לעגלה
                 const { slug, variants, categories, description, ...updatedProduct } = product;
 
+                // קבלת המחיר המדוייק ללקוח
+                const productPricing = getUserPrice(product, userInfo);
+
                 const newItem = {
                     ...updatedProduct,
                     title: product.title,
                     id: product._id,
                     variant: product.prices,
-                    price: product.prices.price,
-                    originalPrice: product.prices?.originalPrice,
+                    price: productPricing.salePrice || productPricing.price,
+                    originalPrice: productPricing.originalPrice,
+                    purchaseLimit: productPricing.purchaseLimit,
                     slug: product.slug,
                 };
 

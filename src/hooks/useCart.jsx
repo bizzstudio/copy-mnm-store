@@ -9,6 +9,7 @@ import { trackFbAddToCart, trackFbCustomEvent } from '@services/facebookPixel';
 import { notifyError } from '@utils/toast';
 import { useTranslations } from "next-intl";
 import { findOptimalOfferCombination } from '@utils/offerCalculations';
+import { getUserPrice } from '@utils/priceUtils';
 
 const useCart = () => {
     const cart = useOriginalCart();
@@ -163,13 +164,16 @@ const useCart = () => {
             totalDiscount,
             appliedOffers,
             thresholdDiscount
-        } = findOptimalOfferCombination(cart.items, offers);
+        } = findOptimalOfferCombination(cart.items, offers, userInfo);
 
         // 2. חישוב הסכום הכולל
         let localTotal = 0;
 
         // חישוב מחירים לאחר מבצעים
         updatedCartItems.forEach(item => {
+            // קבלת המחיר המדוייק ללקוח (אם המוצר לא כבר עם מחיר מוגדר מהעגלה)
+            const itemPrice = item.price || getUserPrice(item, userInfo).price;
+
             if (item.isRewardProduct) {
                 // מוצר פרס - מחיר לפי rewardPrice
                 localTotal += (item.rewardPrice || 0) * item.quantity;
@@ -177,8 +181,8 @@ const useCart = () => {
                 // מוצר עם הנחת מבצע
                 localTotal += item.discountedPrice;
             } else {
-                // מוצר במחיר רגיל
-                localTotal += item.prices?.price * item.quantity;
+                // מוצר במחיר רגיל - משתמש במחיר המדוייק ללקוח
+                localTotal += itemPrice * item.quantity;
             }
         });
 

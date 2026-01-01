@@ -30,6 +30,7 @@ import DefaultSeo from "@component/common/DefaultSeo";
 const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
   const { state: { userInfo }, dispatch } = useContext(UserContext);
+  console.log('userInfo layout :>> ', userInfo);
 
   let currentLang = Cookies.get('_lang');
 

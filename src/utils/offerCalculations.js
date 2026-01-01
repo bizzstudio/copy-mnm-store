@@ -1,19 +1,23 @@
 // src/utils/offerCalculations.js
 // פונקציות עזר טהורות לחישוב מבצעים על עגלת קניות
+import { getUserPrice } from './priceUtils';
 
 /**
  * חישוב סכום כולל של עגלה (ללא מבצעים)
  * @param {Array} cartItems - פריטי העגלה
  * @param {Boolean} excludeRewards - האם להתעלם ממוצרי פרס בחישוב
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Number} - סכום כולל
  */
-export const calculateCartTotal = (cartItems, excludeRewards = false) => {
+export const calculateCartTotal = (cartItems, excludeRewards = false, userInfo = null) => {
     return cartItems.reduce((total, item) => {
         // אם צריך להתעלם ממוצרי פרס
         if (excludeRewards && item.isRewardProduct) {
             return total;
         }
-        return total + (item.prices?.price * item.quantity);
+        // קבלת המחיר המדוייק ללקוח
+        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+        return total + (itemPrice * item.quantity);
     }, 0);
 };
 
@@ -40,9 +44,10 @@ export const createProductCountMap = (cartItems) => {
  * יישום מבצע BUNDLE_PRICE
  * @param {Array} cartItems - פריטי העגלה (ללא מוצרי פרס)
  * @param {Object} offer - המבצע
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Object} - { discount, affectedItems: [{itemId, quantityInOffer, unitPriceInOffer}] }
  */
-export const applyBundlePrice = (cartItems, offer) => {
+export const applyBundlePrice = (cartItems, offer, userInfo = null) => {
     if (!offer?.products || offer?.products?.length === 0) {
         return { discount: 0, affectedItems: [] };
     }
@@ -78,7 +83,10 @@ export const applyBundlePrice = (cartItems, offer) => {
             const discountQuantity = Math.min(item.quantity, remainingQuantityToApply);
             remainingQuantityToApply -= discountQuantity;
 
-            const originalPrice = item.prices?.price * discountQuantity;
+            // קבלת המחיר המדוייק ללקוח
+            const itemPrice = item.price || getUserPrice(item, userInfo).price;
+
+            const originalPrice = itemPrice * discountQuantity;
             const discountedPrice = discountQuantity * offerUnitPrice;
             const itemDiscount = originalPrice - discountedPrice;
 
@@ -105,9 +113,10 @@ export const applyBundlePrice = (cartItems, offer) => {
  * יישום מבצע BUY_X_GET_Y
  * @param {Array} cartItems - פריטי העגלה
  * @param {Object} offer - המבצע
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Object} - { discount, rewardItemsToAdd: [{product, quantity, price, offerId, offerName}] }
  */
-export const applyBuyXGetY = (cartItems, offer) => {
+export const applyBuyXGetY = (cartItems, offer, userInfo = null) => {
     if (!offer?.triggerProduct || !offer?.rewardProduct) {
         return { discount: 0, rewardItemsToAdd: [] };
     }
@@ -128,9 +137,9 @@ export const applyBuyXGetY = (cartItems, offer) => {
     // כמות יחידות פרס שהלקוח זכאי להן
     const totalRewardQuantity = timesOfferCanApply * (offer.rewardQuantity || 1);
 
-    // חישוב הנחה
+    // חישוב הנחה - קבלת המחיר המדוייק ללקוח עבור מוצר הפרס
     const rewardUnitPrice = offer.rewardPrice || 0;
-    const originalRewardPrice = offer.rewardProduct.prices?.price || 0;
+    const originalRewardPrice = getUserPrice(offer.rewardProduct, userInfo).price;
     const discountPerUnit = originalRewardPrice - rewardUnitPrice;
     const totalDiscount = totalRewardQuantity * discountPerUnit;
 
@@ -152,9 +161,10 @@ export const applyBuyXGetY = (cartItems, offer) => {
  * יישום מבצע THRESHOLD_GET_ITEM
  * @param {Object} offer - המבצע
  * @param {Number} currentTotal - סכום העגלה הנוכחי (אחרי מבצעים אחרים)
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Object} - { discount, rewardItemsToAdd: [{product, quantity, price, offerId, offerName}] }
  */
-export const applyThresholdGetItem = (offer, currentTotal) => {
+export const applyThresholdGetItem = (offer, currentTotal, userInfo = null) => {
     if (!offer?.rewardProduct || !offer?.thresholdAmount) {
         return { discount: 0, rewardItemsToAdd: [] };
     }
@@ -167,7 +177,7 @@ export const applyThresholdGetItem = (offer, currentTotal) => {
     // המבצע חל פעם אחת בלבד
     const rewardQuantity = offer.rewardQuantity || 1;
     const rewardUnitPrice = offer.rewardPrice || 0;
-    const originalRewardPrice = offer.rewardProduct.prices?.price || 0;
+    const originalRewardPrice = getUserPrice(offer.rewardProduct, userInfo).price;
     const discountPerUnit = originalRewardPrice - rewardUnitPrice;
     const totalDiscount = rewardQuantity * discountPerUnit;
 
@@ -250,10 +260,11 @@ export const mergeRewardItems = (rewardItems) => {
  * @param {Array} originalCartItems - פריטי עגלה מקוריים
  * @param {Array} bundleResults - תוצאות BUNDLE_PRICE
  * @param {Array} rewardItems - מוצרי פרס להוסיף/לעדכן
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Array} - פריטי עגלה מעודכנים שמכילים:
  *  [{discountedPrice, offerTitle, appliedOffers: [{type, name, quantityInOffer, unitPrice}]}]
  */
-export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardItems) => {
+export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardItems, userInfo = null) => {
     // מפה של הנחות לפי itemId
     const discountMap = {};
     const offerTitleMap = {};
@@ -279,13 +290,16 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
             return item; // נעדכן מוצרי פרס בנפרד
         }
 
+        // קבלת המחיר המדוייק ללקוח
+        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+
         const discount = discountMap[item.id];
         if (discount) {
             const discountQuantity = discount.quantityInOffer;
             const nonDiscountQuantity = item.quantity - discountQuantity;
             const discountedPrice =
                 discountQuantity * discount.unitPriceInOffer +
-                nonDiscountQuantity * item.prices?.price;
+                nonDiscountQuantity * itemPrice;
 
             const offerName = offerTitleMap[item.id] || {};
             return {
@@ -298,7 +312,7 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
                     quantityInOffer: discountQuantity,
                     unitPrice: discount.unitPriceInOffer,
                     regularQuantity: nonDiscountQuantity,
-                    regularUnitPrice: item.prices?.price
+                    regularUnitPrice: itemPrice
                 }]
             };
         }
@@ -369,6 +383,9 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
                 if (regularItem) {
                     const itemIndex = updatedItems.findIndex(i => i.id === regularItem.id);
                     if (itemIndex !== -1) {
+                        // קבלת המחיר המדוייק ללקוח
+                        const itemPrice = regularItem.price || getUserPrice(regularItem, userInfo).price;
+
                         // חישוב מחיר מעורב: חלק במחיר מבצע, חלק במחיר רגיל
                         const rewardQty = Math.min(reward.quantity, regularItem.quantity);
                         const regularQty = regularItem.quantity - rewardQty;
@@ -377,7 +394,7 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
                         const existingDiscountedPrice = updatedItems[itemIndex].discountedPrice;
                         const baseUnitPrice = existingDiscountedPrice ?
                             existingDiscountedPrice / regularItem.quantity :
-                            regularItem.prices?.price;
+                            itemPrice;
 
                         const mixedPrice =
                             rewardQty * reward.price +
@@ -423,9 +440,10 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
  * האלגוריתם המרכזי - מציאת קומבינציית מבצעים אופטימלית
  * @param {Array} cartItems - פריטי העגלה המקוריים
  * @param {Array} offers - כל המבצעים הזמינים
+ * @param {Object} userInfo - מידע על המשתמש (למחירון)
  * @returns {Object} - { updatedCartItems, totalDiscount, appliedOffers, thresholdDiscount }
  */
-export const findOptimalOfferCombination = (cartItems, offers = []) => {
+export const findOptimalOfferCombination = (cartItems, offers = [], userInfo = null) => {
     if (!Array.isArray(offers) || offers.length === 0 || cartItems.length === 0) {
         return {
             updatedCartItems: cartItems.map(item => ({
@@ -453,14 +471,14 @@ export const findOptimalOfferCombination = (cartItems, offers = []) => {
     const bundleResults = bundleOffers.map(offer => ({
         offer,
         offerName: offer.name || {},
-        ...applyBundlePrice(baseCartItems, offer)
+        ...applyBundlePrice(baseCartItems, offer, userInfo)
     })).filter(result => result.discount > 0);
 
     // שלב 2: יישום כל מבצעי BUY_X_GET_Y
     const buyXGetYResults = buyXGetYOffers.map(offer => ({
         offer,
         offerName: offer.name || {},
-        ...applyBuyXGetY(baseCartItems, offer)
+        ...applyBuyXGetY(baseCartItems, offer, userInfo)
     })).filter(result => result.discount > 0);
 
     // שלב 3: חישוב סכום ביניים (אחרי BUNDLE + BUY_X_GET_Y)
@@ -472,17 +490,20 @@ export const findOptimalOfferCombination = (cartItems, offers = []) => {
     });
 
     // יצירת עגלה ביניים
-    let intermediateCart = createUpdatedCartItems(baseCartItems, bundleResults, allRewardItems);
+    let intermediateCart = createUpdatedCartItems(baseCartItems, bundleResults, allRewardItems, userInfo);
 
     // חישוב סכום ביניים
     let intermediateTotal = 0;
     intermediateCart.forEach(item => {
+        // קבלת המחיר המדוייק ללקוח
+        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+
         if (item.isRewardProduct) {
             intermediateTotal += (item.rewardPrice || 0) * item.quantity;
         } else if (item.discountedPrice) {
             intermediateTotal += item.discountedPrice;
         } else {
-            intermediateTotal += item.prices?.price * item.quantity;
+            intermediateTotal += itemPrice * item.quantity;
         }
     });
 
@@ -499,7 +520,7 @@ export const findOptimalOfferCombination = (cartItems, offers = []) => {
         const result = {
             offer,
             offerName: offer.name || {},
-            ...applyThresholdGetItem(offer, intermediateTotal)
+            ...applyThresholdGetItem(offer, intermediateTotal, userInfo)
         };
 
         // אם המבצע חל, זה המבצע היחיד שחל (הגבוה ביותר שעובר)
@@ -519,7 +540,7 @@ export const findOptimalOfferCombination = (cartItems, offers = []) => {
     const mergedRewardItems = mergeRewardItems(allRewardItems);
 
     // שלב 6: יצירת עגלה סופית
-    const finalCart = createUpdatedCartItems(baseCartItems, bundleResults, mergedRewardItems);
+    const finalCart = createUpdatedCartItems(baseCartItems, bundleResults, mergedRewardItems, userInfo);
 
     // שלב 7: בדיקת THRESHOLD_DISCOUNT על הסכום הביניים
     // מיון מבצעים לפי thresholdAmount מהגבוה לנמוך - רק המבצע הגבוה ביותר שעובר יחול

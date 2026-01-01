@@ -85,7 +85,7 @@ const RewardProductModal = ({
                             />
                             {/* Gift Badge */}
                             <div className="absolute top-2 left-2 sm:top-3 sm:left-3 lg:top-6 lg:left-6 bg-mainColor text-white px-2.5 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 rounded-full shadow-lg flex items-center gap-1.5 sm:gap-2 animate-bounce">
-                                <FiGift size={14} className="sm:!w-4 sm:!h-4 lg:!w-5 lg:!h-5" />
+                                <FiGift size={14} className="sm:w-4! sm:h-4! lg:w-5! lg:h-5!" />
                                 <span className="font-bold text-[10px] sm:text-xs lg:text-sm">{t('free')}!</span>
                             </div>
 
@@ -147,7 +147,7 @@ const RewardProductModal = ({
                                     className="w-full"
                                 >
                                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 !py-2 sm:!py-3 lg:!py-4 text-xs sm:text-base">
-                                        <FiGift size={14} className="sm:!w-5 sm:!h-5" />
+                                        <FiGift size={14} className="sm:w-5! sm:h-5!" />
                                         <span className="font-semibold">{t('viewProduct')}</span>
                                     </div>
                                 </MainBT>

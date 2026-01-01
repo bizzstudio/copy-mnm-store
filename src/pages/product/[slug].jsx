@@ -1,5 +1,6 @@
 // src/pages/product/[slug].jsx
 import { useTranslations } from "next-intl";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -41,6 +42,7 @@ import { trackFbViewContent } from "@services/facebookPixel";
 import { getI18nProps } from "@utils/i18n";
 
 const ProductScreen = ({ product, relatedProducts }) => {
+  // console.log('ProductScreen product :>> ', product);
   const router = useRouter();
 
   const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();

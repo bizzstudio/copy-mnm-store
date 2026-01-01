@@ -1,5 +1,6 @@
+// src/component/modal/SubModal.js
 import React, { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 
 const SubModal = ({ modalOpen, z = null, children }) => {
   return (
@@ -20,7 +21,7 @@ const SubModal = ({ modalOpen, z = null, children }) => {
               enterTo="opacity-100"
               leave="ease-in duration-200"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-black opacity-60" />
+              <DialogBackdrop className="fixed inset-0 bg-black opacity-60" />
             </Transition.Child>
 
             <span className="inline-block h-screen align-middle" aria-hidden="true">

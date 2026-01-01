@@ -64,7 +64,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
           password,
         })
           .then((res) => {
-            // console.log(res);
+            console.log('login res :>> ', res);
             setLoading(false);
             setModalOpen(false);
             localStorage.removeItem("plsRegisterAgain");
@@ -85,7 +85,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
               trackNewsletterSignup(res.email, res.name, res.lastName, res.phone || res.contact || '');
             }
 
-            window.location.reload();
+            // window.location.reload();
           })
           .catch((err) => {
             // בדיקה אם המשתמש כבר נרשם וממתין לאימות
@@ -134,7 +134,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
             }
 
             router.push(redirect || "/");
-            window.location.reload();
+            // window.location.reload();
             return;
           }
 
@@ -186,6 +186,8 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
         credential: credentialResponse?.credential
       })
         .then((res) => {
+          console.log('google sign in res :>> ', res);
+
           setModalOpen(false);
           notifySuccess(t('loginSuccess'));
           router.push(redirect || "/");
@@ -199,7 +201,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
             trackNewsletterSignup(res.email, res.name, res.lastName, res.phone || res.contact || '');
           }
 
-          window.location.reload();
+          // window.location.reload();
         })
 
         .catch((err) => {

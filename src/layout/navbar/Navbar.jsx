@@ -249,7 +249,7 @@ const Navbar = ({ cashierPage = false }) => {
                   {/* כפתור פרופיל */}
                   {userInfo?.name ?
                     <Link
-                      className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
+                      className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
                       aria-label="Login"
                       href="/user/dashboard"
                     >
@@ -265,7 +265,7 @@ const Navbar = ({ cashierPage = false }) => {
                           <FiUserCheck className="w-6 h-6 drop-shadow-xl" />
                         </span>}
                     </Link> :
-                    <button className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
+                    <button className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
                       aria-label="Login"
                       onClick={() => setModalOpen(!modalOpen)}>
                       <FiUser className="w-6 h-6 drop-shadow-xl" />
