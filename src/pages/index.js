@@ -22,7 +22,6 @@ import BlogServices from "@services/BlogServices";
 import BlogCard from "@component/blog/BlogCard";
 import MainBT from "@component/button/MainBT";
 import CMSkeleton from "@component/preloader/CMSkeleton";
-import logoGif from "public/logoGif.gif";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { useTranslations } from "next-intl";
 import MinimalTitle from "@component/common/MinimalTitle";
@@ -55,7 +54,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
       setTimeout(() => {
         setFakeLoading(true);
         sessionStorage.setItem('fakeLoading', 'true');
-      }, 100);
+      }, 2000);
     }
   }, []);
 
@@ -353,8 +352,21 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
   } else {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {/* <img src={logoGif.src} alt="loading" className="m-auto" /> */}
-        <Loading loading={true} />
+        <div className="m-auto max-w-[400px] w-full overflow-hidden relative">
+          <video 
+            src="/opening.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-auto"
+            style={{ 
+              clipPath: 'inset(11% 0 11% 0)',
+              objectFit: 'cover'
+            }}
+          />
+        </div>
+        {/* <Loading loading={true} /> */}
       </div>
     );
   }
