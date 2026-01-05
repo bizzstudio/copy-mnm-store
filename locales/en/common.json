@@ -495,8 +495,8 @@
   "errorLoadingData": "Error loading data",
   "noCitiesFound": "No cities found",
   "deliveryNationwide": "Delivery Nationwide",
-  "minimumOrderAmount": "Minimum order amount {{amount}}₪",
-  "minimumPurchaseAmount": "Minimum purchase {{amount}}₪",
+  "minimumOrderAmount": "Minimum order amount {amount}₪",
+  "minimumPurchaseAmount": "Minimum purchase {amount}₪",
 
   "/=================* Invoice * =================/": "",
 

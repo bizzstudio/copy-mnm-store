@@ -75,9 +75,11 @@ const CheckoutActions = ({
                                 storeCustomizationSetting?.checkout
                                     ?.confirm_button
                             )}
-                            <span className="text-xs text-gray-500 mb-px">
-                                ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
-                            </span>
+                            {minimumOrderAmount ? (
+                                <span className="text-xs text-gray-100">
+                                    ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
+                                </span>
+                            ) : null}
                             <span className="text-xl">
                                 {" "}
                                 <IoArrowForward

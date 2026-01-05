@@ -23,8 +23,9 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
   const router = useRouter();
   const t = useTranslations();
 
-  // קבלת המחיר המדוייק ללקוח
-  const { price: itemPrice } = getUserPrice(item, userInfo);
+  // קבלת המחיר המדוייק ללקוח (אם יש salePrice, משתמש בו, אחרת price)
+  const { price, salePrice } = getUserPrice(item, userInfo);
+  const itemPrice = salePrice && salePrice > 0 ? salePrice : price;
 
   const [totalPrice, setTotalPrice] = useState(itemPrice * item.quantity);
   const [offerTitle, setOfferTitle] = useState('');

@@ -38,10 +38,9 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
   const getProductStock = (p) => {
     if (p?.manageStock === false) {
       return 9999;
-    } else if (p?.stocks && Array.isArray(p.stocks) && p.stocks.length > 0) {
-      return p.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
     }
-    return 0;
+    // המלאי הוא שדה stock פשוט
+    return p?.stock || 0;
   };
 
   const handleAddItem = (p) => {

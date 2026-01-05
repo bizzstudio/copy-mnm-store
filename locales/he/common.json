@@ -497,8 +497,8 @@
     "errorLoadingData": "שגיאה בטעינת הנתונים",
     "noCitiesFound": "לא נמצאו ערים",
     "deliveryNationwide": "משלוחים לכל הארץ",
-    "minimumOrderAmount": "מינימום הזמנה {{amount}}₪",
-    "minimumPurchaseAmount": "מינימום קנייה {{amount}}₪",
+    "minimumOrderAmount": "מינימום הזמנה {amount}₪",
+    "minimumPurchaseAmount": "מינימום קנייה {amount}₪",
   
     "/=================* Invoice * =================/": "",
   

@@ -31,9 +31,8 @@ const useAddToCart = () => {
   const getProductStock = (product) => {
     if (product?.manageStock === false) {
       return 9999;
-    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
-      return product.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
     }
+    // המלאי הוא שדה stock פשוט
     return product?.stock || 0;
   };
 

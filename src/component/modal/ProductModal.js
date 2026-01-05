@@ -22,6 +22,8 @@ import ProductDescription from "@component/product/ProductDescription";
 import ImageCarousel from "@component/carousel/ImageCarousel";
 import { trackProductModalView } from "@services/flashy";
 import { trackFbViewContent } from "@services/facebookPixel";
+import { UserContext } from "@context/UserContext";
+import { getUserPrice } from "@utils/priceUtils";
 
 const ProductModal = ({
   modalOpen,
@@ -34,6 +36,7 @@ const ProductModal = ({
   console.log('ProductModal product: ', product);
   const router = useRouter();
   const { setIsLoading, isLoading } = useContext(SidebarContext);
+  const { state: { userInfo } } = useContext(UserContext);
   const t = useTranslations();
 
   const { handleAddItem, setItem, item } = useAddToCart();
@@ -65,14 +68,9 @@ const ProductModal = ({
     // הגדרת מלאי - אם manageStock הוא false, נחשב שיש מלאי
     if (product?.manageStock === false) {
       setStock(9999); // מלאי בלתי מוגבל
-    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
-      // אם יש מערך stocks, נחשב את הסכום הכולל
-      const totalStock = product.stocks.reduce((sum, stockItem) => {
-        return sum + (stockItem?.quantity || 0);
-      }, 0);
-      setStock(totalStock);
     } else {
-      setStock(0);
+      // המלאי הוא שדה stock פשוט
+      setStock(product?.stock || 0);
     }
 
     // הגדרת מחירים - לוקח את המחיר הראשון מהמערך prices
@@ -104,7 +102,7 @@ const ProductModal = ({
   }, [
     product,
     product?.prices,
-    product?.stocks,
+    product?.stock,
     product?.manageStock,
     product?.image,
   ]);
@@ -126,16 +124,32 @@ const ProductModal = ({
   const handleAddToCart = (p) => {
     if (stock <= 0) return notifyError(t('productStockOut'));
 
+    // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+    const productPricing = getUserPrice(p, userInfo);
+    const purchaseLimit = productPricing.purchaseLimit;
+
+    // בדיקת הגבלת רכישה
+    if (purchaseLimit && purchaseLimit > 0 && item > purchaseLimit) {
+      notifyError(t('maxQuantityReached') || `לא ניתן לרכוש יותר מ-${purchaseLimit} יחידות`);
+      return;
+    }
+
+    // בדיקת מלאי
+    if (item > stock) {
+      notifyError(t('productStockOut') || `אין מספיק מלאי. במלאי: ${stock} יחידות`);
+      return;
+    }
+
     const { categories, description, ...updatedProduct } = product;
-    const productPrice = p?.prices?.[0];
 
     const newItem = {
       ...updatedProduct,
       id: p._id,
       title: p.title,
       image: img || p?.image?.[0],
-      price: getNumber(productPrice?.salePrice || productPrice?.price || 0),
-      originalPrice: getNumber(productPrice?.price || 0),
+      price: getNumber(productPricing.salePrice || productPricing.price || 0),
+      originalPrice: getNumber(productPricing.price || 0),
+      purchaseLimit: purchaseLimit,
     };
 
     handleAddItem(newItem);
@@ -296,9 +310,22 @@ const ProductModal = ({
                       style={{ MozAppearance: 'textfield' }}
                     />
                     <button
-                      onClick={() => setItem(item + 1)}
+                      onClick={() => {
+                        // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+                        const productPricing = getUserPrice(product, userInfo);
+                        const purchaseLimit = productPricing.purchaseLimit;
+                        // בדיקת הגבלת רכישה ומלאי
+                        if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
+                          return;
+                        }
+                        setItem(item + 1);
+                      }}
                       disabled={
-                        stock < item || stock === item || stock === 0
+                        stock < item || stock === item || stock === 0 || (() => {
+                          const productPricing = getUserPrice(product, userInfo);
+                          const purchaseLimit = productPricing.purchaseLimit;
+                          return purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit;
+                        })()
                       }
                       className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                     >

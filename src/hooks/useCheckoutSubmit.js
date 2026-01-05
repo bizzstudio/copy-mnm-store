@@ -56,7 +56,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
   // סטייטים לוולידציה - מנוהלים בהוק
   const [guestChosenCity, setGuestChosenCity] = useState(null);
   const [isDeliverable, setIsDeliverable] = useState(null);
-  const [minimumOrderAmount] = useState(process.env.NEXT_PUBLIC_ENV === 'dev' ? 1 : 150);
+  const [minimumOrderAmount] = useState(0);
   const guestAddressFormRef = useRef(null);
 
   const router = useRouter();
@@ -512,8 +512,9 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         let stock = 0;
         if (product?.manageStock === false) {
           stock = 9999;
-        } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
-          stock = product.stocks.reduce((sum, stockItem) => sum + (stockItem?.quantity || 0), 0);
+        } else {
+          // המלאי הוא שדה stock פשוט
+          stock = product?.stock || 0;
         }
 
         const productPrice = product?.prices?.[0];

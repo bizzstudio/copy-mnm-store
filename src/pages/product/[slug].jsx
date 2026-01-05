@@ -40,14 +40,16 @@ import MinimalTitle from "@component/common/MinimalTitle";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { trackFbViewContent } from "@services/facebookPixel";
 import { getI18nProps } from "@utils/i18n";
+import { UserContext } from "@context/UserContext";
+import { getUserPrice } from "@utils/priceUtils";
 
 const ProductScreen = ({ product, relatedProducts }) => {
-  // console.log('ProductScreen product :>> ', product);
-  const router = useRouter();
+  console.log('ProductScreen product :>> ', product);
 
   const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();
 
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
+  const { state: { userInfo } } = useContext(UserContext);
   const { handleAddItem, item, setItem } = useAddToCart();
 
   const [price, setPrice] = useState(0);
@@ -93,15 +95,9 @@ const ProductScreen = ({ product, relatedProducts }) => {
     if (product?.manageStock === false) {
       setStock(9999); // מלאי בלתי מוגבל
       setStockLoaded(true);
-    } else if (product?.stocks && Array.isArray(product.stocks) && product.stocks.length > 0) {
-      // אם יש מערך stocks, נחשב את הסכום הכולל
-      const totalStock = product.stocks.reduce((sum, stockItem) => {
-        return sum + (stockItem?.quantity || 0);
-      }, 0);
-      setStock(totalStock);
-      setStockLoaded(true);
     } else {
-      setStock(0);
+      // המלאי הוא שדה stock פשוט
+      setStock(product?.stock || 0);
       setStockLoaded(true);
     }
 
@@ -134,7 +130,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
   }, [
     product,
     product?.prices,
-    product?.stocks,
+    product?.stock,
     product?.manageStock,
     product?.image,
   ]);
@@ -147,16 +143,32 @@ const ProductScreen = ({ product, relatedProducts }) => {
   const handleAddToCart = (p) => {
     if (stock <= 0) return notifyError(t('productStockOut'));
 
+    // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+    const productPricing = getUserPrice(p, userInfo);
+    const purchaseLimit = productPricing.purchaseLimit;
+
+    // בדיקת הגבלת רכישה
+    if (purchaseLimit && purchaseLimit > 0 && item > purchaseLimit) {
+      notifyError(t('maxQuantityReached') || `לא ניתן לרכוש יותר מ-${purchaseLimit} יחידות`);
+      return;
+    }
+
+    // בדיקת מלאי
+    if (item > stock) {
+      notifyError(t('productStockOut') || `אין מספיק מלאי. במלאי: ${stock} יחידות`);
+      return;
+    }
+
     const { categories, description, ...updatedProduct } = product;
-    const productPrice = p?.prices?.[0];
 
     const newItem = {
       ...updatedProduct,
       id: p._id,
       title: p.title,
       image: img || p?.image?.[0],
-      price: getNumber(productPrice?.salePrice || productPrice?.price || 0),
-      originalPrice: getNumber(productPrice?.price || 0),
+      price: getNumber(productPricing.salePrice || productPricing.price || 0),
+      originalPrice: getNumber(productPricing.price || 0),
+      purchaseLimit: purchaseLimit,
     };
 
     handleAddItem(newItem);
@@ -453,8 +465,21 @@ const ProductScreen = ({ product, relatedProducts }) => {
                               {item}
                             </p>
                             <button
-                              onClick={() => setItem(item + 1)}
-                              disabled={stock <= item || stock === 0}
+                              onClick={() => {
+                                // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+                                const productPricing = getUserPrice(product, userInfo);
+                                const purchaseLimit = productPricing.purchaseLimit;
+                                // בדיקת הגבלת רכישה ומלאי
+                                if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
+                                  return;
+                                }
+                                setItem(item + 1);
+                              }}
+                              disabled={(() => {
+                                const productPricing = getUserPrice(product, userInfo);
+                                const purchaseLimit = productPricing.purchaseLimit;
+                                return stock <= item || stock === 0 || (purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit);
+                              })()}
                               className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
                             >
                               <span className="text-dark text-base">

@@ -1,14 +1,23 @@
+// src/component/checkout/CheckoutCard.js
 import Image from "next/image";
 import { FiPlus, FiMinus } from "react-icons/fi";
+import { useContext } from "react";
 import SettingServices from "@services/SettingServices";
 import useAsync from "@hooks/useAsync";
 import useCart from "@hooks/useCart";
+import { UserContext } from "@context/UserContext";
+import { getUserPrice } from "@utils/priceUtils";
 
 const CheckoutCard = ({ item }) => {
   const { updateItemQuantity } = useCart();
+  const { state: { userInfo } } = useContext(UserContext);
   const { data: globalSetting } = useAsync(SettingServices.getGlobalSetting);
 
   const currency = globalSetting?.default_currency || "₪";
+
+  // קבלת המחיר המדוייק ללקוח (אם יש salePrice, משתמש בו, אחרת price)
+  const { price, salePrice } = getUserPrice(item, userInfo);
+  const itemPrice = salePrice && salePrice > 0 ? salePrice : price;
 
   return (
     <div
@@ -26,7 +35,7 @@ const CheckoutCard = ({ item }) => {
             </span>
             <span className="text-xs text-gray-400 mb-2">
               Item Price{currency}
-              {item.price}
+              {itemPrice.toFixed(2)}
             </span>
           </p>
           <div className="h-8 w-20 flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">
@@ -52,7 +61,7 @@ const CheckoutCard = ({ item }) => {
           </div>
 
           <div className="font-bold text-sm text-heading leading-5">
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+            <span>{currency}{(itemPrice * item.quantity).toFixed(2)}</span>
           </div>
         </div>
       </div>

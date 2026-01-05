@@ -1,12 +1,20 @@
 // src/component/voice-search/VoiceSearchItem.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import { FiPlus, FiMinus, FiTrash2 } from "react-icons/fi";
 import Cookies from "js-cookie";
+import { UserContext } from "@context/UserContext";
+import { getUserPrice } from "@utils/priceUtils";
 
 const VoiceSearchItem = ({ item, currency, onQuantityChange, onRemove }) => {
     const router = useRouter();
-    const [totalPrice, setTotalPrice] = useState(item.prices?.price * item.quantity);
+    const { state: { userInfo } } = useContext(UserContext);
+
+    // קבלת המחיר המדוייק ללקוח (אם יש salePrice, משתמש בו, אחרת price)
+    const { price, salePrice } = getUserPrice(item, userInfo);
+    const itemPrice = salePrice && salePrice > 0 ? salePrice : price;
+
+    const [totalPrice, setTotalPrice] = useState(itemPrice * item.quantity);
 
     let currentLang = Cookies.get('_lang');
 
@@ -24,8 +32,8 @@ const VoiceSearchItem = ({ item, currency, onQuantityChange, onRemove }) => {
 
     // עדכון מחיר המוצר בהתאם לכמות
     useEffect(() => {
-        setTotalPrice(item.prices?.price * item.quantity);
-    }, [item.quantity, item.prices?.price]);
+        setTotalPrice(itemPrice * item.quantity);
+    }, [item.quantity, itemPrice]);
 
     const handleQuantityChange = (newQuantity) => {
         if (newQuantity <= 0) {

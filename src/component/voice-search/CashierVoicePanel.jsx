@@ -81,6 +81,10 @@ const CashierVoicePanel = forwardRef((props, ref) => {
 
         recognizedProducts.forEach(product => {
             try {
+                // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+                const productPricing = getUserPrice(product, userInfo);
+                const purchaseLimit = productPricing.purchaseLimit;
+
                 // בדיקת מלאי
                 if (product.stock < 1) {
                     notifyError(t('productOutOfStock', { product: product.title?.he || product.title?.en }));
@@ -91,11 +95,14 @@ const CashierVoicePanel = forwardRef((props, ref) => {
                     return;
                 }
 
+                // בדיקת הגבלת רכישה
+                if (purchaseLimit && purchaseLimit > 0 && product.quantity > purchaseLimit) {
+                    notifyError(t('maxQuantityReached') || `לא ניתן לרכוש יותר מ-${purchaseLimit} יחידות`);
+                    return;
+                }
+
                 // עיבוד המוצר לפורמט הנכון לעגלה
                 const { slug, variants, categories, description, ...updatedProduct } = product;
-
-                // קבלת המחיר המדוייק ללקוח
-                const productPricing = getUserPrice(product, userInfo);
 
                 const newItem = {
                     ...updatedProduct,
