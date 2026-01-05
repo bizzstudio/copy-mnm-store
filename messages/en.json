@@ -464,6 +464,9 @@
   "orderFailedDescription": "Your order has failed. Please try again or contact us for help. We are here to assist you.",
   "orderFaildText": "Your payment has been declined, please try again.",
   "tryAgain": "Try Again",
+  "createCreditOrder": "Create Credit Order",
+  "creditOrderDescription": "Create an order on credit according to your limit",
+  "mustBeLoggedIn": "You must be logged in to create a credit order",
   "customerNote": "Order notes (optional)",
   "typeHere": "Type here...",
 

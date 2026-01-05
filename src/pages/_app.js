@@ -147,7 +147,7 @@ function MyApp({ Component, pageProps }) {
       )}
 
       {/* Flashy Pixel */}
-      <Script
+      {/* <Script
         id="flashy-init"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -168,10 +168,10 @@ function MyApp({ Component, pageProps }) {
             flashy('init', '${process.env.NEXT_PUBLIC_FLASHY_ACCOUNT_ID}');
           `,
         }}
-      />
+      /> */}
 
       {/* Meta Pixel (Facebook) */}
-      <Script id="fb-pixel" strategy="afterInteractive">
+      {/* <Script id="fb-pixel" strategy="afterInteractive">
         {`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -185,7 +185,7 @@ function MyApp({ Component, pageProps }) {
           fbq('init', '${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}');
           fbq('track', 'PageView');
         `}
-      </Script>
+      </Script> */}
 
       {/* Providers */}
       <NextIntlClientProvider

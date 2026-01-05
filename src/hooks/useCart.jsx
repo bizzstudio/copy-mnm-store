@@ -9,7 +9,7 @@ import { trackFbAddToCart, trackFbCustomEvent } from '@services/facebookPixel';
 import { notifyError } from '@utils/toast';
 import { useTranslations } from "next-intl";
 import { findOptimalOfferCombination } from '@utils/offerCalculations';
-import { getUserPrice } from '@utils/priceUtils';
+import { getFinalPrice } from '@utils/priceUtils';
 
 const useCart = () => {
     const cart = useOriginalCart();
@@ -171,8 +171,10 @@ const useCart = () => {
 
         // חישוב מחירים לאחר מבצעים
         updatedCartItems.forEach(item => {
-            // קבלת המחיר המדוייק ללקוח (אם המוצר לא כבר עם מחיר מוגדר מהעגלה)
-            const itemPrice = item.price || getUserPrice(item, userInfo).price;
+            // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+            // לא משתמשים ב-item.price השמור כי הוא יכול להיות ממחירון ישן
+            // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+            const itemPrice = getFinalPrice(item, userInfo);
 
             if (item.isRewardProduct) {
                 // מוצר פרס - מחיר לפי rewardPrice
@@ -199,7 +201,7 @@ const useCart = () => {
 
         // עדכון ref למצב הקודם
         prevCartItemsRef.current = updatedCartItems;
-    }, [cart, offers]);
+    }, [cart, offers, userInfo]);
 
     return {
         ...cart,

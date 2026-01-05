@@ -1,7 +1,7 @@
 // src/component/checkout/CheckoutActions.jsx
 import React from "react";
 import Link from "next/link";
-import { IoReturnUpBackOutline, IoArrowForward } from "react-icons/io5";
+import { IoReturnUpBackOutline, IoCardOutline, IoReceiptOutline } from "react-icons/io5";
 import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import MainBT from "@component/button/MainBT";
@@ -14,6 +14,9 @@ const CheckoutActions = ({
     storeCustomizationSetting,
     showingTranslateValue,
     minimumOrderAmount,
+    userInfo,
+    submitCreditOrder,
+    handleSubmit,
 }) => {
     const t = useTranslations();
 
@@ -30,65 +33,115 @@ const CheckoutActions = ({
             break;
     };
 
+    // בדיקה האם להציג כפתור הזמנה בהקפה
+    const showCreditOrderButton = userInfo &&
+        userInfo.customerType !== 'casual' &&
+        userInfo.creditLimit > 0;
+
+    const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number';
+    const isLoading = isCheckoutSubmit;
+
     return (
-        <div className="border rounded-lg bg-white px-5 lg:px-8 py-5 grid grid-cols-6 gap-4 lg:gap-6">
-            <div className="col-span-6 sm:col-span-3 sm:block hidden">
-                <Link href="/" passHref>
-                    <MainBT type="button">
-                        <div className={currentLang ? "flex justify-center items-center gap-2 font-serif w-full" : "flex flex-row-reverse justify-center items-center gap-2 font-serif w-full"}>
-                            <span className="text-xl">
+        <div className="border rounded-xl bg-white shadow-sm px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch">
+                {/* כפתור חזרה - מוסתר במסך קטן */}
+                <div className="hidden md:flex md:w-auto">
+                    <Link href="/" passHref className="w-full md:w-auto">
+                        <button
+                            type="button"
+                            className="relative inline-flex items-center justify-center px-6 py-3 min-h-[56px] text-base font-serif font-medium rounded-lg border-2 border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                            <div className={`flex items-center justify-center gap-2 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
                                 <IoReturnUpBackOutline
-                                    className={currentLang ? "transform scale-x-[-1]" : ""}
+                                    className={`text-xl ${currentLang ? 'transform scale-x-[-1]' : ''}`}
                                 />
-                            </span>
-                            {showingTranslateValue(
-                                storeCustomizationSetting?.checkout?.continue_button
-                            )}
-                        </div>
-                    </MainBT>
-                </Link>
-            </div>
-            <div className="col-span-6 sm:col-span-3">
-                <MainBT
-                    type="submit"
-                    disabled={isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number'}
-                    className="text-sm font-serif font-medium flex justify-center w-full"
-                >
-                    {typeof customCartTotal !== 'number' ? (
-                        <Calculating />
-                    ) : isCheckoutSubmit ? (
-                        <span className="flex flex-row-reverse justify-center text-center">
-                            <span className="ms-1">
-                                {t('processing')}
-                            </span>
-                            <img
-                                src="/loader/spinner.gif"
-                                alt="Loading"
-                                width={20}
-                                height={10}
-                                className="saturate-0"
-                            />
-                        </span>
-                    ) : (
-                        <span className={currentLang ? "flex justify-center gap-1 text-center items-center" : "flex flex-row-reverse justify-center gap-1 text-center items-center"}>
-                            {showingTranslateValue(
-                                storeCustomizationSetting?.checkout
-                                    ?.confirm_button
-                            )}
-                            {minimumOrderAmount ? (
-                                <span className="text-xs text-gray-100">
-                                    ({t('minimumPurchaseAmount', { amount: minimumOrderAmount })})
+                                <span>
+                                    {showingTranslateValue(
+                                        storeCustomizationSetting?.checkout?.continue_button
+                                    )}
                                 </span>
-                            ) : null}
-                            <span className="text-xl">
-                                {" "}
-                                <IoArrowForward
-                                    className={currentLang ? "transform scale-x-[-1]" : ""}
+                            </div>
+                        </button>
+                    </Link>
+                </div>
+
+                {/* כפתורי יצירת הזמנה */}
+                <div className={`flex flex-col sm:flex-row gap-4 flex-1 ${showCreditOrderButton ? 'sm:grid sm:grid-cols-2' : ''}`}>
+                    {/* כפתור תשלום רגיל */}
+                    <MainBT
+                        type="submit"
+                        disabled={isDisabled}
+                        className="flex-1 min-h-[56px] px-6 py-3 bg-mainColor hover:bg-mainColor-dark text-white font-serif font-semibold text-base shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {typeof customCartTotal !== 'number' ? (
+                            <div className="flex items-center justify-center">
+                                <Calculating />
+                            </div>
+                        ) : isLoading ? (
+                            <div className={`flex items-center justify-center gap-2 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                <img
+                                    src="/loader/spinner.gif"
+                                    alt="Loading"
+                                    width={20}
+                                    height={20}
+                                    className="saturate-0"
                                 />
-                            </span>
-                        </span>
+                                <span className="font-medium">{t('processing')}</span>
+                            </div>
+                        ) : (
+                            <div className={`flex items-center justify-center gap-3 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                <IoCardOutline className="text-xl" />
+                                <div className="flex flex-col items-center">
+                                    <span className="text-base font-semibold">
+                                        {showCreditOrderButton
+                                            ? t('payNow')
+                                            : showingTranslateValue(
+                                                storeCustomizationSetting?.checkout?.confirm_button
+                                            )
+                                        }
+                                    </span>
+                                    {minimumOrderAmount ? (
+                                        <span className="text-xs opacity-90 mt-0.5">
+                                            {t('minimumPurchaseAmount', { amount: minimumOrderAmount })}
+                                        </span>
+                                    ) : null}
+                                </div>
+                            </div>
+                        )}
+                    </MainBT>
+
+                    {/* כפתור הזמנה בהקפה */}
+                    {showCreditOrderButton && (
+                        <MainBT
+                            type="button"
+                            onClick={handleSubmit(submitCreditOrder)}
+                            disabled={isDisabled}
+                            className="flex-1 min-h-[56px] px-6 py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-serif font-semibold text-base shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {typeof customCartTotal !== 'number' ? (
+                                <div className="flex items-center justify-center">
+                                    <Calculating />
+                                </div>
+                            ) : isLoading ? (
+                                <div className={`flex items-center justify-center gap-2 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                    <img
+                                        src="/loader/spinner.gif"
+                                        alt="Loading"
+                                        width={20}
+                                        height={20}
+                                        className="saturate-0"
+                                    />
+                                    <span className="font-medium">{t('processing')}</span>
+                                </div>
+                            ) : (
+                                <div className={`flex items-center justify-center gap-3 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                    <IoReceiptOutline className="text-xl" />
+                                    <span className="text-base font-semibold">{t('createCreditOrder')}</span>
+                                </div>
+                            )}
+                        </MainBT>
                     )}
-                </MainBT>
+                </div>
             </div>
         </div>
     );

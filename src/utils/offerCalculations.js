@@ -1,6 +1,6 @@
 // src/utils/offerCalculations.js
 // פונקציות עזר טהורות לחישוב מבצעים על עגלת קניות
-import { getUserPrice } from './priceUtils';
+import { getUserPrice, getFinalPrice } from './priceUtils';
 
 /**
  * חישוב סכום כולל של עגלה (ללא מבצעים)
@@ -15,8 +15,9 @@ export const calculateCartTotal = (cartItems, excludeRewards = false, userInfo =
         if (excludeRewards && item.isRewardProduct) {
             return total;
         }
-        // קבלת המחיר המדוייק ללקוח
-        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+        // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+        // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+        const itemPrice = getFinalPrice(item, userInfo);
         return total + (itemPrice * item.quantity);
     }, 0);
 };
@@ -83,8 +84,9 @@ export const applyBundlePrice = (cartItems, offer, userInfo = null) => {
             const discountQuantity = Math.min(item.quantity, remainingQuantityToApply);
             remainingQuantityToApply -= discountQuantity;
 
-            // קבלת המחיר המדוייק ללקוח
-            const itemPrice = item.price || getUserPrice(item, userInfo).price;
+            // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+            // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+            const itemPrice = getFinalPrice(item, userInfo);
 
             const originalPrice = itemPrice * discountQuantity;
             const discountedPrice = discountQuantity * offerUnitPrice;
@@ -139,7 +141,8 @@ export const applyBuyXGetY = (cartItems, offer, userInfo = null) => {
 
     // חישוב הנחה - קבלת המחיר המדוייק ללקוח עבור מוצר הפרס
     const rewardUnitPrice = offer.rewardPrice || 0;
-    const originalRewardPrice = getUserPrice(offer.rewardProduct, userInfo).price;
+    // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+    const originalRewardPrice = getFinalPrice(offer.rewardProduct, userInfo);
     const discountPerUnit = originalRewardPrice - rewardUnitPrice;
     const totalDiscount = totalRewardQuantity * discountPerUnit;
 
@@ -177,7 +180,8 @@ export const applyThresholdGetItem = (offer, currentTotal, userInfo = null) => {
     // המבצע חל פעם אחת בלבד
     const rewardQuantity = offer.rewardQuantity || 1;
     const rewardUnitPrice = offer.rewardPrice || 0;
-    const originalRewardPrice = getUserPrice(offer.rewardProduct, userInfo).price;
+    // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+    const originalRewardPrice = getFinalPrice(offer.rewardProduct, userInfo);
     const discountPerUnit = originalRewardPrice - rewardUnitPrice;
     const totalDiscount = rewardQuantity * discountPerUnit;
 
@@ -290,8 +294,9 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
             return item; // נעדכן מוצרי פרס בנפרד
         }
 
-        // קבלת המחיר המדוייק ללקוח
-        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+        // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+        // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+        const itemPrice = getFinalPrice(item, userInfo);
 
         const discount = discountMap[item.id];
         if (discount) {
@@ -383,8 +388,9 @@ export const createUpdatedCartItems = (originalCartItems, bundleResults, rewardI
                 if (regularItem) {
                     const itemIndex = updatedItems.findIndex(i => i.id === regularItem.id);
                     if (itemIndex !== -1) {
-                        // קבלת המחיר המדוייק ללקוח
-                        const itemPrice = regularItem.price || getUserPrice(regularItem, userInfo).price;
+                        // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+                        // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+                        const itemPrice = getFinalPrice(regularItem, userInfo);
 
                         // חישוב מחיר מעורב: חלק במחיר מבצע, חלק במחיר רגיל
                         const rewardQty = Math.min(reward.quantity, regularItem.quantity);
@@ -495,8 +501,9 @@ export const findOptimalOfferCombination = (cartItems, offers = [], userInfo = n
     // חישוב סכום ביניים
     let intermediateTotal = 0;
     intermediateCart.forEach(item => {
-        // קבלת המחיר המדוייק ללקוח
-        const itemPrice = item.price || getUserPrice(item, userInfo).price;
+        // תמיד מחשבים מחדש את המחיר לפי userInfo הנוכחי
+        // משתמשים ב-getFinalPrice כדי לקבל salePrice אם קיים
+        const itemPrice = getFinalPrice(item, userInfo);
 
         if (item.isRewardProduct) {
             intermediateTotal += (item.rewardPrice || 0) * item.quantity;

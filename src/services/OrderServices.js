@@ -25,6 +25,10 @@ const OrderServices = {
   addCashierOrder: async (body, headers) => {
     return requests.post("/cashier-orders", body, headers);
   },
+
+  addCreditOrder: async (body, headers) => {
+    return requests.post("/order/add-credit", body, headers);
+  },
 };
 
 export default OrderServices;

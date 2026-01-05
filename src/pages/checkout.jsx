@@ -1,4 +1,4 @@
-// checkout.jsx
+// src/pages/checkout.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
@@ -26,6 +26,7 @@ import { SidebarContext } from "@context/SidebarContext";
 import AutoDeliveriesPopup from "@component/deliveriesPopup/AutoDeliveriesPopup";
 import { notifyError } from "@utils/toast";
 import { getI18nProps } from "@utils/i18n";
+
 // Checkout Components
 import CheckoutItems from "@component/checkout/CheckoutItems";
 import OrderCosts from "@component/checkout/OrderCosts";
@@ -59,6 +60,7 @@ const Checkout = () => {
   const {
     handleSubmit,
     submitHandler,
+    submitCreditOrder,
     submitWithRefreshOffers,
     handleShippingCost,
     register,
@@ -599,6 +601,9 @@ const Checkout = () => {
                               storeCustomizationSetting={storeCustomizationSetting}
                               showingTranslateValue={showingTranslateValue}
                               minimumOrderAmount={minimumOrderAmount}
+                              userInfo={userInfo}
+                              submitCreditOrder={submitCreditOrder}
+                              handleSubmit={handleSubmit}
                             />
                           </>
                         ) : (
@@ -676,6 +681,9 @@ const Checkout = () => {
                               storeCustomizationSetting={storeCustomizationSetting}
                               showingTranslateValue={showingTranslateValue}
                               minimumOrderAmount={minimumOrderAmount}
+                              userInfo={userInfo}
+                              submitCreditOrder={submitCreditOrder}
+                              handleSubmit={handleSubmit}
                             />
                           </>
                         )}
@@ -704,7 +712,7 @@ const Checkout = () => {
 
 export const getServerSideProps = async (context) => {
   const i18nProps = await getI18nProps(context);
-  
+
   return {
     props: {
       ...i18nProps,

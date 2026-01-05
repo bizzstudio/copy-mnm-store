@@ -500,6 +500,123 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     }
   };
 
+  // יצירת הזמנה בהקפה
+  const submitCreditOrder = async (data) => {
+    try {
+      // וולידציה - רק משתמשים מחוברים יכולים ליצור הזמנה בהקפה
+      if (!userInfo) {
+        notifyError(t('mustBeLoggedIn'));
+        return;
+      }
+
+      // וולידציות כלליות
+
+      // אם אין משלוח לכתובת
+      if (isDeliverable !== undefined && !isDeliverable) {
+        notifyError(t('noDeliveryToAddress'));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      // אם אין שיטת משלוח
+      if (isDeliveryMetod !== undefined && !isDeliveryMetod) {
+        notifyError(t('selectDeliveryMethod'));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      // אם הסכום הכולל קטן מידי
+      if (minimumOrderAmount !== undefined && customCartTotal < minimumOrderAmount) {
+        notifyError(t('minimumOrderAmount', { amount: minimumOrderAmount }));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      // שמירת כתובת המשלוח
+      dispatch({ type: "SAVE_SHIPPING_ADDRESS", payload: data });
+      Cookies.set("shippingAddress", JSON.stringify(data));
+      setIsCheckoutSubmit(true);
+      setError("");
+
+      // בניית פרטי המשתמש
+      const userDetails = {
+        name: userInfo.name,
+        lastName: userInfo.lastName || '',
+        contact: userInfo.phone,
+        email: userInfo.email,
+        address: userInfo.address,
+        country: 'Isral',
+        zipCode: userInfo?.address?.postalCode,
+      };
+
+      // בניית פרטי ההזמנה
+      const orderInfo = {
+        user_info: userDetails,
+        shippingOption: data.shippingOption,
+        callOnArrival: data.callOnArrival,
+        customer_note: data.customer_note,
+        paymentMethod: "credit",
+        status: "Pending",
+        cart: items.sort((a, b) => a.barcode - b.barcode) || items,
+        subTotal: Number(customCartTotal.toFixed(2)),
+        shippingCost: shippingCost,
+        discount: discountAmount,
+        total: total,
+        coupon: couponInfo._id || null,
+      };
+
+      // יצירת ההזמנה בהקפה
+      const res = await OrderServices.addCreditOrder(orderInfo);
+      const orderData = res?.data || res;
+
+      // רישום לפלאשי
+      const loggedInUser = {
+        email: userInfo.email,
+        name: userInfo.name,
+        lastName: userInfo.lastName || '',
+        phone: userInfo.phone || userInfo.contact || '',
+      };
+
+      identifyUser(loggedInUser);
+
+      // אם המשתמש בחר להירשם לניוזלטר
+      if (newsletterOptIn) {
+        trackNewsletterSignup(
+          userInfo.email,
+          userInfo.name,
+          userInfo.lastName || '',
+          userInfo.phone || userInfo.contact || ''
+        );
+      }
+
+      // ניקוי העגלה והקופון
+      emptyCart();
+      Cookies.remove("couponInfo");
+      setCouponInfo({});
+      setDiscountAmount(0);
+
+      // Redirect לעמוד הצלחה עם orderId
+      if (orderData?._id) {
+        router.push(`/success?orderId=${orderData._id}`);
+      } else {
+        router.push("/success");
+      }
+
+    } catch (err) {
+      console.error("Error in submitCreditOrder:", err);
+
+      // טיפול בקונפליקטים
+      if (err?.response?.status === 409) {
+        const errorData = err?.response?.data;
+        handleConflicts(errorData);
+        return;
+      } else {
+        notifyApiResponse(err?.response, false);
+      }
+      setIsCheckoutSubmit(false);
+    }
+  };
+
   // עדכון המוצרים ששונה להם המחיר
   useEffect(() => {
     if (addUpdatedProducts) {
@@ -691,6 +808,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
   return {
     handleSubmit,
     submitHandler,
+    submitCreditOrder,
     submitWithRefreshOffers,
     handleShippingCost,
     register,
