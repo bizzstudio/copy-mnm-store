@@ -20,12 +20,10 @@ import { trackPurchase as trackFlashyPurchase } from "@services/flashy";
 import googleAnalytics, { trackPurchase } from "@services/googleAnalytics";
 import { trackFbPurchase } from "@services/facebookPixel";
 import OrderServices from "@services/OrderServices";
-import { UserContext } from "@context/UserContext";
 import { getI18nProps } from "@utils/i18n";
 
 const Success = () => {
-  const { isLoading, setIsLoading } = useContext(SidebarContext);
-  const { state: { userInfo }, dispatch } = useContext(UserContext);
+  const { isLoading } = useContext(SidebarContext);
   const t = useTranslations();
   const router = useRouter();
   const [order, setOrder] = useState(null);
@@ -33,16 +31,17 @@ const Success = () => {
 
   const { emptyCart } = useCart();
 
-  // קבלת פרטי ההזמנה מ-URL parameters או sessionStorage
+  // קבלת פרטי ההזמנה מ-URL parameters
   useEffect(() => {
     const getOrderInfo = async () => {
       try {
-        // בדיקה אם יש order_id ב-URL
+        // חילוץ orderId ו-token מה-URL
         const orderId = router.query.orderId;
+        const token = router.query.token;
 
         if (orderId) {
-          // קבלת פרטי ההזמנה מהשרת
-          const orderData = await OrderServices.getOrderById(orderId);
+          // קבלת פרטי ההזמנה מהשרת והעברת הטוקן לשרת (אם קיים)
+          const orderData = await OrderServices.getOrderById(orderId, token || null);
           setOrder(orderData);
         }
       } catch (error) {
@@ -50,7 +49,10 @@ const Success = () => {
       }
     };
 
-    getOrderInfo();
+    // רק אם יש query parameters
+    if (router.query.orderId) {
+      getOrderInfo();
+    }
   }, [router.query]);
 
   // Flashy Purchase Tracking
@@ -112,10 +114,10 @@ const Success = () => {
         {isLoading ? (
           <Loading loading={isLoading} />
         ) : (
-          <div className='w-full mx-auto flex flex-col justify-center items-center gap-5 py-20 px-10 lg:px-0'>
+          <div className='w-full mx-auto flex flex-col justify-center items-center gap-2 py-32 px-10 lg:px-0'>
             <img className="md:w-1/5 w-2/3 mr-8" src={cartSuccess.src} alt="הרכישה הושלמה בהצלחה" />
-            <h1 className="text-4xl text-center font-bold">{t('thankYouForPurchase')}</h1>
-            {/* <h3 className="text-xl font-bold text-center">{t('orsderInProcess')}</h3> */}
+            <h1 className="sm:text-4xl text-xl text-center font-bold">{t('thankYouForPurchase')}</h1>
+            <h3 className="sm:text-xl text-lg text-center">{t('orsderInProcess')}</h3>
             <div className="flex items-center justify-center flex-wrap gap-5 mt-3 h-11">
               <Link href="/" target="_top">
                 <MainBT className='w-fit! px-6'>
@@ -145,7 +147,6 @@ const Success = () => {
     </>
   );
 };
-
 
 export async function getStaticProps(context) {
   return {

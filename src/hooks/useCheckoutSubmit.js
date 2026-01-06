@@ -377,7 +377,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
             shippingOption: data.shippingOption,
             callOnArrival: data.callOnArrival,
             customer_note: data.customer_note,
-            paymentMethod: "creditCard",
+            paymentMethod: "card",
             status: "Pending",
             cart: items.sort((a, b) => a.barcode - b.barcode) || items,
             subTotal: Number(customCartTotal.toFixed(2)),
@@ -410,7 +410,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
             shippingOption: data.shippingOption || "2",
             callOnArrival: data.callOnArrival,
             customer_note: data.customer_note || '',
-            paymentMethod: "creditCard",
+            paymentMethod: "card",
             status: "Pending",
             cart: items.sort((a, b) => a.barcode - b.barcode) || items,
             subTotal: Number(customCartTotal.toFixed(2)),
@@ -565,8 +565,8 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         coupon: couponInfo._id || null,
       };
 
-      // יצירת ההזמנה בהקפה
-      const res = await OrderServices.addCreditOrder(orderInfo);
+      // יצירת ההזמנה בהקפה - שימוש ב-addOrder עם paymentMethod: "credit"
+      const res = await OrderServices.addOrder(orderInfo);
       const orderData = res?.data || res;
 
       // רישום לפלאשי

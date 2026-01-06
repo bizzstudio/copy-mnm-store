@@ -18,16 +18,14 @@ const OrderServices = {
     return requests.get(`/order?limit=${limit}&page=${page}`);
   },
 
-  getOrderById: async (id, body) => {
-    return requests.get(`/order/${id}`, body);
+  getOrderById: async (id, token = null) => {
+    // אם יש טוקן, מוסיפים אותו כקווארי פרמטר
+    const url = token ? `/order/${id}?token=${token}` : `/order/${id}`;
+    return requests.get(url);
   },
 
   addCashierOrder: async (body, headers) => {
     return requests.post("/cashier-orders", body, headers);
-  },
-
-  addCreditOrder: async (body, headers) => {
-    return requests.post("/order/add-credit", body, headers);
   },
 };
 
