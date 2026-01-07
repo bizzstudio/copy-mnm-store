@@ -20,16 +20,43 @@ import { trackPurchase as trackFlashyPurchase } from "@services/flashy";
 import googleAnalytics, { trackPurchase } from "@services/googleAnalytics";
 import { trackFbPurchase } from "@services/facebookPixel";
 import OrderServices from "@services/OrderServices";
+import CustomerServices from "@services/CustomerServices";
+import { UserContext } from "@context/UserContext";
 import { getI18nProps } from "@utils/i18n";
 
 const Success = () => {
   const { isLoading } = useContext(SidebarContext);
+  const { state: { userInfo }, dispatch } = useContext(UserContext);
   const t = useTranslations();
   const router = useRouter();
   const [order, setOrder] = useState(null);
   const [purchaseTracked, setPurchaseTracked] = useState(false);
 
   const { emptyCart } = useCart();
+
+  // רענון מידע המשתמש בטעינת העמוד
+  useEffect(() => {
+    const refreshUserInfo = async () => {
+      // רק אם יש משתמש מחובר
+      if (!userInfo) return;
+
+      try {
+        // קריאה ל-/me לעדכון מידע המשתמש (כולל unpaidBalance ו-availableCredit)
+        const updatedUserInfo = await CustomerServices.getCurrentCustomer();
+        
+        if (updatedUserInfo) {
+          // עדכון המידע ב-context וב-cookies
+          dispatch({ type: "USER_LOGIN", payload: updatedUserInfo });
+          Cookies.set("userInfo", JSON.stringify(updatedUserInfo));
+        }
+      } catch (error) {
+        console.error("Error refreshing user info:", error);
+        // אם יש שגיאה - לא נתק את המשתמש, רק נדפיס שגיאה
+      }
+    };
+
+    refreshUserInfo();
+  }, []); // רץ רק פעם אחת בטעינת העמוד
 
   // קבלת פרטי ההזמנה מ-URL parameters
   useEffect(() => {

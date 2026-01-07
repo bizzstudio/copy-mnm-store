@@ -31,12 +31,12 @@ instance.interceptors.request.use(function (config) {
 const responseBody = (response) => response.data;
 
 const requests = {
-  get: (url, body) => instance.get(url, body).then(responseBody),
+  get: (url, body, headers) => instance.get(url, body, headers).then(responseBody),
 
   post: (url, body, headers) =>
     instance.post(url, body, headers).then(responseBody),
 
-  put: (url, body) => instance.put(url, body).then(responseBody),
+  put: (url, body, headers) => instance.put(url, body, headers).then(responseBody),
 };
 
 export default requests;

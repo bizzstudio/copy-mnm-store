@@ -178,16 +178,22 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
     return {};
   };
 
-  // בדיקת תקפות טוקן בריענון
+  // בדיקת תקפות טוקן ורענון מידע המשתמש בריענון
   useEffect(() => {
-    const validateUserToken = async () => {
+    const validateAndRefreshUser = async () => {
       // רק אם יש משתמש מחובר
       if (!userInfo) return;
 
       try {
-        const isValid = await CustomerServices.validateToken();
-        if (!isValid) {
-          // אם הטוקן לא תקין - נתק את המשתמש
+        // קריאה ל-/me לעדכון מידע המשתמש (כולל unpaidBalance ו-availableCredit)
+        const updatedUserInfo = await CustomerServices.getCurrentCustomer();
+
+        if (updatedUserInfo) {
+          // עדכון המידע ב-context וב-cookies
+          dispatch({ type: "USER_LOGIN", payload: updatedUserInfo });
+          Cookies.set("userInfo", JSON.stringify(updatedUserInfo));
+        } else {
+          // אם אין תשובה תקינה - הטוקן כנראה לא תקין
           dispatch({ type: "USER_LOGOUT" });
           Cookies.remove("userInfo");
           Cookies.remove("couponInfo");
@@ -197,11 +203,19 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
           }
         }
       } catch (error) {
-        console.error("Token validation error:", error);
+        console.error("Token validation/refresh error:", error);
+        // אם יש שגיאה - נתק את המשתמש
+        dispatch({ type: "USER_LOGOUT" });
+        Cookies.remove("userInfo");
+        Cookies.remove("couponInfo");
+        // אם זה לא עמוד הבית - העבר לעמוד הבית
+        if (router.pathname !== "/") {
+          router.push("/");
+        }
       }
     };
 
-    validateUserToken();
+    validateAndRefreshUser();
   }, []); // רץ רק פעם אחת בריענון
 
   return (

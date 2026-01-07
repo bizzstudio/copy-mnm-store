@@ -17,6 +17,7 @@ const CheckoutActions = ({
     userInfo,
     submitCreditOrder,
     handleSubmit,
+    total,
 }) => {
     const t = useTranslations();
 
@@ -36,7 +37,7 @@ const CheckoutActions = ({
     // בדיקה האם להציג כפתור הזמנה בהקפה
     const showCreditOrderButton = userInfo &&
         userInfo.customerType !== 'casual' &&
-        userInfo.creditLimit > 0;
+        userInfo.availableCredit > total;
 
     const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number';
     const isLoading = isCheckoutSubmit;

@@ -604,6 +604,7 @@ const Checkout = () => {
                               userInfo={userInfo}
                               submitCreditOrder={submitCreditOrder}
                               handleSubmit={handleSubmit}
+                              total={total}
                             />
                           </>
                         ) : (

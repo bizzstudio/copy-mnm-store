@@ -41,6 +41,10 @@ const CustomerServices = {
   validateToken: async () => {
     return requests.get("/customer/validate-token");
   },
+
+  getCurrentCustomer: async () => {
+    return requests.get("/customer/me");
+  },
 };
 
 export default CustomerServices;
