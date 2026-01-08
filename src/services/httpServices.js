@@ -15,14 +15,22 @@ const instance = axios.create({
 instance.interceptors.request.use(function (config) {
   // Do something before request is sent
   let userInfo;
-  if (Cookies.get('userInfo')) {
-    userInfo = JSON.parse(Cookies.get('userInfo'));
+  
+  // Check if we're in a browser environment (client-side)
+  if (typeof window !== 'undefined' && Cookies.get('userInfo')) {
+    try {
+      userInfo = JSON.parse(Cookies.get('userInfo'));
+    } catch (error) {
+      console.error('Error parsing userInfo cookie:', error);
+    }
   }
 
+  // Merge headers instead of replacing them
   return {
     ...config,
     headers: {
-      authorization: userInfo ? `Bearer ${userInfo.token}` : null,
+      ...config.headers,
+      ...(userInfo?.token && { authorization: `Bearer ${userInfo.token}` }),
     },
   };
 });

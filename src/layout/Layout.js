@@ -29,6 +29,9 @@ import DefaultSeo from "@component/common/DefaultSeo";
 
 const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
+  const { storeCustomizationSetting } = useGetSetting() || {};
+  const { seo: defaultSeo } = storeCustomizationSetting || {};
+
   const { state: { userInfo }, dispatch } = useContext(UserContext);
   console.log('userInfo layout :>> ', userInfo);
 
@@ -142,9 +145,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
   // יצירת props דינאמיים לפי העמוד הנוכחי
   const getWhatsAppProps = () => {
     const { pathname, query } = router;
-    const { storeCustomizationSetting } = useGetSetting() || {};
-    const { seo } = storeCustomizationSetting || {};
-    const { meta_title } = seo || {};
+    const { meta_title } = seo || defaultSeo || {};
 
     // עמוד מוצר
     if (pathname.startsWith('/product/')) {
@@ -260,7 +261,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
       )} */}
 
       {/* SEO tags דינמיים לעמוד - מקבל SEO מ-props (מ-getServerSideProps) */}
-      <DefaultSeo title={title} description={description} seo={seo} />
+      <DefaultSeo title={title} description={description} seo={seo || defaultSeo} />
 
       <div className="font-sans">
         {/* <NavBarTop /> */}

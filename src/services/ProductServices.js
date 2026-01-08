@@ -13,7 +13,7 @@ const ProductServices = {
     // Replace '[' and '\' with '' - משום מה זה גורם לקריסה, צריך לבדוק מה הלוז
     const cleanTitle = title.replace(/[\[\\]/g, "");
     const encodedTitle = encodeURIComponent(cleanTitle);
-    const encodedCategory = encodeURIComponent(category);
+    const encodedCategory = encodeURIComponent(category || "");
 
     // console.log({ encodedSlug })
 
