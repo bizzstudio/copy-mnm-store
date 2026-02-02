@@ -15,15 +15,17 @@ const NavbarUserButton = ({ userInfo, imageUrl, onLoginClick }) => {
         href="/user/dashboard"
       >
         {imageUrl || userInfo?.image ? (
-          <Image
-            width={100}
-            height={100}
-            src={imageUrl || userInfo?.image}
-            alt="user"
-            className="min-w-full min-h-full object-cover"
-          />
+          <span className="w-8 h-8 rounded-full overflow-hidden shrink-0 block">
+            <Image
+              width={36}
+              height={36}
+              src={imageUrl || userInfo?.image}
+              alt="user"
+              className="w-full h-full object-cover"
+            />
+          </span>
         ) : (
-          <FiUserCheck className="w-5 h-5 drop-shadow-xl" />
+          <FiUserCheck className="w-5 h-5 drop-shadow-xl shrink-0" />
         )}
         <span className="text-base font-medium whitespace-nowrap text-inherit">
           {t("hello")} {(userInfo?.name ?? "").slice(0, 10).trim()}
