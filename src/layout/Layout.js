@@ -26,6 +26,8 @@ import FloatingWhatsApp from "@component/common/FloatingWhatsApp";
 import CustomerServices from "@services/CustomerServices";
 import RewardOffersManager from "@component/reward-offers/RewardOffersManager";
 import DefaultSeo from "@component/common/DefaultSeo";
+import LoginModal from "@component/modal/LoginModal";
+import { SidebarContext } from "@context/SidebarContext";
 
 const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
@@ -33,6 +35,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
   const { seo: defaultSeo } = storeCustomizationSetting || {};
 
   const { state: { userInfo }, dispatch } = useContext(UserContext);
+  const { loginModalOpen, setLoginModalOpen } = useContext(SidebarContext);
   console.log('userInfo layout :>> ', userInfo);
 
   let currentLang = Cookies.get('_lang');
@@ -222,6 +225,11 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
   return (
     <>
       <ToastContainer rtl={currentLang} />
+
+      {/* Login Modal - managed by SidebarContext */}
+      {loginModalOpen && (
+        <LoginModal modalOpen={loginModalOpen} setModalOpen={setLoginModalOpen} />
+      )}
 
       {addressPopup && (
         <MainModal modalOpen={addressPopup} setModalOpen={setAddressPopup}>

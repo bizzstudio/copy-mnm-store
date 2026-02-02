@@ -11,7 +11,7 @@ const notifyApiResponse = (response, success = Boolean) => {
 
     if (success) {
         // הצלחה
-        const successMessage = message?.[lang] || (lang === "he" ? "הפעולה הצליחה!" : "Action succeeded!");
+        const successMessage = message?.[lang] || message || (lang === "he" ? "הפעולה הצליחה!" : "Action succeeded!");
         notifySuccess(successMessage);
     } else {
         // כישלון

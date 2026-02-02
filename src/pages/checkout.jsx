@@ -1,9 +1,10 @@
 // src/pages/checkout.jsx
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 // Internal import
 import Layout from "@layout/Layout";
@@ -17,10 +18,8 @@ import Loading from "@component/preloader/Loading";
 import DeliveryServices from "@services/DeliveryServices";
 import MainModal from "@component/modal/MainModal";
 import UserAddressUpdate from "@component/userAddressUpdate/UserAddressUpdate";
-import LoginModal from "@component/modal/LoginModal";
 import MissingProductsModal from "@component/modal/MissingProductsModal";
 import websiteClose from 'public/websiteClose2.svg'
-import Image from "next/image";
 import PriceUpdatedModal from "@component/modal/PriceUpdatedModal";
 import { SidebarContext } from "@context/SidebarContext";
 import AutoDeliveriesPopup from "@component/deliveriesPopup/AutoDeliveriesPopup";
@@ -91,8 +90,6 @@ const Checkout = () => {
     priceConflictsModal,
     setPriceConflictsModal,
     priceConflicts,
-    showLoginModal,
-    setShowLoginModal,
     setError: setFormError,
     clearErrors,
 
@@ -492,9 +489,6 @@ const Checkout = () => {
             <UserAddressUpdate />
           </div>
         </MainModal>
-      )}
-      {showLoginModal && (
-        <LoginModal modalOpen={showLoginModal} setModalOpen={setShowLoginModal} />
       )}
       {deliveriesPopupOpen && (
         <MainModal modalOpen={deliveriesPopupOpen} setModalOpen={setDeliveriesPopupOpen}>

@@ -1,7 +1,7 @@
 // src/layout/navbar/NavbarPromo.jsx
 import { Fragment, useState, useEffect, useContext, useRef } from "react";
 import Link from "next/link";
-import { Transition, Popover } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import SettingServices from "@services/SettingServices";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -13,17 +13,14 @@ import useGetSetting from "@hooks/useGetSetting";
 import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Image from "next/image";
-import LoginModal from "@component/modal/LoginModal";
 
 const NavbarPromo = () => {
-  const [LoginModalOpen, setLoginModalOpen] = useState(false);
+  const router = useRouter();
   const [activePopover, setActivePopover] = useState(null);
   const { storeCustomizationSetting } = useGetSetting();
   const { categories, categoriesLoading } = useContext(SidebarContext);
 
   const { showingTranslateValue, getCategorySlug, findMainCategory } = useUtilsFunction();
-
-  const router = useRouter();
 
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -151,23 +148,19 @@ const NavbarPromo = () => {
 
   return (
     <>
-      {LoginModalOpen && (
-        <LoginModal modalOpen={LoginModalOpen} setModalOpen={setLoginModalOpen} />
-      )}
-
       <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 3xl:bg-transparent w-full relative`}>
         <div className="relative w-full sm:ps-20 3xl:ps-0! md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
           {/* קונטיינר גלילה אמיתי */}
           <div className="w-full relative py-2">
             {/* חץ שמאלה (צד שמאל של המסך) – גולל שמאלה */}
             {showLeftArrow && (
-            <button
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-full p-2 transition-all duration-200 drop-shadow-md"
-              aria-label="גלול שמאלה"
-            >
-              <FaAnglesLeft className="w-3 h-3 text-gray-600 left-right-animation" />
-            </button>
+              <button
+                onClick={scrollLeft}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-full p-2 transition-all duration-200 drop-shadow-md"
+                aria-label="גלול שמאלה"
+              >
+                <FaAnglesLeft className="w-3 h-3 text-gray-600 left-right-animation" />
+              </button>
             )}
 
             {/* חץ ימינה (צד ימין של המסך) – גולל ימינה */}
@@ -265,7 +258,7 @@ const NavbarPromo = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <div className="fixed sm:absolute top-[137px] sm:top-[105%] left-1/2 sm:left-auto sm:end-0 -translate-x-1/2 sm:translate-x-0 z-20 min-w-[200px] bg-white shadow-lg rounded-md ring-1 ring-black ring-opacity-5"  
+                        <div className="fixed sm:absolute top-[137px] sm:top-[105%] left-1/2 sm:left-auto sm:end-0 -translate-x-1/2 sm:translate-x-0 z-20 min-w-[200px] bg-white shadow-lg rounded-md ring-1 ring-black ring-opacity-5"
                         >
                           <ul dir="rtl">
                             {category.children &&

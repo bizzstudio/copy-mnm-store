@@ -1,17 +1,13 @@
 // sr/layou/foote/MobileFooter.js
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-
-import { TbCategoryPlus, TbDiscount, TbHomeDot } from "react-icons/tb";
-import { MdOutlineSettingsBackupRestore } from "react-icons/md";
-import { FaList } from "react-icons/fa6";
-import { RiHome6Line, RiShoppingCartLine, RiUserAddLine } from "react-icons/ri";
-import { HiOutlineUser } from "react-icons/hi";
+import { TbCategoryPlus, TbHomeDot } from "react-icons/tb";
+import { RiShoppingCartLine, RiUserAddLine } from "react-icons/ri";
 import { useTranslations } from "next-intl";
 
+// Internal import
 import { UserContext } from "@context/UserContext";
-import LoginModal from "@component/modal/LoginModal";
 import { SidebarContext } from "@context/SidebarContext";
 import CategoryDrawer from "@component/drawer/CategoryDrawer";
 import useCart from "@hooks/useCart";
@@ -20,10 +16,14 @@ import { FiRefreshCcw } from "react-icons/fi";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const MobileFooter = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { toggleCartDrawer, toggleCategoryDrawer, categories } = useContext(SidebarContext);
+  const {
+    toggleCartDrawer,
+    toggleCategoryDrawer,
+    categories,
+    setLoginModalOpen,
+  } = useContext(SidebarContext);
   const { totalItems } = useCart();
-  const { getCategorySlug, showingTranslateValue, findCategoryByIdentifier } = useUtilsFunction();
+  const { getCategorySlug, findCategoryByIdentifier } = useUtilsFunction();
 
   const {
     state: { userInfo },
@@ -40,14 +40,13 @@ const MobileFooter = () => {
   const lblHome = t('homeBTN');
 
   // מציאת קטגוריית המבצעים
-  const offersCategory = categories?.[0]?.children 
+  const offersCategory = categories?.[0]?.children
     ? findCategoryByIdentifier(categories[0].children, "מבצעים")
     : null;
   const offersCategorySlug = offersCategory ? getCategorySlug(offersCategory) : "מבצעים";
 
   return (
     <>
-      <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       <div className="flex flex-col h-full justify-between align-middle bg-white rounded cursor-pointer overflow-y-scroll grow scrollbar-hide w-full">
         <CategoryDrawer className="w-6 h-6 drop-shadow-xl" />
       </div>
@@ -129,7 +128,7 @@ const MobileFooter = () => {
             ) : (
               <button
                 aria-label={lblLogin}
-                onClick={() => setModalOpen(true)}
+                onClick={() => setLoginModalOpen(true)}
                 className="grid grid-cols-1 gap-0.5 items-center justify-center h-full"
               >
                 <div className="w-[6vw] h-[6vw] min-w-[24px] min-h-[24px] max-w-[32px] max-h-[32px] flex items-center justify-center mx-auto">

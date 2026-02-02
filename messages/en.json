@@ -1,6 +1,5 @@
 {
   "/=================*WhatsApp Button*=================/": "",
-
   "whatsappDefaultMessage": "Hello, I came from Tmarim Betomer website and would like to get professional help and consultation",
   "whatsappCategoryMessage": "Hello, I came from Tmarim Betomer website and would like to get help regarding {categoryName} category",
   "whatsappSubCategoryMessage": "Hello, I came from Tmarim Betomer website and would like to get help regarding {categoryName} - {subCategoryName}",
@@ -21,9 +20,19 @@
 
   "/=================* Titles * =================/": "",
   "loginTitle": "Login",
+  "loginRegularTab": "Private customers",
+  "loginBusinessTab": "Business / Institutional",
   "registerTitle": "Register",
   "resetPasswordTitle": "Reset Password",
+  "resetPasswordSubtitle": "Reset your password",
+  "forgetPasswordRedirecting": "Redirecting to login in a few seconds...",
+  "newPasswordPlaceholder": "New password",
+  "passwordRequired": "You must specify a password",
+  "passwordMinLength": "Password must have at least 8 characters",
   "recoverPasswordTitle": "Recover Password",
+  "rivhitCustomerNumber": "Rivhit customer number",
+  "businessCustomer": "Business/Institutional customer?",
+  "hideBusinessFields": "Hide business fields",
   "signingUpSuccessTitle": "Registration successful",
   "beforeStartTitle": "Second before we start",
   "pleaseNotePopupTitle": "Please note",
@@ -36,9 +45,8 @@
   "blogsTitle": "Our Blog",
   "allBlogs": "All Articles",
   "blogsSubtitle": "Recipes, articles and news on various topics",
-  
-  "/=================* Cashier * =================/": "",
 
+  "/=================* Cashier * =================/": "",
   "cashierDesk": "Cashier Page",
   "cashierDeskTitle": "Cashier Page - Create a New Order",
   "cashierWelcome": "Welcome {name}, create a new order for a customer",
@@ -79,7 +87,6 @@
   "voiceSearchInitializing": "Initializing...",
 
   "/=================*Top Menu*=================/": "",
-  
   "Top-Search": "Search for product (e.g. fish, apple, oil)",
   "HOME": "Home",
   "main": "Main",
@@ -104,7 +111,6 @@
   "sliderH1": "POS and E-Commerce Website both controlled from a single easy to use Administration Panel",
   "Ckeckout": "Checkout",
   "purchasedProducts": "My Products",
-
   "search-placeholder": "Search for products (e.g. fish, apple, oil)",
   "showAll": "Show all the results",
   "lastOffers": "Last Offers",
@@ -133,20 +139,15 @@
   "openTheWindowAgain": "Open the window again to start talking",
 
   "/=================*Top Slider*=================/": "",
-
   "Slider1Title": "The Best Quality Products Guaranteed!",
   "Slider1description": "Dramatically facilitate effective total linkage for go forward processes...",
-
   "Slider2Title": "Best Different Type of Grocery Store",
   "Slider2description": "Quickly aggregate empowered networks after emerging products...",
-
   "Slider3Title": "Quality Freshness Guaranteed!",
   "Slider3description": "Intrinsicly fashion performance based products rather than accurate benefits...",
-
   "Slider-btn": "Shop Now",
 
   "/=================*page*==================/": "",
-
   "PersonalArea": "Personal area",
   "offer-page": "Offer",
   "checkout-page": "Checkout",
@@ -170,7 +171,6 @@
   "inactive": "Inactive",
 
   "/=================*Banner*=================/": "",
-
   "Banner-title-span-text": "100% Natural Quality",
   "Banner-title-text": "Organic Porduct",
   "Banner-paragraph-text": "See Our latest discounted products from here and get a special",
@@ -178,18 +178,15 @@
   "Banner-btn-text": "Shop Now",
 
   "/=================*Featured Categories*=================/": "",
-
   "Featured-title": "Featured Categories",
   "Featured-sub-title": "Choose your necessary products from this feature categories.",
   "showAllSubCategories": "Sub-categories",
 
   "/=================*popular products*=================/": "",
-
   "popular-products-title": "Popular Products for Daily Shopping",
   "popular-products-sub-title": "See all our popular products in this week. You can choose your daily needs products from this list and get some special offer with free shipping.",
 
   "/=================*promotional banner*=================/": "",
-
   "promotional-banner-title-span-text": "Organic Products and Food",
   "promotional-banner-title-text": "Quick Delivery to",
   "promotional-banner-title-span": "Your Home",
@@ -197,56 +194,44 @@
   "promotional-banner-link-text": "Download App",
 
   "/=================*Discounted Products*=================/": "",
-
   "discounted-products-title": "Latest Discounted Products",
   "discounted-products-paragraph-text": "See Our latest discounted products below. Choose your daily needs from here and get a special discount with free shipping.",
 
   "/=================*Feature Promo*=================/": "",
-
   "featurePromo1-title": "Free Shipping",
   "featurePromo1-info": "From $500.00",
-
   "featurePromo2-title": "Support 24/7",
   "featurePromo2-info": "At Anytime",
-
   "featurePromo3-title": "Secure Payment",
   "featurePromo3-info": "Totally Safe",
-
   "featurePromo4-title": "Latest Offer",
   "featurePromo4-info": "Upto 20% Off",
 
   "/=================*Footer Top*=================/": "",
-
   "footer-top-title": "Get Your Daily Needs From Our MNM יבוא שיווק והפצה Store",
   "footer-top-paragraph-text": "There are many products you will find our shop, Choose your daily necessary product from our MNM יבוא שיווק והפצה shop and get some special offer.",
 
   "/=================*Footer *=================/": "",
-
   "footer-menu-title": "Company",
   "footer-about-us": "About Us",
   "footer-contact-us": "Contact Us",
   "footer-careers": "Careers",
   "footer-news": "Latest News",
-
   "footer-top-category": "Top Category",
   "footer-top-category-fish-meat": "Fish & Meat",
   "footer-top-category-soft-drinks": "Soft Drinks",
   "footer-top-category-baby-care": "Baby Care",
   "footer-top-category-beauty-health": " Beauty & Health",
-
   "footer-my-account-title": "My Account",
   "footer-my-account-dashboard": "Dashboard",
   "footer-my-account-myOrders": "My Orders",
   "footer-my-account-recentOrders": "Recent Orders",
   "footer-my-account-updatedProfile": "Updated Profile",
-
   "footer-address": " 987 Andre Plain Suite High Street 838,  Lake Hestertown, USA",
   "footer-tell": "Tell: 02.356.1666",
   "footer-email": "Email: ccruidk@test.com",
-
   "footer-follow-us": "Follow Us",
   "footer-call-us": "Call Us Today!",
-
   "categories": "Categories",
   "home": "Home",
   "cart": "Cart",
@@ -263,7 +248,6 @@
   "homeBTN": "Home",
 
   "/=================* About Us* =================/": "",
-
   "about-page-title": "About Us",
   "about-section-title": "Welcome to our MNM יבוא שיווק והפצה",
   "about-section-top-paragraph1": " Holisticly seize parallel metrics and functional ROI.Seamlessly revolutionize error-free internal or organic sources before effective scenarios. Progressively incentivize state of the art applications for efficient intellectual capital. Credibly leverage existing distinctive mindshare through cutting-edge schemas. Proactively procrastinate team building paradigms coordinate client-centric total transparent internal.",
@@ -284,21 +268,15 @@
   "lead-developer": "Lead Developer",
 
   "/=================* Contact Us* =================/": "",
-
   "contact-page-title": "Contact Us",
-
   "contact-page-box1-title": "Email Us",
   "contact-page-box1-info": "Interactively grow empowered for process-centric total linkage.",
-
   "contact-page-box2-title": "call Us",
   "contact-page-box2-info": "Distinctively disseminate focused solutions clicks-and-mortar ministate.",
-
   "contact-page-box3-title": "Location",
   "contact-page-box3-info": "Cecilia Chapman, 561-4535 Nulla LA, United States 96522",
-
   "contact-page-form-title": "For any suppoort just send your query",
   "contact-page-form-paragraph": "Collaboratively promote client-focused convergence vis-a-vis customer directed alignments via plagiarize strategic users and standardized infrastructures.",
-
   "contact-page-form-input-name": "Your Name",
   "contact-page-form-plaholder-name": "Enter Your Name",
   "contact-page-form-input-email": "Your Email",
@@ -310,7 +288,6 @@
   "contact-page-form-send-btn": "Send Message",
 
   "/=================* Single Product More Info* =================/": "",
-
   "moreInfo": "More Info",
   "readMore": "Read More",
   "showLess": "Show Less",
@@ -327,7 +304,6 @@
   "productStockOut": "Product is out of stock",
 
   "/=================* Cart Drawer * =================/": "",
-
   "shoppingCartDrawerTitle": "Shopping Cart",
   "closeBtn": "Close",
   "cartEmptyTitle": "Your cart is empty",
@@ -343,7 +319,6 @@
   "exceedingMaxQuantity": "Maximum allowed quantity is {limit}",
 
   "/=================* Login Popup * =================/": "",
-
   "loginBoxText": "Login with your email and password",
   "email": "Email",
   "phone": "Tel",
@@ -351,7 +326,7 @@
   "forgotPassword": "Forgot password?",
   "resetPassword": "Reset Your Password",
   "registerEmail": "Your Register Email",
-  "recoverPassword":"Recover password",
+  "recoverPassword": "Recover password",
   "loginBtn": "Login",
   "or": "OR",
   "orGoogle": "or login with Google",
@@ -365,7 +340,6 @@
   "loginSuccess": "Login Success!",
 
   "/=================* Signing Up * =================/": "",
-
   "signingUp": "Signing Up",
   "createAccount": "Create an account",
   "name": "First Name",
@@ -376,7 +350,6 @@
   "passwordsDoNotMatch": "Passwords do not match",
   "confirmPassword": "Confirm Password",
   "newsletterOptInLabel": "I want to receive updates and offers by email",
-
   "items": "Items",
   "registerMessage1": "Please access",
   "registerMessage2": "your email to verify your registration. If you did not receive an email, please check the spam box.",
@@ -393,7 +366,6 @@
   "customerAlreadyRegistered": "This email is already registered. Please log in before making a purchase.",
 
   "/=================* checkout * =================/": "",
-
   "checkout": "Checkout",
   "deliveryDetails": "Delivery Details",
   "checkoutDescription": "this is checkout page",
@@ -411,7 +383,6 @@
   "firstName": "First Name",
   "emailAddress": "Email address",
   "phoneNumber": "Phone Number",
-
   "shippingDetails": "Shipping Details",
   "streetAddress": "Street address",
   "city": "City",
@@ -422,10 +393,8 @@
   "cashOnDelivery": "Cash On Delivery",
   "creditCard": "Credit Card",
   "payPal": "PayPal",
-
   "continueShoppingBtn": "Continue Shopping",
   "confirmOrderBtn": "Confirm Order",
-
   "applyBtn": "Apply",
   "couponCode": "Input your coupon code",
   "couponError": "Please Input a Coupon Code!",
@@ -438,12 +407,10 @@
   "couponRemovedDueToHighDiscount": "The coupon has been removed because the discount is higher than the total cost",
   "couponTooHighForTotal": "This coupon is higher than the total amount, add items to the cart and try again",
   "subtotal": "Subtotal",
-
   "discount": "Discount",
   "totalCost": "TOTAL COST",
   "orderItems": "Order Items",
   "orderCosts": "Order Costs",
-
   "shippingMethod": "Shipping Method",
   "changeAddress": "Change Address",
   "noItemAdded": "No Item Added Yet!",
@@ -451,15 +418,12 @@
   "cannotDeliver": "There is no deliver to your address",
   "nextAvailable": "The option to deliver to your address will be available from",
   "deliveriesNotAvailable": "Deliveries are not available now",
-
   "likutMessage": "Please note: there is a 10% increase in price for the collection service",
-
   "thankYouForPurchase": "Thank you for shopping at MNM Import & Marketing!",
   "orderCompletedSuccessfully": "Order Completed Successfully",
   "orderCompletedDescription": "Your order has been completed successfully! Thank you for choosing us. Your quality dates are on their way to you.",
   "orsderInProcess": "Your order is being processed. At this time, you will receive an email summary of your order.",
   "viewOrder": "View Order",
-
   "purchaseFailed": "Purchase Failed!",
   "orderFailedDescription": "Your order has failed. Please try again or contact us for help. We are here to assist you.",
   "orderFaildText": "Your payment has been declined, please try again.",
@@ -469,7 +433,6 @@
   "mustBeLoggedIn": "You must be logged in to create a credit order",
   "customerNote": "Order notes (optional)",
   "typeHere": "Type here...",
-
   "ok": "OK",
   "deliveryMessagePart1": "We'll try to deliver your shipment today ",
   "deliveryMessagePart2": "by 22:00, or at the latest the next day in cases of overload.",
@@ -477,13 +440,9 @@
   "PickupMessagePart1": "We will try to collect your order today ",
   "PickupMessagePart2": "by 16:00, or at the latest the next day in cases of overload.",
   "PickupMessagePart3": "We will try to collect your order tomorrow ",
-  
-
   "noOptionToSearchInCheckoutPage": "It is not possible to add products on the payment page",
-  
   "storeClose": "Sorry, the website is closed now.",
   "storeCloseMessage": "The site is currently closed for orders due to load. Please try again in a few hours.",
-
   "callOnArrival": "The courier will contact upon arrival",
   "leaveAtDoor": "The courier will leave the delivery at the door",
   "deliveryAvailable": "Delivery available to your address",
@@ -502,7 +461,6 @@
   "minimumPurchaseAmount": "Minimum purchase {amount}₪",
 
   "/=================* Invoice * =================/": "",
-
   "invoice": "Invoice",
   "order": "Order",
   "orderConfirmationDescription": "Order Confirmation - Your order details",
@@ -517,7 +475,6 @@
   "itemPrice": "Item Price",
   "amount": "Amount",
   "paymentMethod": " Payment Method",
-
   "totalAmount": "Total Amount",
   "downloadInvoice": "Download Invoice",
   "printInvoice": "Print Invoice",
@@ -527,7 +484,6 @@
   "orderReceivedMsg": "Your order have been received!",
 
   "/=================* My account * =================/": "",
-
   "dashboard": "Dashboard",
   "dashboardDescription": "Dashboard - Manage your account and orders",
   "myOrders": "My Orders",
@@ -535,7 +491,6 @@
   "changePassword": "Change Password",
   "logout": "Logout",
   "noOrder": "You Have no order Yet!",
-
   "action": "ACTION",
   "id": "ID",
   "orderTime": "ORDERTIME",
@@ -545,11 +500,9 @@
   "Status": "Status/Collector name",
   "total": "TOTAL",
   "details": "Details",
-
   "Cash": "Cash",
   "Card": "Card",
   "Credit": "Credit",
-
   "OrderStatus": "Status",
   "Delivered": "Delivered",
   "Pending": "Pending",
@@ -557,22 +510,17 @@
   "processing": "Processing",
   "Cancel": "Cancel",
   "payNow": "Pay Now by Credit Card",
-  
   "fileToBig": "The image size exceeds 3MB.",
   "username_at_least_two_words": "First name and last name must be entered!",
-
   "next": "Next",
   "previous": "Previous",
-
   "dashboardText": "This is User Dashboard",
   "totalOrder": "Total Order",
   "pendingOrder": "Pending Order",
   "ProcessingOrder": "Processing Order",
   "completeOrder": "Complete Order",
-
   "recentOrder": "Recent Order",
   "notes": "Notes",
-
   "photo": "Photo",
   "fullName": "Full Name",
   "yourAddress": "Your Address",
@@ -586,20 +534,17 @@
   "yourNewPassword": "Your New Password",
   "changePasswordBtn": "Change Password",
   "success": "Profile Update Successfully",
-
   "street": "Street",
   "houseNumber": "House Number",
-  "apartmentNumber":  "Apartment Number",
+  "apartmentNumber": "Apartment Number",
   "floor": "Floor",
   "entryCode": "Entry Code",
   "postalCode": "Postal Code",
   "optional": "(Optional)",
-
   "noOptions": "No Options",
   "selectCity": "Select a city",
 
   "/=================* Search * =================/": "",
-
   "loadMoreBtn": "Load More",
   "totalI": "Total",
   "itemsFound": "items Found",
@@ -610,7 +555,6 @@
   "noBlogsFound": "No blogs found",
   "search": "Search",
   "searchDescription": "Product Search - Find the perfect dates and products for you",
-
   "sortBy": "Sort By",
   "sortAlphabetical": "Product Name",
   "sortPriceLowToHigh": "Price (Low to High)",
@@ -637,7 +581,6 @@
   "Faq-question8-ans": "Distinctively initiate error-free channels with highly efficient ROI. Intrinsicly envisioneer world-class data via best-of-breed best practices. Efficiently enable empowered e-tailers after cross-unit services. Uniquely expedite seamless e-tailers via cooperative interfaces. Monotonectally myocardinate customer directed meta-services whereas error-free scenarios.",
 
   "/=================* privacy-policy * =================/": "",
-
   "privacy-policy-update-date": "Last updated: February 15, 2022  ",
   "privacy-policy-update-date-docs1": "At MNM יבוא שיווק והפצה, accessible from MNM יבוא שיווק והפצה dot com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by MNM יבוא שיווק והפצה and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, and any other information you may choose to provide. When you register for an Account, we may ask for your contact information, including items such as name, company name, address, email address, and telephone number.",
   "privacy-policy-update-date-docs2": "This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in MNM יבוא שיווק והפצה.we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, we may ask for your contact information, including items such as name, company name, address, email address, and telephone number. This policy is not applicable to any information collected offline or via channels other than this website. Our Privacy Policy was created with the help of the Free Privacy Policy Generator.",
@@ -723,8 +666,8 @@
   "thresholdGetItemDescription": "With purchases over {threshold}₪ get {rewardName} as a gift!",
   "rewardOffersAvailable": "Reward offers available",
   "giftsAvailable": "gifts available",
-    "thresholdDiscount": "Purchase Discount",
-    "couponDiscount": "Coupon Discount",
+  "thresholdDiscount": "Purchase Discount",
+  "couponDiscount": "Coupon Discount",
 
   "/=================* Threshold Discount Slider * =================/": "",
   "unlockDiscount": "Unlock Special Discount!",

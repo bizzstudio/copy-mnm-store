@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Hotjar from '@hotjar/browser';
-import Script from "next/script";
 import { NextIntlClientProvider } from 'next-intl';
 import Head from "next/head";
 

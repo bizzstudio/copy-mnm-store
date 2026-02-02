@@ -23,14 +23,16 @@ export const getUserPrice = (product, userInfo = null) => {
         const userPriceListId = String(userInfo.priceList); // המרה למחרוזת להשוואה
 
         // חיפוש המחיר המתאים למחירון של המשתמש
-        // priceList תמיד מגיע כאובייקט populated עם _id
         const userPrice = product.prices.find(p => {
-            if (!p.priceList || typeof p.priceList !== 'object' || !p.priceList._id) {
-                return false;
-            }
+            if (!p.priceList) return false;
 
-            // השוואה לפי _id
-            return String(p.priceList._id) === userPriceListId;
+            // תומך גם ב-populated object וגם ב-ObjectId/string
+            const priceListId =
+                typeof p.priceList === 'object' && p.priceList._id
+                    ? p.priceList._id
+                    : p.priceList;
+
+            return String(priceListId) === userPriceListId;
         });
 
         if (userPrice) {
@@ -46,10 +48,9 @@ export const getUserPrice = (product, userInfo = null) => {
     }
 
     // אם אין משתמש מחובר או לא נמצא מחירון מתאים - נחפש מחירון ברירת מחדל
-    // priceList תמיד מגיע כאובייקט populated עם isDefault
-    const defaultPrice = product.prices.find(p => 
-        p.priceList && 
-        typeof p.priceList === 'object' && 
+    const defaultPrice = product.prices.find(p =>
+        p.priceList &&
+        typeof p.priceList === 'object' &&
         p.priceList.isDefault === true
     );
 

@@ -2,20 +2,34 @@
 import OfferServices from "@services/OfferServices";
 import CategoryServices from "@services/CategoryServices";
 import React, { useState, useMemo, createContext, useEffect } from "react";
+import { useRouter } from "next/router";
 // import useNotification from "@hooks/useNotification";
 
 // create context
 export const SidebarContext = createContext();
 
 export const SidebarProvider = ({ children }) => {
+  const router = useRouter();
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [offers, setOffers] = useState([]); // משתנה לשמירת המבצעים
   const [categories, setCategories] = useState([]); // משתנה לשמירת הקטגוריות
   const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  const VALID_LOGIN_METHODS = ["login-regular", "login-bussines", "register", "reset-password"];
+
+  // רק פתיחה: אם יש method תקין ב-URL – פותחים את המודאל
+  useEffect(() => {
+    if (!router.isReady) return;
+    const method = router.query.method;
+    if (typeof method === "string" && VALID_LOGIN_METHODS.includes(method)) {
+      setLoginModalOpen(true);
+    }
+  }, [router.isReady, router.query.method]);
 
   // שליפת המבצעים פעם אחת כשאתר נטען
   const fetchOffers = async () => {
@@ -85,6 +99,8 @@ export const SidebarProvider = ({ children }) => {
       isModalOpen,
       toggleModal,
       closeModal,
+      loginModalOpen,
+      setLoginModalOpen,
       currentPage,
       setCurrentPage,
       handleChangePage,
@@ -97,7 +113,7 @@ export const SidebarProvider = ({ children }) => {
       refreshCategories,
     }),
 
-    [cartDrawerOpen, categoryDrawerOpen, isModalOpen, currentPage, isLoading, offers, categories, categoriesLoading]
+    [cartDrawerOpen, categoryDrawerOpen, isModalOpen, loginModalOpen, currentPage, isLoading, offers, categories, categoriesLoading]
   );
 
   return (

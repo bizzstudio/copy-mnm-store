@@ -17,11 +17,22 @@
   "whatsappDashboardMessage": "שלום, הגעתי מהאתר של MNM יבוא שיווק והפצה ואשמח לקבל עזרה ומידע לגבי החשבון שלי",
   "whatsappMyOrdersMessage": "שלום, הגעתי מהאתר של MNM יבוא שיווק והפצה ואשמח לקבל עזרה ומידע לגבי ההזמנות שלי",
   "whatsappMyDocumentsMessage": "שלום, הגעתי מהאתר של MNM יבוא שיווק והפצה ואשמח לקבל עזרה ומידע לגבי המסמכים שלי",
+
   "/=================* Titles * =================/": "",
   "loginTitle": "כניסה",
+  "loginRegularTab": "לקוחות פרטיים",
+  "loginBusinessTab": "לקוחות עסקיים/מוסדיים",
   "registerTitle": "הרשמה",
   "resetPasswordTitle": "איפוס סיסמה",
+  "resetPasswordSubtitle": "איפוס של הסיסמה שלך",
+  "forgetPasswordRedirecting": "הינך מועבר לדף הכניסה בעוד מספר שניות...",
+  "newPasswordPlaceholder": "סיסמה חדשה",
+  "passwordRequired": "יש להזין סיסמה",
+  "passwordMinLength": "הסיסמה חייבת להכיל לפחות 8 תווים",
   "recoverPasswordTitle": "שחזור סיסמה",
+  "rivhitCustomerNumber": "מספר לקוח בריווחית",
+  "businessCustomer": "לקוח עסקי/מוסדי?",
+  "hideBusinessFields": "הסתר שדות עסקיים",
   "signingUpSuccessTitle": "הרשמה בוצעה בהצלחה",
   "beforeStartTitle": "שנייה לפני שמתחילים",
   "pleaseNotePopupTitle": "שימו לב",
@@ -34,8 +45,8 @@
   "blogsTitle": "הבלוג שלנו",
   "allBlogs": "כל המאמרים",
   "blogsSubtitle": "מתכונים, מאמרים וחדשות בנושאים שונים",
+
   "/=================* Cashier * =================/": "",
-  
   "cashierDesk": "עמוד קופה",
   "cashierDeskTitle": "עמוד קופה - יצירת הזמנה חדשה",
   "cashierWelcome": "ברוך הבא {name}, צור הזמנה חדשה עבור לקוח",
@@ -74,7 +85,7 @@
   "close": "סגור",
   "backToHomePgae": "חזרה לדף הבית",
   "voiceSearchInitializing": "מאתחל...",
-  
+
   "/=================*Top Menu*=================/": "",
   "Top-Search": "חיפוש מוצרים",
   "HOME": "ראשי",
@@ -83,17 +94,17 @@
   "About Us": "אודותינו",
   "Products": "מוצרים",
   "FAQ": "שאלות נפוצות",
-"faqDescription": "שאלות נפוצות - תשובות לשאלות על מוצרים, משלוחים ותשלומים",
+  "faqDescription": "שאלות נפוצות - תשובות לשאלות על מוצרים, משלוחים ותשלומים",
   "Pages": "עמודים",
   "Offers": "מבצעים",
-"offersDescription": "מבצעים - הצעות מיוחדות על תמרים ומוצרי טבע",
+  "offersDescription": "מבצעים - הצעות מיוחדות על תמרים ומוצרי טבע",
   "Categories": "קטגוריות",
   "All Categories": "קטגוריות",
   "unknownCategory": "קטגוריה לא ידועה",
   "unknownSubCategory": "תת-קטגוריה לא ידועה",
   "Contact Us": "צרו קשר",
   "Privacy Policy": "מדיניות פרטיות",
-"privacyPolicyDescription": "מדיניות פרטיות - הגנה על המידע האישי שלכם",
+  "privacyPolicyDescription": "מדיניות פרטיות - הגנה על המידע האישי שלכם",
   "Terms & Conditions": "תנאים והגבלות",
   "My account": "החשבון שלי",
   "Login": "התחברות",
@@ -108,7 +119,8 @@
   "accessibility": "נגישות",
   "hello": "שלום",
   "termsAndConditions": "תקנון אתר",
-"termsAndConditionsDescription": "תקנון אתר - תנאים והגבלות לשימוש באתר",
+  "termsAndConditionsDescription": "תקנון אתר - תנאים והגבלות לשימוש באתר",
+
   "/=================* Voice Search * =================/": "",
   "voiceSearchTooltip": "אין לך כוח לחפש מוצרים?\nפשוט תגיד/י לנו מה את/ה רוצה!",
   "voiceSearchTitle": "הוספת מוצרים באמצעות תמלול קולי",
@@ -130,16 +142,12 @@
   "openTheWindowAgain": "פתח/י את החלון שוב כדי להתחיל לדבר",
 
   "/=================*Top Slider*=================/": "",
-
   "Slider1Title": "The Best Quality Products Guaranteed!",
   "Slider1description": "Dramatically facilitate effective total linkage for go forward processes...",
-
   "Slider2Title": "Best Different Type of Grocery Store",
   "Slider2description": "Quickly aggregate empowered networks after emerging products...",
-
   "Slider3Title": "Quality Freshness Guaranteed!",
   "Slider3description": "Intrinsicly fashion performance based products rather than accurate benefits...",
-
   "Slider-btn": "Shop Now",
 
   "/=================*page*==================/": "",
@@ -153,7 +161,7 @@
   "terms-and-conditions-page": "תנאים והגבלות",
   "not-found-page": "404",
   "notFoundTitle": "אופס! המוצר שחיפשת לא נמצא",
-"notFoundDescription": "העמוד שחיפשתם לא נמצא. חזרו לעמוד הבית או חפשו את התמרים והמוצרים שלנו.",
+  "notFoundDescription": "העמוד שחיפשתם לא נמצא. חזרו לעמוד הבית או חפשו את התמרים והמוצרים שלנו.",
   "backToHome": "חזרה לחנות",
 
   "/=================*Offer Card*=================/": "",
@@ -166,7 +174,6 @@
   "inactive": "פג תוקף",
 
   "/=================*Banner*=================/": "",
-
   "Banner-title-span-text": "100% Natural Quality",
   "Banner-title-text": "Organic Porduct",
   "Banner-paragraph-text": "See Our latest discounted products from here and get a special",
@@ -174,18 +181,15 @@
   "Banner-btn-text": "Shop Now",
 
   "/=================*Featured Categories*=================/": "",
-
   "Featured-title": "Featured Categories",
   "Featured-sub-title": "Choose your necessary products from this feature categories.",
   "showAllSubCategories": "תתי קטגוריה",
 
   "/=================*popular products*=================/": "",
-
   "popular-products-title": "Popular Products for Daily Shopping",
   "popular-products-sub-title": "See all our popular products in this week. You can choose your daily needs products from this list and get some special offer with free shipping.",
 
   "/=================*promotional banner*=================/": "",
-
   "promotional-banner-title-span-text": "Organic Products and Food",
   "promotional-banner-title-text": "Quick Delivery to",
   "promotional-banner-title-span": "Your Home",
@@ -193,53 +197,42 @@
   "promotional-banner-link-text": "Download App",
 
   "/=================*Discounted Products*=================/": "",
-
   "discounted-products-title": "Latest Discounted Products",
   "discounted-products-paragraph-text": "See Our latest discounted products below. Choose your daily needs from here and get a special discount with free shipping.",
 
   "/=================*Feature Promo*=================/": "",
-
   "featurePromo1-title": "Free Shipping",
   "featurePromo1-info": "From $500.00",
-
   "featurePromo2-title": "Support 24/7",
   "featurePromo2-info": "At Anytime",
-
   "featurePromo3-title": "Secure Payment",
   "featurePromo3-info": "Totally Safe",
-
   "featurePromo4-title": "Latest Offer",
   "featurePromo4-info": "Upto 20% Off",
 
   "/=================*Footer Top*=================/": "",
-
   "footer-top-title": "Get Your Daily Needs From Our MNM יבוא שיווק והפצה Store",
   "footer-top-paragraph-text": "There are many products you will find our shop, Choose your daily necessary product from our MNM יבוא שיווק והפצה shop and get some special offer.",
 
   "/=================*Footer *=================/": "",
-
   "footer-menu-title": "Company",
   "footer-about-us": "About Us",
   "footer-contact-us": "Contact Us",
   "footer-careers": "Careers",
   "footer-news": "Latest News",
-
   "footer-top-category": "Top Category",
   "footer-top-category-fish-meat": "Fish & Meat",
   "footer-top-category-soft-drinks": "Soft Drinks",
   "footer-top-category-baby-care": "Baby Care",
   "footer-top-category-beauty-health": " Beauty & Health",
-
   "footer-my-account-title": "My Account",
   "footer-my-account-dashboard": "Dashboard",
   "footer-my-account-myOrders": "ההזמנות שלי",
   "footer-my-account-recentOrders": "Recent Orders",
   "footer-my-account-updatedProfile": "Updated Profile",
-
   "footer-address": " 987 Andre Plain Suite High Street 838,  Lake Hestertown, USA",
   "footer-tell": "Tell: 02.356.1666",
   "footer-email": "Email: ccruidk@test.com",
-
   "footer-follow-us": "עקבו אחרינו",
   "footer-call-us": "התקשרו אלינו היום!",
   "categories": "קטגוריות",
@@ -248,9 +241,9 @@
   "profile": "פרופיל",
   "login": "כניסה",
   "contactUs": "צרו קשר",
-"contactUsDescription": "צרו קשר - נשמח לעזור לכם עם כל שאלה או בקשה",
+  "contactUsDescription": "צרו קשר - נשמח לעזור לכם עם כל שאלה או בקשה",
   "aboutUs": "אודותינו",
-"aboutUsDescription": "אודותינו - הכירו את הסיפור שלנו ואת המחויבות שלנו לאיכות",
+  "aboutUsDescription": "אודותינו - הכירו את הסיפור שלנו ואת המחויבות שלנו לאיכות",
   "deliveriesPolicy": "מדיניות משלוחים",
   "allProducts": "כל המוצרים",
   "deals": "מבצעים",
@@ -258,7 +251,6 @@
   "homeBTN": "ראשי",
 
   "/=================* About Us* =================/": "",
-
   "about-page-title": "About Us",
   "about-section-title": "Welcome to our MNM יבוא שיווק והפצה",
   "about-section-top-paragraph1": " Holisticly seize parallel metrics and functional ROI.Seamlessly revolutionize error-free internal or organic sources before effective scenarios. Progressively incentivize state of the art applications for efficient intellectual capital. Credibly leverage existing distinctive mindshare through cutting-edge schemas. Proactively procrastinate team building paradigms coordinate client-centric total transparent internal.",
@@ -279,21 +271,15 @@
   "lead-developer": "Lead Developer",
 
   "/=================* Contact Us* =================/": "",
-
   "contact-page-title": "Contact Us",
-
   "contact-page-box1-title": "Email Us",
   "contact-page-box1-info": "Interactively grow empowered for process-centric total linkage.",
-
   "contact-page-box2-title": "call Us",
   "contact-page-box2-info": "Distinctively disseminate focused solutions clicks-and-mortar ministate.",
-
   "contact-page-box3-title": "Location",
   "contact-page-box3-info": "Cecilia Chapman, 561-4535 Nulla LA, United States 96522",
-
   "contact-page-form-title": "For any suppoort just send your query",
   "contact-page-form-paragraph": "Collaboratively promote client-focused convergence vis-a-vis customer directed alignments via plagiarize strategic users and standardized infrastructures.",
-
   "contact-page-form-input-name": "שם פרטי",
   "contact-page-form-plaholder-name": "הכנס שם פרטי",
   "contact-page-form-input-email": "אימייל",
@@ -305,7 +291,6 @@
   "contact-page-form-send-btn": "שליחה",
 
   "/=================* Single Product More Info* =================/": "",
-
   "moreInfo": "מידע נוסף",
   "readMore": "קראו עוד",
   "showLess": "הצג פחות",
@@ -322,7 +307,6 @@
   "productStockOut": "המוצר אזל מהמלאי",
 
   "/=================* Cart Drawer * =================/": "",
-
   "shoppingCartDrawerTitle": "עגלת קניות",
   "closeBtn": "סגור",
   "cartEmptyTitle": "העגלה עדיין ריקה",
@@ -338,7 +322,6 @@
   "exceedingMaxQuantity": "הכמות המקסימלית המורשית היא {limit}",
 
   "/=================* Login Popup * =================/": "",
-
   "loginBoxText": "התחברו לחשבון עם אימייל וסיסמה",
   "email": "אימייל",
   "phone": "טלפון",
@@ -346,7 +329,7 @@
   "forgotPassword": "שכחת סיסמה?",
   "resetPassword": "אפס/י את הסיסמה שלך",
   "registerEmail": "האימייל שנרשמת איתו",
-  "recoverPassword":"שחזור סיסמה",
+  "recoverPassword": "שחזור סיסמה",
   "loginBtn": "כניסה",
   "or": "או",
   "orGoogle": "או היכנס/י עם גוגל",
@@ -360,18 +343,16 @@
   "loginSuccess": "התחברת בהצלחה!",
 
   "/=================* Signing Up * =================/": "",
-
   "signingUp": "הרשמה",
   "createAccount": "יצירת חשבון עם אימייל וסיסמה",
   "name": "שם פרטי",
-  "lastName":"שם משפחה",
+  "lastName": "שם משפחה",
   "registerSuccess": "ההרשמה בוצעה בהצלחה!",
   "hey": "היי",
   "initializeAddressDes": "רגע לפני ההזמנה, עליך למלא את כל השדות כדי לסיים את תהליך ההרשמה. (בין אם אתם רוצים איסוף עצמי או משלוח).",
   "passwordsDoNotMatch": "הסיסמאות לא תואמות",
   "confirmPassword": "אימות סיסמה",
   "newsletterOptInLabel": "אני רוצה לקבל עדכונים ומבצעים במייל",
-
   "items": "פריטים",
   "registerMessage1": "נא לגשת",
   "registerMessage2": "לתיבת האימייל שלך לבצע אימות הרשמה. במידה ולא קיבלת אימייל נא לבדוק בתיבת הספאם.",
@@ -388,7 +369,6 @@
   "customerAlreadyRegistered": "האימייל כבר רשום במערכת. יש להתחבר לפני הרכישה.",
 
   "/=================* checkout * =================/": "",
-
   "checkout": "תשלום",
   "deliveryDetails": "פרטי משלוח",
   "checkoutDescription": "דף תשלום",
@@ -406,7 +386,6 @@
   "firstName": "First Name",
   "emailAddress": "Email address",
   "phoneNumber": "Phone Number",
-
   "shippingDetails": "Shipping Details",
   "streetAddress": "Street address",
   "city": "עיר",
@@ -417,10 +396,8 @@
   "cashOnDelivery": "Cash On Delivery",
   "creditCard": "כרטיס אשראי",
   "payPal": "PayPal",
-
   "continueShoppingBtn": "Continue Shopping",
   "confirmOrderBtn": "Confirm Order",
-
   "applyBtn": "Apply",
   "couponCode": "הכנס את קוד הקופון שלך",
   "couponError": "אנא הכנס קוד קופון",
@@ -433,12 +410,10 @@
   "couponRemovedDueToHighDiscount": "הקופון הוסר מאחר וההנחה גבוהה מהעלות הכוללת",
   "couponTooHighForTotal": "קופון זה יותר גבוה מהסכום הכולל, יש להוסיף פריטים לעגלה ולנסות שוב",
   "subtotal": "Subtotal",
-
   "discount": "הנחה",
   "totalCost": "TOTAL COST",
   "orderItems": "סיכום הזמנה",
   "orderCosts": "סיכום עלויות",
-
   "shippingMethod": "Shipping Method",
   "changeAddress": "שינוי כתובת",
   "noItemAdded": "עדיין לא נוספו פריטים",
@@ -470,7 +445,6 @@
   "PickupMessagePart2": "עד השעה 16:00, או לכל המאוחר יום למחרת במקרי עומס.",
   "PickupMessageThursdayAfter14Part2": "עד השעה 14:00.",
   "PickupMessagePart3": "נשתדל ללקט את ההזמנה שלך מחר ",
-  
   "noOptionToSearchInCheckoutPage": "אין אפשרות להוסיף מוצרים בדף התשלום.",
   "storeClose": "מצטערים, האתר סגור כעת.",
   "storeCloseMessage": "האתר סגור כעת להזמנות עקב עומס. אנא נסו שנית בעוד כמה שעות.",
@@ -492,10 +466,9 @@
   "minimumPurchaseAmount": "מינימום קנייה {amount}₪",
 
   "/=================* Invoice * =================/": "",
-
   "invoice": "קבלה",
   "order": "הזמנה",
- "orderConfirmationDescription": "אישור הזמנה - פרטי ההזמנה שלך",
+  "orderConfirmationDescription": "אישור הזמנה - פרטי ההזמנה שלך",
   "date": "תאריך",
   "invoiceNo": "מס' קבלה",
   "orderNo": "מס' הזמנה",
@@ -507,7 +480,6 @@
   "itemPrice": "מחיר הפריט",
   "amount": "סכום כולל",
   "paymentMethod": "שיטת תשלום",
-
   "totalAmount": "סה״כ לתשלום",
   "downloadInvoice": "Download Invoice",
   "printInvoice": "Print Invoice",
@@ -517,15 +489,13 @@
   "orderReceivedMsg": "Your order have been received!",
 
   "/=================* My account * =================/": "",
-
   "dashboard": "לוח בקרה",
-"dashboardDescription": "לוח בקרה - ניהול החשבון וההזמנות שלך",
+  "dashboardDescription": "לוח בקרה - ניהול החשבון וההזמנות שלך",
   "myOrders": "My Orders",
   "updateProfile": "Update Profile",
   "changePassword": "Change Password",
   "logout": "Logout",
   "noOrder": "אין לך עדיין הזמנות!",
-
   "action": "פעולות",
   "id": "מספר זיהוי",
   "orderTime": "תאריך הזמנה",
@@ -547,19 +517,15 @@
   "payNow": "לתשלום באשראי כעת",
   "fileToBig": "התמונה חורגת מהגודל המותר (3MB)",
   "username_at_least_two_words": "יש להזין שם פרטי ושם משפחה!",
-
   "next": "הבא",
   "previous": "הקודם",
-
   "dashboardText": "This is User Dashboard",
   "totalOrder": "Total Order",
   "pendingOrder": "Pending Order",
   "ProcessingOrder": "Processing Order",
   "completeOrder": "Complete Order",
-
   "recentOrder": "Recent Order",
   "notes": "הערות",
-
   "photo": "Photo",
   "fullName": "שם מלא",
   "yourAddress": "הכתובת שלך",
@@ -584,7 +550,6 @@
   "selectCity": "בחר/י עיר",
 
   "/=================* Search * =================/": "",
-
   "loadMoreBtn": "טען עוד",
   "totalI": "סה״כ",
   "itemsFound": "פריטים נמצאו",
@@ -593,7 +558,6 @@
   "highToLow": "מחיר מהיקר לזול",
   "sorryText": "לא נמצאו מוצרים תואמים",
   "noBlogsFound": "לא נמצאו בלוגים",
-  
   "search": "חיפוש",
   "searchDescription": "חיפוש מוצרים - מצאו את המוצרים המושלמים עבורכם",
   "sortBy": "מיון לפי",
@@ -622,7 +586,6 @@
   "Faq-question8-ans": "Distinctively initiate error-free channels with highly efficient ROI. Intrinsicly envisioneer world-class data via best-of-breed best practices. Efficiently enable empowered e-tailers after cross-unit services. Uniquely expedite seamless e-tailers via cooperative interfaces. Monotonectally myocardinate customer directed meta-services whereas error-free scenarios.",
 
   "/=================* privacy-policy * =================/": "",
-
   "privacy-policy-update-date": "Last updated: February 15, 2022  ",
   "privacy-policy-update-date-docs1": "At MNM יבוא שיווק והפצה, accessible from MNM יבוא שיווק והפצה dot com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by MNM יבוא שיווק והפצה and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, and any other information you may choose to provide. When you register for an Account, we may ask for your contact information, including items such as name, company name, address, email address, and telephone number.",
   "privacy-policy-update-date-docs2": "This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in MNM יבוא שיווק והפצה.we may receive additional information about you such as your name, email address, phone number, the contents of the message and/or attachments you may send us, we may ask for your contact information, including items such as name, company name, address, email address, and telephone number. This policy is not applicable to any information collected offline or via channels other than this website. Our Privacy Policy was created with the help of the Free Privacy Policy Generator.",
@@ -686,6 +649,7 @@
   "terms-condition-disclaimer-docs3": "3. limit any of our or your liabilities in any way that is not permitted under applicable law; or  ",
   "terms-condition-disclaimer-docs4": "4. exclude any of our or your liabilities that may not be excluded under applicable law.  ",
   "terms-condition-disclaimer-docs5": "The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty. As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.",
+
   "/=================* Welcome Gift * =================/": "",
   "welcomeGiftTitle": "🎁 מתנת ברוכים הבאים!",
   "welcomeGiftSubtitle": "קיבלת מתנה מיוחדת במסגרת ההרשמה שלך",
@@ -698,6 +662,7 @@
   "giftProductNotFound": "מצטערים, לא מצאנו את מוצר המתנה",
   "welcomeGiftAvailable": "יש לך מתנה זמינה!",
   "giftAvailable": "🎁 יש לך מתנה!",
+
   "/=================* Reward Offers * =================/": "",
   "rewardReceivedTitle": "יש! קיבלת מתנה!",
   "viewTriggerProduct": "צפה במוצר",
@@ -707,6 +672,7 @@
   "rewardOffersAvailable": "מבצעי מתנה זמינים",
   "giftsAvailable": "מתנות זמינות",
   "thresholdDiscount": "הנחת קניה",
+
   "/=================* Threshold Discount Slider * =================/": "",
   "unlockDiscount": "פתח הנחה מיוחדת!",
   "addMoreToUnlock": "הוסף עוד לעגלה והגע ל",

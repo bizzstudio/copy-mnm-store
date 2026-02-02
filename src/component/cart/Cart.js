@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 
 // Internal import
 import CartItem from "@component/cart/CartItem";
-import LoginModal from "@component/modal/LoginModal";
 import { UserContext } from "@context/UserContext";
 import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -18,9 +17,8 @@ import ThresholdDiscountSlider from "./ThresholdDiscountSlider";
 
 const Cart = ({ onClose }) => {
   const router = useRouter();
-  const [modalOpen, setModalOpen] = useState(false);
   const { isEmpty, items, customCartTotal } = useCart();
-  const { toggleCartDrawer } = useContext(SidebarContext);
+  const { toggleCartDrawer, setLoginModalOpen } = useContext(SidebarContext);
   const { currency } = useUtilsFunction();
   const t = useTranslations();
   const buttonRef = useRef(null);
@@ -39,15 +37,14 @@ const Cart = ({ onClose }) => {
   }, [cartDrawerOpen]); // רק כשהעגלה נפתחת
 
   const handleOpenLogin = () => {
-    router.push(
-      { pathname: router.pathname, query: { redirect: '/checkout' } },
-      router.asPath,
+    setLoginModalOpen(true);
+    toggleCartDrawer();
+    router.replace(
+      { pathname: router.pathname, query: { redirect: "/checkout" } },
+      undefined,
       { shallow: true }
     );
-    toggleCartDrawer();
-    setModalOpen(!modalOpen);
   };
-
 
   const handleCheckoutClick = (e) => {
     e.stopPropagation(); // Prevent event propagation
@@ -104,9 +101,6 @@ const Cart = ({ onClose }) => {
 
   return (
     <>
-      {modalOpen && (
-        <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      )}
       <div className="flex flex-col w-full h-full justify-between items-middle bg-white rounded">
         <div className="w-full flex justify-between items-center relative px-6 py-5 bg-linear-to-br from-white to-gray-50 border-b border-mainColor-light shadow-sm rounded-t-lg">
           <h2 className="font-semibold font-serif text-lg m-0 text-heading flex items-center gap-2">

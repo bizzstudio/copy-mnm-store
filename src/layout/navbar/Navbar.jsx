@@ -6,7 +6,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { IoHome, IoNewspaperOutline, IoSearchOutline } from "react-icons/io5";
-import { FiShoppingCart, FiUser, FiBell, FiUserCheck } from "react-icons/fi";
+import { FiShoppingCart } from "react-icons/fi";
 import { FaX } from "react-icons/fa6";
 import { MdPointOfSale } from "react-icons/md";
 import { useTranslations } from "next-intl";
@@ -19,7 +19,6 @@ import { FaList } from "react-icons/fa";
 // Internal import
 import NavbarPromo from "@layout/navbar/NavbarPromo";
 import { UserContext } from "@context/UserContext";
-import LoginModal from "@component/modal/LoginModal";
 import CartDrawer from "@component/drawer/CartDrawer";
 import { SidebarContext } from "@context/SidebarContext";
 import useGetSetting from "@hooks/useGetSetting";
@@ -30,6 +29,7 @@ import AttributeServices from "@services/AttributeServices";
 import useCart from "@hooks/useCart";
 import VoiceSearchButton from "@component/voice-search/VoiceSearchButton";
 import DropdownMenu from "@component/menu/DropdownMenu";
+import NavbarUserButton from "@layout/navbar/NavbarUserButton";
 import MainModal from "@component/modal/MainModal";
 import AutoDeliveriesPopup from "@component/deliveriesPopup/AutoDeliveriesPopup";
 
@@ -41,10 +41,9 @@ const Navbar = ({ cashierPage = false }) => {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState();
   const [attributes, setAttributes] = useState();
-  const [modalOpen, setModalOpen] = useState(false);
   const [deliveriesPopup, setDeliveriesPopup] = useState(false);
 
-  const { toggleCartDrawer } = useContext(SidebarContext);
+  const { toggleCartDrawer, setLoginModalOpen } = useContext(SidebarContext);
   const { state: { userInfo } } = useContext(UserContext);
 
   const { totalItems } = useCart();
@@ -106,9 +105,6 @@ const Navbar = ({ cashierPage = false }) => {
       )}
 
       <CartDrawer />
-      {modalOpen && (
-        <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      )}
 
       <>
         <div
@@ -247,30 +243,11 @@ const Navbar = ({ cashierPage = false }) => {
                   </button>
 
                   {/* כפתור פרופיל */}
-                  {userInfo?.name ?
-                    <Link
-                      className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
-                      aria-label="Login"
-                      href="/user/dashboard"
-                    >
-                      {imageUrl || userInfo?.image ?
-                        <Image
-                          width={100}
-                          height={100}
-                          src={imageUrl || userInfo?.image}
-                          alt="user"
-                          className="min-w-full min-h-full object-cover"
-                        /> :
-                        <span className="flex items-center justify-center leading-none font-bold font-serif mb-0.5">
-                          <FiUserCheck className="w-6 h-6 drop-shadow-xl" />
-                        </span>}
-                    </Link> :
-                    <button className="flex items-center justify-center bg-white hover:bg-mainColor hover:text-white text-2xl font-bold w-9 h-9 rounded-full leading-none outline-2 outline-mainColor outline-offset-2 hover:scale-110 hover:outline-none transition-all overflow-hidden"
-                      aria-label="Login"
-                      onClick={() => setModalOpen(!modalOpen)}>
-                      <FiUser className="w-6 h-6 drop-shadow-xl" />
-                    </button>
-                  }
+                  <NavbarUserButton
+                    userInfo={userInfo}
+                    imageUrl={imageUrl}
+                    onLoginClick={() => setLoginModalOpen(true)}
+                  />
 
                   {/* כפתור עמוד קופה - רק לקופאים */}
                   {userInfo?.isCashier && (

@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 // Internal import
 import { UserContext } from "@context/UserContext";
@@ -38,7 +38,8 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
     registerEmail,
     verifyEmail,
     password,
-    phone
+    phone,
+    rivhitCustomerNumber,
   }) => {
     setLoading(true);
 
@@ -62,6 +63,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
         CustomerServices.customerLogin({
           registerEmail,
           password,
+          ...(rivhitCustomerNumber ? { rivhitCustomerNumber } : {}),
         })
           .then((res) => {
             console.log('login res :>> ', res);
@@ -70,7 +72,7 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
             localStorage.removeItem("plsRegisterAgain");
             localStorage.removeItem("waitingForVerification");
             // גרימה לפופאפ הזנת כתובת לקפוץ אם אין לו כתובת
-            if (!res.address.city) {
+            if (!res?.address?.city) {
               localStorage.setItem("firstTime", true);
             }
             router.push(redirect || "/");
@@ -94,8 +96,8 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
               notifyError(t('waiting_for_verification'));
               return;
             } else {
-              notifyError(err ? err.response.data.message : err.message);
               setLoading(false);
+              notifyApiResponse(err, false);
             }
           });
       }
@@ -167,15 +169,19 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
 
     // forget password
     if (verifyEmail) {
-      CustomerServices.forgetPassword({ verifyEmail })
+      CustomerServices.forgetPassword({ 
+        verifyEmail,
+        ...(rivhitCustomerNumber ? { rivhitCustomerNumber } : {}),
+      })
         .then((res) => {
           setLoading(false);
           notifySuccess(res.message);
-          setValue("verifyEmail");
+          setValue("verifyEmail", "");
+          setValue("rivhitCustomerNumber", "");
         })
         .catch((err) => {
           setLoading(false);
-          notifyError(err ? err.response.data.message : err.message);
+          notifyApiResponse(err, false);
         });
     }
   };
@@ -205,8 +211,8 @@ const useLoginSubmit = (setModalOpen, newsletterOptIn = false) => {
         })
 
         .catch((err) => {
-          notifyError(err.message);
-          setModalOpen(false);
+          setLoading(false);
+          notifyApiResponse(err, false);
         });
     }
   };

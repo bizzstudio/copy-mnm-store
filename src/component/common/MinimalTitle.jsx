@@ -28,7 +28,7 @@ const MinimalTitle = ({ title, subtitle }) => {
             <div className="flex flex-col justify-center overflow-hidden">
                 {title && (
                     <h1
-                        className={`text-mainColor-leaf md:text-4xl text-lg font-extrabold text-start ${inView ? 'animate-title' : 'opacity-0'}`}
+                        className={`text-mainColor-leaf md:text-4xl ${subtitle ? 'text-lg' : 'text-3xl'} font-extrabold text-start ${inView ? 'animate-title' : 'opacity-0'}`}
                         key={title}
                     >
                         {title}

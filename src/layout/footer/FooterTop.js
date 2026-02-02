@@ -1,6 +1,5 @@
 // src/layout/footer/FooterTop.js
 import React, { useContext, useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -11,21 +10,15 @@ import useGetSetting from "@hooks/useGetSetting";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import MainBT from "@component/button/MainBT";
 
 const FooterTop = () => {
   const { storeCustomizationSetting, loading: settingLoading } = useGetSetting();
   const { categories, categoriesLoading } = useContext(SidebarContext);
   const { showingTranslateValue, findMainCategory, findSubCategory } = useUtilsFunction();
   const { asPath } = useRouter();
-  
+
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentSubCategory, setCurrentSubCategory] = useState(null);
-
-  // בדיקה אם אנחנו בעמוד הבית - אם כן, לא נציג את הקומפוננטה
-  if (asPath === "/") {
-    return null;
-  }
 
   // זיהוי הקטגוריה הנוכחית לפי הנתיב
   useEffect(() => {
@@ -40,7 +33,7 @@ const FooterTop = () => {
 
         if (foundCategory) {
           setCurrentCategory(foundCategory);
-          
+
           // אם יש תת-קטגוריה
           if (subCategoryIdentifier) {
             const foundSubCategory = findSubCategory(foundCategory, subCategoryIdentifier);
@@ -58,6 +51,11 @@ const FooterTop = () => {
       }
     }
   }, [asPath, categories, categoriesLoading]);
+
+  // בדיקה אם אנחנו בעמוד הבית - אם כן, לא נציג את הקומפוננטה
+  if (asPath === "/") {
+    return null;
+  }
 
   // הצגת הקטגוריה הנוכחית (תת-קטגוריה אם קיימת, אחרת הקטגוריה הראשית)
   const displayCategory = currentSubCategory || currentCategory;
@@ -79,7 +77,7 @@ const FooterTop = () => {
         return currentCategory.coloredIcon || currentCategory.icon;
       }
     }
-    
+
     // אם אין אייקון בכלל, נחזיר את הלוגו מה-footer
     return storeCustomizationSetting?.footer?.block4_logo;
   };
@@ -103,7 +101,7 @@ const FooterTop = () => {
                 alt="app download"
                 width={270}
                 height={270}
-                // className="block w-auto"
+              // className="block w-auto"
               />
             </div>
             <div className="text-center">
@@ -134,7 +132,7 @@ const FooterTop = () => {
                   width={270}
                   height={270}
                   alt="app download"
-                  // className="block w-auto"
+                // className="block w-auto"
                 />
               </div>
             </div>
@@ -188,7 +186,7 @@ const FooterTop = () => {
                 showingTranslateValue(displayCategory.name)
               )}
             </h2>
-            
+
             <div className="text-base md:text-lg leading-7 opacity-90">
               {categoriesLoading ? (
                 <Skeleton count={6} height={20} />

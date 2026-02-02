@@ -60,12 +60,12 @@ const EmailVerification = ({ params }) => {
   );
 };
 
-export const getServerSideProps = async ({ params }) => {
+export const getServerSideProps = async (context) => {
   const i18nProps = await getI18nProps(context);
 
   return {
     props: {
-      params,
+      params: context.params,
       ...i18nProps,
     },
   };

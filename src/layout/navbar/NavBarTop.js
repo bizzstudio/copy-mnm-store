@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+// src/layout/navbar/NavBarTop.js
+import React, { useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
@@ -7,8 +8,8 @@ import { IoLockOpenOutline } from "react-icons/io5";
 import { FiPhoneCall, FiUser } from "react-icons/fi";
 
 // Internal import
-import LoginModal from "@component/modal/LoginModal";
 import { UserContext } from "@context/UserContext";
+import { SidebarContext } from "@context/SidebarContext";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
@@ -17,9 +18,8 @@ const NavBarTop = () => {
     dispatch,
     state: { userInfo },
   } = useContext(UserContext);
+  const { setLoginModalOpen } = useContext(SidebarContext);
   const router = useRouter();
-
-  const [modalOpen, setModalOpen] = useState(false);
 
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
@@ -28,7 +28,7 @@ const NavBarTop = () => {
     if (userInfo?.email) {
       router.push("/user/dashboard");
     } else {
-      setModalOpen(!modalOpen);
+      setLoginModalOpen(true);
     }
   };
 
@@ -39,19 +39,15 @@ const NavBarTop = () => {
     window.location = "/";
   };
 
-  console.log(' storeCustomizationSetting?.navbar',  storeCustomizationSetting?.navbar)
+  console.log(' storeCustomizationSetting?.navbar', storeCustomizationSetting?.navbar)
   return (
     <>
-      {modalOpen && (
-        <LoginModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      )}
-
       <div className="hidden lg:block bg-gray-100">
         <div className="w-full mx-auto px-3 sm:px-4">
           <div className="text-gray-700 py-2 font-sans text-xs font-medium border-b flex justify-between items-center">
             <span className="flex items-center">
-              {storeCustomizationSetting?.navbar?.phone_number && 
-              <FiPhoneCall className="mr-2" />
+              {storeCustomizationSetting?.navbar?.phone_number &&
+                <FiPhoneCall className="mr-2" />
               }
               {showingTranslateValue(
                 storeCustomizationSetting?.navbar?.help_text
@@ -118,7 +114,7 @@ const NavBarTop = () => {
                 </button>
               ) : (
                 <button
-                  onClick={() => setModalOpen(!modalOpen)}
+                  onClick={() => setLoginModalOpen(true)}
                   className="flex items-center font-medium hover:text-mainColor-dark"
                 >
                   <span className="ml-1">

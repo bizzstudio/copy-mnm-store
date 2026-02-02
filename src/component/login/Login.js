@@ -1,15 +1,19 @@
 // src/component/login/Login.js
-import { FiLock, FiMail } from "react-icons/fi";
+import { FiHash, FiLock, FiMail } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 
-//internal  import
+// internal import
 import Error from "@component/form/Error";
 import useLoginSubmit from "@hooks/useLoginSubmit";
 import InputArea from "@component/form/InputArea";
-import MinimalTitle from "@component/common/MinimalTitle";
 import MainBT from "@component/button/MainBT";
 
-const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) => {
+const Login = ({
+  loginType = "regular",
+  setShowResetPassword,
+  setModalOpen,
+  newsletterOptIn = false,
+}) => {
   const {
     handleSubmit,
     submitHandler,
@@ -19,11 +23,10 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
   } = useLoginSubmit(setModalOpen, newsletterOptIn);
   const t = useTranslations();
 
+  const isBusinessLogin = loginType === "business";
+
   return (
     <>
-      <div className="flex justify-between items-center mb-4 bg-white shadow-md rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
-        <MinimalTitle title={t('loginTitle')} />
-      </div>
       <form
         onSubmit={handleSubmit(submitHandler)}
         className="flex flex-col justify-center"
@@ -52,6 +55,20 @@ const Login = ({ setShowResetPassword, setModalOpen, newsletterOptIn = false }) 
 
             <Error errorName={errors.password} />
           </div>
+
+          {isBusinessLogin && (
+            <div className="form-group">
+              <InputArea
+                register={register}
+                name="rivhitCustomerNumber"
+                type="tel"
+                placeholder={t("rivhitCustomerNumber")}
+                Icon={FiHash}
+                isRequired={true}
+              />
+              <Error errorName={errors.rivhitCustomerNumber} />
+            </div>
+          )}
 
           <div className="flex items-center justify-between">
             <div className="flex ms-auto">

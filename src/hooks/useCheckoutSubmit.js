@@ -1,9 +1,9 @@
 // src/hooks/useCheckoutSubmit.js
 import Cookies from "js-cookie";
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 // Internal import
 import useAsync from "@hooks/useAsync";
@@ -12,10 +12,7 @@ import OrderServices from "@services/OrderServices";
 import CouponServices from "@services/CouponServices";
 import { notifyError, notifySuccess } from "@utils/toast";
 import SettingServices from "@services/SettingServices";
-import NotificationServices from "@services/NotificaitonServices";
-import { useTranslations } from "next-intl";
 import useCart from "./useCart";
-import useAddToCart from "./useAddToCart";
 import { SidebarContext } from "@context/SidebarContext";
 import notifyApiResponse from "@utils/notifyApiResponse";
 import { identifyUser, trackNewsletterSignup } from "@services/flashy";
@@ -25,7 +22,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     state: { userInfo, shippingAddress },
     dispatch,
   } = useContext(UserContext);
-  const { refreshOffers } = useContext(SidebarContext);
+  const { refreshOffers, setLoginModalOpen } = useContext(SidebarContext);
   const t = useTranslations();
 
   const [error, setError] = useState("");
@@ -51,7 +48,6 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
   const [offerConflictsModal, setOfferConflictsModal] = useState(false);
   const [offerConflicts, setOfferConflicts] = useState([]);
   const [addUpdatedProducts, setAddUpdatedProducts] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // סטייטים לוולידציה - מנוהלים בהוק
   const [guestChosenCity, setGuestChosenCity] = useState(null);
@@ -730,7 +726,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       case "customerAlreadyRegistered": {
         // לקוח רשום שמנסה לקנות כאורח
-        setShowLoginModal(true);
+        setLoginModalOpen(true);
         notifyError(errorData.message || t('customerAlreadyRegistered') || "האימייל כבר רשום במערכת. יש להתחבר לפני הרכישה.");
         break;
       }
@@ -851,8 +847,6 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     setOfferConflictsModal,
     offerConflicts,
     setOfferConflicts,
-    showLoginModal,
-    setShowLoginModal,
     setError: setFormError,
     clearErrors,
 
