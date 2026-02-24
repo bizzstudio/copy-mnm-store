@@ -28,7 +28,7 @@ const Search = ({ products }) => {
     setIsLoading(false);
   }, [products]);
 
-  const { setSortedField, productData } = useFilter(products);
+  const { productData } = useFilter(products);
 
   return (
     <Layout

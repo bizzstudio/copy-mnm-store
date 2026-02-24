@@ -12,7 +12,6 @@ import Banner from "@component/banner/Banner";
 import useGetSetting from "@hooks/useGetSetting";
 import CardTwo from "@component/cta-card/CardTwo";
 import OfferCard from "@component/offer/OfferCard";
-import StickyCart from "@component/cart/StickyCart";
 import Loading from "@component/preloader/Loading";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@component/product/ProductCard";
@@ -58,6 +57,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
     }
   }, []);
 
+  //ask moti about this
   useEffect(() => {
     if (router.asPath === "/") {
       setIsLoading(false);
