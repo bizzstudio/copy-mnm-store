@@ -16,6 +16,7 @@ import MainBT from "@component/button/MainBT";
 import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getI18nProps } from "@utils/i18n";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const SubCategoryPage = ({ products }) => {
     const t = useTranslations();
@@ -140,10 +141,13 @@ const SubCategoryPage = ({ products }) => {
 export default SubCategoryPage;
 
 export const getServerSideProps = async (context) => {
+    const { cookies } = context.req;
     const { subCategoryName } = context.query;
+    const userToken = getUserTokenFromCookies(cookies);
 
     const data = await ProductServices.getShowingStoreProducts({
         category: subCategoryName,
+        token: userToken,
     });
 
     const i18nProps = await getI18nProps(context);

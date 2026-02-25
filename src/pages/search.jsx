@@ -14,6 +14,7 @@ import { SidebarContext } from "@context/SidebarContext";
 import Loading from "@component/preloader/Loading";
 import { useRouter } from "next/router";
 import { getI18nProps } from "@utils/i18n";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const Search = ({ products }) => {
   const t = useTranslations();
@@ -137,11 +138,14 @@ const Search = ({ products }) => {
 export default Search;
 
 export const getServerSideProps = async (context) => {
+  const { cookies } = context.req;
   const { query, _id } = context.query;
+  const userToken = getUserTokenFromCookies(cookies);
 
   const data = await ProductServices.getShowingStoreProducts({
     category: _id ? _id : "",
     title: query ? query : "",
+    token: userToken,
   });
 
   const i18nProps = await getI18nProps(context);

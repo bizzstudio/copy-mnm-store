@@ -16,6 +16,7 @@ import MainBT from "@component/button/MainBT";
 import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getI18nProps } from "@utils/i18n";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const CategoryPage = ({ products }) => {
     // console.log('products :>> ', products);
@@ -134,10 +135,13 @@ const CategoryPage = ({ products }) => {
 export default CategoryPage;
 
 export const getServerSideProps = async (context) => {
+    const { cookies } = context.req;
     const { categoryName } = context.query;
+    const userToken = getUserTokenFromCookies(cookies);
 
     const data = await ProductServices.getShowingStoreProducts({
         category: categoryName,
+        token: userToken,
     });
 
     const i18nProps = await getI18nProps(context);

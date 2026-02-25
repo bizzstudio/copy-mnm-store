@@ -6,7 +6,7 @@ const ProductServices = {
     return requests.get("/products/show");
   },
 
-  getShowingStoreProducts: async ({ category = "", title = "", slug = "", sku = "" }) => {
+  getShowingStoreProducts: async ({ category = "", title = "", slug = "", sku = "", token = "" }) => {
     // resolve the issue with URLs that include non-English letters.
     let newSlug = slug.toLowerCase().replace(/[()]+/g, "").replace(/\s+/g, "-");
     const encodedSlug = encodeURIComponent(newSlug);
@@ -17,8 +17,10 @@ const ProductServices = {
 
     // console.log({ encodedSlug })
 
+    const config = token ? { headers: { authorization: `Bearer ${token}` } } : undefined;
     return requests.get(
-      `/products/store?category=${encodedCategory}&title=${encodedTitle}&slug=${encodedSlug}&sku=${sku}`
+      `/products/store?category=${encodedCategory}&title=${encodedTitle}&slug=${encodedSlug}&sku=${sku}`,
+      config
     );
   },
 
