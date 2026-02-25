@@ -11,6 +11,7 @@ import ProductCard from "@component/product/ProductCard";
 import AttributeServices from "@services/AttributeServices";
 import CMSkeleton from "@component/preloader/CMSkeleton";
 import { getI18nProps } from "@utils/i18n";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const Offers = ({ discountProducts, attributes }) => {
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
@@ -103,12 +104,14 @@ export const getServerSideProps = async (context) => {
 
   const { cookies } = context.req;
   const { query, _id } = context.query;
+  const userToken = getUserTokenFromCookies(cookies);
 
   const [i18nProps, data, attributes] = await Promise.all([
     getI18nProps(context),
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
+      token: userToken,
     }),
     AttributeServices.getShowingAttributes(),
   ]);

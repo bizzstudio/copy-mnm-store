@@ -28,6 +28,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import useFilter from "@hooks/useFilter";
 import { getI18nProps } from "@utils/i18n";
 import { getSeoProps } from "@utils/getSeoProps";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => {
   const router = useRouter();
@@ -375,11 +376,13 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
 export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
   const { query, _id } = context.query;
+  const userToken = getUserTokenFromCookies(cookies);
 
   const [data, blogsData, seoProps, i18nProps] = await Promise.all([
     ProductServices.getShowingStoreProducts({
       category: _id ? _id : "",
       title: query ? query : "",
+      token: userToken,
     }),
 
     BlogServices.getPublishedBlogs({

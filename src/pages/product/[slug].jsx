@@ -42,10 +42,9 @@ import { trackFbViewContent } from "@services/facebookPixel";
 import { getI18nProps } from "@utils/i18n";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
+import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 
 const ProductScreen = ({ product, relatedProducts }) => {
-  console.log('ProductScreen product :>> ', product);
-
   const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();
 
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
@@ -622,11 +621,13 @@ const ProductScreen = ({ product, relatedProducts }) => {
 
 export const getServerSideProps = async (context) => {
   const { slug } = context.params;
-  console.log('slug', slug)
+  const { cookies } = context.req;
+  const userToken = getUserTokenFromCookies(cookies);
 
   const data = await ProductServices.getShowingStoreProducts({
     category: "",
     slug: slug,
+    token: userToken,
   });
 
   let product = {};
