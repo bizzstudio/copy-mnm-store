@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 
-// Internal import
 import Layout from "@layout/Layout";
 import Label from "@component/form/Label";
 import Error from "@component/form/Error";
