@@ -33,6 +33,7 @@ const getCartStorageId = (userInfo) => {
   return `react-use-cart-${encodeURIComponent(String(userIdentifier))}`;
 };
 
+
 const getUserInfoFromCookie = () => {
   try {
     const rawUserInfo = Cookies.get("userInfo");
