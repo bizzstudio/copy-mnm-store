@@ -46,7 +46,27 @@ const getUserInfoFromCookie = () => {
 const UserScopedCartProvider = ({ children }) => {
   const { state } = useContext(UserContext);
   const cookieUserInfo = getUserInfoFromCookie();
-  const cartStorageId = getCartStorageId(state?.userInfo || cookieUserInfo);
+  const effectiveUserInfo = state?.userInfo || cookieUserInfo;
+  const cartStorageId = getCartStorageId(effectiveUserInfo);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !effectiveUserInfo) return;
+
+    const guestCartStorageId = getCartStorageId(null);
+    const userCartStorageId = getCartStorageId(effectiveUserInfo);
+    if (guestCartStorageId === userCartStorageId) return;
+
+    try {
+      const guestCartRaw = window.localStorage.getItem(guestCartStorageId);
+      if (!guestCartRaw) return;
+
+      // Business rule: guest cart wins after login.
+      window.localStorage.setItem(userCartStorageId, guestCartRaw);
+      window.localStorage.removeItem(guestCartStorageId);
+    } catch (error) {
+      console.error("Cart migration from guest to user failed:", error);
+    }
+  }, [effectiveUserInfo]);
 
   return (
     <CartProvider key={cartStorageId} id={cartStorageId}>
