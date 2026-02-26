@@ -5,16 +5,17 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { Provider } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import Hotjar from '@hotjar/browser';
 import { NextIntlClientProvider } from 'next-intl';
 import Head from "next/head";
+import Cookies from "js-cookie";
 
 // Internal import
 import store from "@redux/store";
 import useAsync from "@hooks/useAsync";
-import { UserProvider } from "@context/UserContext";
+import { UserContext, UserProvider } from "@context/UserContext";
 import { SidebarProvider } from "@context/SidebarContext";
 import SettingServices from "@services/SettingServices";
 import { trackPageView as trackFlashyPageView } from "@services/flashy";
@@ -26,6 +27,32 @@ let persistor = persistStore(store);
 
 const siteId = 5076708;
 const hotjarVersion = 6;
+
+const getCartStorageId = (userInfo) => {
+  const userIdentifier = userInfo?._id || userInfo?.id || userInfo?.email || "guest";
+  return `react-use-cart-${encodeURIComponent(String(userIdentifier))}`;
+};
+
+const getUserInfoFromCookie = () => {
+  try {
+    const rawUserInfo = Cookies.get("userInfo");
+    return rawUserInfo ? JSON.parse(rawUserInfo) : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+const UserScopedCartProvider = ({ children }) => {
+  const { state } = useContext(UserContext);
+  const cookieUserInfo = getUserInfoFromCookie();
+  const cartStorageId = getCartStorageId(state?.userInfo || cookieUserInfo);
+
+  return (
+    <CartProvider key={cartStorageId} id={cartStorageId}>
+      {children}
+    </CartProvider>
+  );
+};
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -197,9 +224,9 @@ function MyApp({ Component, pageProps }) {
             <Provider store={store}>
               <PersistGate loading={null} persistor={persistor}>
                 <SidebarProvider>
-                  <CartProvider>
+                  <UserScopedCartProvider>
                     <Component {...pageProps} />
-                  </CartProvider>
+                  </UserScopedCartProvider>
                 </SidebarProvider>
               </PersistGate>
             </Provider>
