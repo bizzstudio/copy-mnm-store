@@ -222,6 +222,7 @@ const GuestAddressForm = ({ register, errors, setError, clearErrors, watch, chos
                             <City
                                 setValue={setChosenCity}
                                 placeholder={chosenCity ? JSON.stringify(chosenCity) : t('selectCity')}
+                                deliveryCitiesOnly={true}
                             />
                             <Error errorName={errors.guestCity} />
                         </div>

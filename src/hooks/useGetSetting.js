@@ -70,7 +70,16 @@ const useGetSetting = () => {
         } else {
           setError(err.message);
         }
-        console.log("Error on getting storeCustomizationSetting setting", err);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Error on getting storeCustomizationSetting setting", err);
+        }
+        // Fallback ל־local כדי שהאפליקציה תמשיך לעבוד בלי לנסות שוב
+        const storeCustomizationData = {
+          ...storeCustomization?.setting,
+          name: "storeCustomizationSetting",
+        };
+        dispatch(addSetting(storeCustomizationData));
+        setLoading(false);
       }
     };
 
@@ -89,7 +98,16 @@ const useGetSetting = () => {
         // setLoading(false);
       } catch (err) {
         setError(err.message);
-        console.log("Error on getting globalSetting setting", err);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Error on getting globalSetting setting", err);
+        }
+        // Fallback כדי שלא ננסה שוב ושוב ו־האפליקציה תמשיך לעבוד
+        dispatch(
+          addSetting({
+            name: "globalSetting",
+            default_currency: "₪",
+          })
+        );
       }
     };
 

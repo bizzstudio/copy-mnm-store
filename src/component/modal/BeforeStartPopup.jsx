@@ -69,7 +69,7 @@ const BeforeStartPopup = ({ onClose }) => {
 
             {/* קומפוננטת העיר */}
             <div className="mb-6">
-                <City setValue={setChosenCity} placeholder={null} />
+                <City setValue={setChosenCity} placeholder={null} deliveryCitiesOnly={true} />
             </div>
 
             {/* הצגת הודעת המשלוח (או מצב טוען) */}

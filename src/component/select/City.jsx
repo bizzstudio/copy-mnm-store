@@ -2,29 +2,40 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { useTranslations } from "next-intl";
+import DeliveryServices from "@services/DeliveryServices";
 
-const City = ({ setValue, placeholder }) => {
+const City = ({ setValue, placeholder, deliveryCitiesOnly = false }) => {
   const t = useTranslations();
 
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
+    if (deliveryCitiesOnly) {
+      DeliveryServices.getAllDeliveries()
+        .then((list) => {
+          const cityList = (list || [])
+            .map((d) => d.city)
+            .filter((c) => c && c.city_name_he);
+          const unique = Array.from(new Map(cityList.map((c) => [c.city_name_he, c])).values());
+          setCities(unique.sort((a, b) => (a.city_name_he || '').localeCompare(b.city_name_he || '', 'he')));
+        })
+        .catch(() => setCities([]));
+      return;
+    }
     (async () => {
       const response = await fetch(
         "https://data.gov.il/api/3/action/datastore_search?resource_id=8f714b6f-c35c-4b40-a0e7-547b675eee0e&limit=100000"
       );
       const data = await response.json();
-      let tempCities = []
-      data.result.records.forEach(record => {
-        tempCities.push(record)
-      })
-      setCities(tempCities.sort((a, b) => a.city_name_he.localeCompare(b.city_name_he, 'he')))
+      let tempCities = [];
+      (data.result?.records || []).forEach((record) => tempCities.push(record));
+      setCities(tempCities.sort((a, b) => (a.city_name_he || '').localeCompare(b.city_name_he || '', 'he')));
     })();
-  }, []);
+  }, [deliveryCitiesOnly]);
 
   const options = cities.map((city) => ({
     value: city,
-    label: city.city_name_he
+    label: city.city_name_he || ''
   }));
 
   const customStyles = {

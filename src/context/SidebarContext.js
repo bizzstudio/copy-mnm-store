@@ -38,7 +38,10 @@ export const SidebarProvider = ({ children }) => {
       // console.log("res offers:", res);
       setOffers(res || []);
     } catch (error) {
-      console.error("Failed to fetch offers:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Failed to fetch offers:", error);
+      }
+      setOffers([]);
     }
   };
 

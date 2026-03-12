@@ -1,5 +1,5 @@
 // src/pages/checkout.jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import Cookies from "js-cookie";
@@ -78,6 +78,7 @@ const Checkout = () => {
     isEmpty,
     items,
     customCartTotal,
+    thresholdDiscount,
     currency,
     isCheckoutSubmit,
     isDeliveryMetod,
@@ -117,6 +118,8 @@ const Checkout = () => {
   const guestFloor = watch("guestFloor");
   const guestEntryCode = watch("guestEntryCode");
   const guestPostalCode = watch("guestPostalCode");
+  const guestCityFromForm = watch("guestCity");
+  const chosenCityFromForm = watch("chosenCity");
 
   // רענון המבצעים בכניסה לעמוד התשלום
   const { refreshOffers } = useContext(SidebarContext);
@@ -286,10 +289,10 @@ const Checkout = () => {
     }
   }, [userInfo]);
 
-  // פונקציה לבדיקת כתובת
-  const isAddressDeliverable = async (address) => {
-    const response = await DeliveryServices.getByCityName(address);
-    return response ? response : null; // יחזיר את עלות המשלוח או null אם אין משלוח לכתובת זו
+  // פונקציה לבדיקת כתובת. orderTotalAfterDiscounts: אופציונלי – סכום אחרי הנחות; כשנשלח, השרת מחזיר shippingCost לפי כללי האזור.
+  const isAddressDeliverable = async (address, orderTotalAfterDiscounts) => {
+    const response = await DeliveryServices.getByCityName(address, orderTotalAfterDiscounts);
+    return response ? response : null;
   };
 
   // פונקציית בדיקה האם יש משלוח היום או מחר ואם לא מתי המשלוח הבא
@@ -325,28 +328,54 @@ const Checkout = () => {
     return { isTodayDeliverable, nextDeliverableDate };
   };
 
-  // בדיקת משלוח לפי כתובת - משתמש מחובר או אורח
+  // פונקציה לחילוץ שם עיר מאובייקט או מחרוזת JSON
+  const getCityName = (val) => {
+    if (!val) return null;
+    if (typeof val === 'object' && val?.city_name_he) return val.city_name_he;
+    if (typeof val === 'string') {
+      try {
+        const parsed = JSON.parse(val);
+        return parsed?.city_name_he || null;
+      } catch (_) { return null; }
+    }
+    return null;
+  };
+
+  // בדיקת משלוח לפי כתובת - משתמש מחובר או אורח. מתעדכן גם כשסכום העגלה/הנחות משתנה (דמי משלוח לפי כללי אזור).
+  const orderTotalAfterDiscounts = Number(customCartTotal || 0) - Number(discountAmount || 0) - Number(thresholdDiscount || 0);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const addressToCheck = userInfo?.address?.city?.city_name_he || guestChosenCity?.city_name_he;
-        if (!addressToCheck) return;
+        const addressToCheck =
+          userInfo?.address?.city?.city_name_he ||
+          guestChosenCity?.city_name_he ||
+          getCityName(guestCityFromForm) ||
+          getCityName(chosenCityFromForm);
+        if (!addressToCheck) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Checkout] משלוח: לא נשלחה בקשה – אין עיר (בחר עיר או וודא כתובת עם עיר)');
+          }
+          return;
+        }
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Checkout] משלוח: שולח בקשה לעיר', addressToCheck, 'orderTotal=', orderTotalAfterDiscounts);
+        }
+        const check = await isAddressDeliverable(addressToCheck, orderTotalAfterDiscounts);
+        const { isTodayDeliverable, nextDeliverableDate } = canOrderToday(check.days || []);
 
-        const check = await isAddressDeliverable(addressToCheck);
-        const { isTodayDeliverable, nextDeliverableDate } = canOrderToday(check.days);
-
+        // השרת מחזיר תמיד shippingCost (מחושב לפי כללי אזור); נשתמש בו או ב-price כ-fallback
+        const cost = Number(check.shippingCost ?? check.price ?? 0);
         if (check?.days?.length > 0) {
           setIsDeliverable(true);
           setAvailableDays(check.days.map(d => d.value));
-          // הגדרת משלוח אוטומטית אם יש משלוח זמין
           setValue("shippingOption", "2");
-          handleShippingCost(check.price);
+          handleShippingCost(cost);
         } else {
           setIsDeliverable(false);
           setAvailableDays([]);
           setNextTime(nextDeliverableDate);
         }
-        setDeliveryPrice(check.price);
+        setDeliveryPrice(cost);
       } catch (error) {
         if (error.response && error.response.status === 404) {
           setIsDeliverable(false);
@@ -357,11 +386,23 @@ const Checkout = () => {
     };
 
     fetchData();
-  }, [city, guestChosenCity]);
+  }, [city, guestChosenCity, guestCityFromForm, chosenCityFromForm, orderTotalAfterDiscounts, customCartTotal]);
 
   const navToPaymentPage = () => {
     router.push(paymentSrc)
   }
+
+  // קריאה ישירה מחישוב המשלוח מסיכום העלויות – מבטיחה שבקשה עם orderTotal תישלח כשהמשתמש רואה את הסיכום.
+  const onFetchShippingFromSummary = useCallback(async (cityName, orderTotal) => {
+    if (!cityName) return;
+    try {
+      const res = await DeliveryServices.getByCityName(cityName, orderTotal);
+      const cost = Number(res?.shippingCost ?? res?.price ?? 0);
+      handleShippingCost(cost);
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.warn('[Checkout] onFetchShippingFromSummary', e);
+    }
+  }, [handleShippingCost]);
 
   // סתם משהו נחמד
   useEffect(() => {
@@ -585,6 +626,7 @@ const Checkout = () => {
                               guestChosenCity={guestChosenCity}
                               newsletterOptIn={newsletterOptIn}
                               setNewsletterOptIn={setNewsletterOptIn}
+                              onFetchShipping={onFetchShippingFromSummary}
                             />
 
                             {/* 6. כפתורי אישור וחזרה */}
@@ -666,6 +708,7 @@ const Checkout = () => {
                               guestChosenCity={guestChosenCity}
                               newsletterOptIn={newsletterOptIn}
                               setNewsletterOptIn={setNewsletterOptIn}
+                              onFetchShipping={onFetchShippingFromSummary}
                             />
 
                             {/* 6. כפתורי אישור וחזרה */}

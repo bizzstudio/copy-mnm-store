@@ -1,5 +1,5 @@
 // src/component/checkout/OrderCosts.jsx
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { IoReceiptOutline } from "react-icons/io5";
 import { useTranslations } from "next-intl";
 import MainBT from "@component/button/MainBT";
@@ -24,9 +24,26 @@ const OrderCosts = ({
     guestChosenCity,
     newsletterOptIn,
     setNewsletterOptIn,
+    onFetchShipping,
 }) => {
     const t = useTranslations();
     const { thresholdDiscount, appliedOffers } = useCart();
+    const orderTotalAfterDiscounts = Number(customCartTotal || 0) - Number(discountAmount || 0) - Number(thresholdDiscount || 0);
+    const lastFetched = useRef({ cityName: null, orderTotal: null });
+
+    // כשסיכום העלויות מוצג – שולחים בקשה לחישוב משלוח לפי עיר + סכום (כללי אזור). מבטיח שהבקשה עם orderTotal תצא.
+    useEffect(() => {
+        if (!onFetchShipping || typeof onFetchShipping !== 'function') return;
+        const cityName = typeof city === 'string' ? city : (guestChosenCity?.city_name_he || null);
+        if (!cityName || !isDeliverable) return;
+        if (orderTotalAfterDiscounts < 0 || (customCartTotal != null && Number(customCartTotal) === 0)) return;
+        if (lastFetched.current.cityName === cityName && lastFetched.current.orderTotal === orderTotalAfterDiscounts) return;
+        lastFetched.current = { cityName, orderTotal: orderTotalAfterDiscounts };
+        if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+            console.log('[סיכום עלויות] שולח חישוב משלוח – עיר:', cityName, 'סכום:', orderTotalAfterDiscounts);
+        }
+        onFetchShipping(cityName, orderTotalAfterDiscounts);
+    }, [city, guestChosenCity, isDeliverable, orderTotalAfterDiscounts, customCartTotal, onFetchShipping]);
 
     // מציאת מבצע THRESHOLD_DISCOUNT שחל
     const thresholdDiscountOffer = appliedOffers?.find(o => o.type === 'THRESHOLD_DISCOUNT');

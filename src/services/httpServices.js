@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 const instance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
-  timeout: 500000,
+  timeout: 20000, // 20 שניות – כישלון מהיר במקום המתנה ארוכה
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

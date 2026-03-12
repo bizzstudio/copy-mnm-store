@@ -33,18 +33,20 @@ const NavbarPromo = () => {
     });
   };
 
-  // get language
+  // get language – אם ה־API נכשל (404), משאירים עברית כברירת מחדל בלי להציף הודעות
   useEffect(() => {
     (async () => {
-      {
-        try {
-          const res = await SettingServices.getShowingLanguage();
-          // console.log("res", res);
-          const result = res?.find((language) => language?.iso_code === "he");
-          handleLanguage(result);
-        } catch (err) {
-          notifyError(err);
-          console.log("error on getting lang", err);
+      try {
+        const res = await SettingServices.getShowingLanguage();
+        const result = res?.find((language) => language?.iso_code === "he");
+        handleLanguage(result);
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("error on getting lang", err);
+        }
+        // כברירת מחדל: עברית (handleLanguage עם undefined לא משנה כלום, אז נגדיר ידנית)
+        if (!Cookies.get("_lang")) {
+          handleLanguage({ iso_code: "he" });
         }
       }
     })();
