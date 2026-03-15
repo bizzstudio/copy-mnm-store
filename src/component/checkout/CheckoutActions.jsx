@@ -7,6 +7,9 @@ import Cookies from "js-cookie";
 import MainBT from "@component/button/MainBT";
 import Calculating from "@component/cart/Calculating";
 
+// כיבוי תשלום באשראי – רק תשלום בהקפה. להחזיר ל־true כדי להפעיל שוב אשראי.
+const CARD_PAYMENT_ENABLED = false;
+
 const CheckoutActions = ({
     isEmpty,
     isCheckoutSubmit,
@@ -34,13 +37,16 @@ const CheckoutActions = ({
             break;
     };
 
-    // בדיקה האם להציג כפתור הזמנה בהקפה
-    const showCreditOrderButton = userInfo &&
+    // בדיקה האם להציג כפתור הזמנה בהקפה (כש־אשראי מופעל – רק למי שיש לו מסגרת)
+    const showCreditOrderButton = CARD_PAYMENT_ENABLED && userInfo &&
         userInfo.customerType !== 'casual' &&
         userInfo.availableCredit > total;
 
     const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number';
     const isLoading = isCheckoutSubmit;
+
+    // כש־תשלום באשראי כבוי – הכפתור היחיד הוא "הזמנה בהקפה"
+    const onlyCreditOrder = !CARD_PAYMENT_ENABLED;
 
     return (
         <div className="border rounded-xl bg-white shadow-sm px-4 sm:px-6 lg:px-8 py-6">
@@ -68,51 +74,53 @@ const CheckoutActions = ({
 
                 {/* כפתורי יצירת הזמנה */}
                 <div className={`flex flex-col sm:flex-row gap-4 flex-1 ${showCreditOrderButton ? 'sm:grid sm:grid-cols-2' : ''}`}>
-                    {/* כפתור תשלום רגיל */}
-                    <MainBT
-                        type="submit"
-                        disabled={isDisabled}
-                        className="flex-1 min-h-[56px] px-6 py-3 bg-mainColor hover:bg-mainColor-dark text-white font-serif font-semibold text-base shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {typeof customCartTotal !== 'number' ? (
-                            <div className="flex items-center justify-center">
-                                <Calculating />
-                            </div>
-                        ) : isLoading ? (
-                            <div className={`flex items-center justify-center gap-2 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
-                                <img
-                                    src="/loader/spinner.gif"
-                                    alt="Loading"
-                                    width={20}
-                                    height={20}
-                                    className="saturate-0"
-                                />
-                                <span className="font-medium">{t('processing')}</span>
-                            </div>
-                        ) : (
-                            <div className={`flex items-center justify-center gap-3 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
-                                <IoCardOutline className="text-xl" />
-                                <div className="flex flex-col items-center">
-                                    <span className="text-base font-semibold">
-                                        {showCreditOrderButton
-                                            ? t('payNow')
-                                            : showingTranslateValue(
-                                                storeCustomizationSetting?.checkout?.confirm_button
-                                            )
-                                        }
-                                    </span>
-                                    {minimumOrderAmount ? (
-                                        <span className="text-xs opacity-90 mt-0.5">
-                                            {t('minimumPurchaseAmount', { amount: minimumOrderAmount })}
-                                        </span>
-                                    ) : null}
+                    {/* כפתור תשלום באשראי – מוצג רק כש־CARD_PAYMENT_ENABLED */}
+                    {CARD_PAYMENT_ENABLED && (
+                        <MainBT
+                            type="submit"
+                            disabled={isDisabled}
+                            className="flex-1 min-h-[56px] px-6 py-3 bg-mainColor hover:bg-mainColor-dark text-white font-serif font-semibold text-base shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {typeof customCartTotal !== 'number' ? (
+                                <div className="flex items-center justify-center">
+                                    <Calculating />
                                 </div>
-                            </div>
-                        )}
-                    </MainBT>
+                            ) : isLoading ? (
+                                <div className={`flex items-center justify-center gap-2 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                    <img
+                                        src="/loader/spinner.gif"
+                                        alt="Loading"
+                                        width={20}
+                                        height={20}
+                                        className="saturate-0"
+                                    />
+                                    <span className="font-medium">{t('processing')}</span>
+                                </div>
+                            ) : (
+                                <div className={`flex items-center justify-center gap-3 ${currentLang ? 'flex-row' : 'flex-row-reverse'}`}>
+                                    <IoCardOutline className="text-xl" />
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-base font-semibold">
+                                            {showCreditOrderButton
+                                                ? t('payNow')
+                                                : showingTranslateValue(
+                                                    storeCustomizationSetting?.checkout?.confirm_button
+                                                )
+                                        }
+                                        </span>
+                                        {minimumOrderAmount ? (
+                                            <span className="text-xs opacity-90 mt-0.5">
+                                                {t('minimumPurchaseAmount', { amount: minimumOrderAmount })}
+                                            </span>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            )}
+                        </MainBT>
+                    )}
 
-                    {/* כפתור הזמנה בהקפה */}
-                    {showCreditOrderButton && (
+                    {/* כפתור הזמנה בהקפה – תמיד כשרק הקפה, אחרת רק למי שיש מסגרת */}
+                    {(onlyCreditOrder || showCreditOrderButton) && (
                         <MainBT
                             type="button"
                             onClick={handleSubmit(submitCreditOrder)}
