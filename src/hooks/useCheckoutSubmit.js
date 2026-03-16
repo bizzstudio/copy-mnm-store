@@ -482,17 +482,20 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
           })
       }
     } catch (err) {
-      console.error("Error in submitHandler:", err);
+      setIsCheckoutSubmit(false);
 
-      // טיפול בקונפליקטים
       if (err?.response?.status === 409) {
         const errorData = err?.response?.data;
-        handleConflicts(errorData);
+        try {
+          handleConflicts(errorData);
+        } catch (conflictErr) {
+          console.warn("handleConflicts error:", conflictErr);
+          notifyError(t("pleaseNote") || "המחירים השתנו. נא לאשר את המחירים ולנסות שוב.");
+        }
         return;
-      } else {
-        notifyError(err?.response?.data?.message || "שגיאה ביצירת ההזמנה. אנא נסה שוב.");
       }
-      setIsCheckoutSubmit(false);
+      if (process.env.NODE_ENV === "development") console.error("Error in submitHandler:", err);
+      notifyError(err?.response?.data?.message || "שגיאה ביצירת ההזמנה. אנא נסה שוב.");
     }
   };
 
@@ -599,49 +602,47 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
       }
 
     } catch (err) {
-      console.error("Error in submitCreditOrder:", err);
+      // תמיד לעצור את מצב הטעינה כדי שהכפתור לא יישאר על "מעבד"
+      setIsCheckoutSubmit(false);
 
-      // טיפול בקונפליקטים
+      // טיפול בקונפליקטים (שינוי מחירים / מבצעים / מוצרים חסרים) – בלי להציג Error Overlay
       if (err?.response?.status === 409) {
         const errorData = err?.response?.data;
-        handleConflicts(errorData);
+        try {
+          handleConflicts(errorData);
+        } catch (conflictErr) {
+          console.warn("handleConflicts error:", conflictErr);
+          notifyError(t("pleaseNote") || "המחירים השתנו. נא לאשר את המחירים המעודכנים ולנסות שוב.");
+        }
         return;
-      } else {
-        notifyApiResponse(err?.response, false);
       }
-      setIsCheckoutSubmit(false);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error in submitCreditOrder:", err);
+      }
+      notifyApiResponse(err?.response, false);
     }
   };
 
-  // עדכון המוצרים ששונה להם המחיר
+  // עדכון המוצרים ששונה להם המחיר – שימוש ב־serverPrice מהבקאנד כדי שבשליחה הבאה לא יהיה שוב 409
   useEffect(() => {
     if (addUpdatedProducts) {
       priceConflicts.forEach((conflict) => {
-        const { product, serverPrice, clientPrice } = conflict;
+        const { product, serverPrice } = conflict;
 
-        const oldQuantity = product.oldQuantity;
-
-        // חישוב מלאי המוצר
-        let stock = 0;
-        if (product?.manageStock === false) {
-          stock = 9999;
-        } else {
-          // המלאי הוא שדה stock פשוט
-          stock = product?.stock || 0;
-        }
+        const oldQuantity = product?.oldQuantity ?? 1;
 
         const productPrice = product?.prices?.[0];
-        const price = productPrice?.salePrice || productPrice?.price || 0;
-        const originalPrice = productPrice?.price || 0;
-        const img = product.image?.[0];
+        const fallbackPrice = productPrice?.salePrice ?? productPrice?.price ?? 0;
+        const originalPrice = productPrice?.price ?? 0;
+        const img = product?.image?.[0];
 
-        const { categories, description, ...updatedProduct } = product;
+        const { categories, description, ...updatedProduct } = product || {};
         const newItem = {
           ...updatedProduct,
           id: product._id,
-          title: product.title,
+          title: product?.title,
           image: img,
-          price: price,
+          price: serverPrice != null ? Number(serverPrice) : fallbackPrice,
           originalPrice: originalPrice,
         };
 
@@ -676,38 +677,32 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       case "priceConflicts": {
         // קונפליקט מחירים
-        const priceConflicts = errorData.priceConflicts || [];
+        const priceConflictsList = errorData.priceConflicts || [];
 
-        // שמירה ב-localStorage
-        localStorage.setItem("priceConflicts", JSON.stringify(priceConflicts));
+        localStorage.setItem("priceConflicts", JSON.stringify(priceConflictsList));
 
-        // **עדכון מיידי של מחיר המוצרים בעגלה**:
-        // הרעיון: להסיר את המוצר הישן ולהוסיף אותו מחדש עם המחיר החדש מהשרת
-        let productsWithQ = priceConflicts;
-        priceConflicts.forEach((conflict) => {
-          const { product } = conflict;
+        let productsWithQ = priceConflictsList;
+        priceConflictsList.forEach((conflict) => {
+          const product = conflict?.product;
+          if (!product?._id) return;
 
-          // 1) מוצאים את הפריט כפי שהוא בעגלה
-          const cartItem = items.find((cartI) => cartI._id === product._id);
+          const cartItem = items.find((cartI) => (cartI._id || cartI.id) === product._id);
+          if (!cartItem) return;
 
-          if (cartItem) {
-            const oldQuantity = cartItem.quantity;
+          const itemId = cartItem.id ?? cartItem._id;
+          const oldQuantity = cartItem.quantity;
 
-            productsWithQ = productsWithQ.map(p => {
-              if (p.product._id === cartItem.id) {
-                return { ...p, product: { ...product, oldQuantity } }
-              }
-              return p;
-            });
+          productsWithQ = productsWithQ.map((p) => {
+            if ((p?.product?._id || p?.product?.id) === itemId) {
+              return { ...p, product: { ...(p.product || {}), ...product, oldQuantity } };
+            }
+            return p;
+          });
 
-            // 2) הסרת הפריט הישן
-            removeItem(cartItem.id);
-
-            setAddUpdatedProducts(true);
-          };
+          removeItem(itemId);
+          setAddUpdatedProducts(true);
         });
 
-        // פתיחת מודאל ייעודי
         setPriceConflicts(productsWithQ);
         setPriceConflictsModal(true);
         break;
