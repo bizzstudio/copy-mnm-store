@@ -150,8 +150,8 @@ const NavbarPromo = () => {
 
   return (
     <>
-      <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 3xl:bg-transparent w-full relative`}>
-        <div className="relative w-full sm:ps-20 3xl:ps-0! md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
+      <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} w-full relative`}>
+        <div className="relative w-full px-2 sm:px-4 md:pe-3 md:pt-2 md:pb-1 flex justify-center lg:justify-between items-center">
           {/* קונטיינר גלילה – חצים מחוץ לאזור הגלילה כדי שלא יכסו קטגוריות */}
           <div className="w-full flex items-center gap-1 py-2">
             {/* חץ שמאלה – עמודה נפרדת, לא על התוכן */}
@@ -170,7 +170,7 @@ const NavbarPromo = () => {
             <div
               dir="ltr"
               ref={scrollContainerRef}
-              className="flex flex-row-reverse justify-between lg:justify-center flex-1 min-w-0 scrollbar-hide 3xl:gap-8 xl:gap-6 lg:gap-4 gap-3 overflow-x-auto"
+              className="flex flex-row-reverse justify-between lg:justify-center flex-1 min-w-0 scrollbar-hide xl:gap-6 lg:gap-4 gap-3 overflow-x-auto"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
@@ -208,7 +208,7 @@ const NavbarPromo = () => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
+                              className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
                             />
                           ) : (
                             <Image
@@ -216,7 +216,7 @@ const NavbarPromo = () => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] opacity-90 -mb-[7px]"
+                              className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] opacity-90 -mb-[7px]"
                             />
                           )
                         ) : (
@@ -225,12 +225,12 @@ const NavbarPromo = () => {
                             width={400}
                             height={400}
                             alt="category"
-                            className="object-cover overflow-visible 3xl:w-[85px] 3xl:h-[85px] xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
+                            className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
                           />
                         )}
 
                         <div
-                          className={`inline-flex items-center justify-center text-center 3xl:text-[20px] xl:text-[18px] lg:text-[18px] md:text-[16px] sm:text-[16px] text-[15px] font-light w-full whitespace-nowrap pb-1.5 ${selectedCategory == index ? "text-mainColor-dark" : ""
+                          className={`inline-flex items-center justify-center text-center xl:text-[18px] lg:text-[18px] md:text-[16px] sm:text-[16px] text-[15px] font-light w-full whitespace-nowrap pb-1.5 ${selectedCategory == index ? "text-mainColor-dark" : ""
                             }`}
                         >
                           {title}

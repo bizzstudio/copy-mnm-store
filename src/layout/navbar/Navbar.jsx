@@ -108,7 +108,7 @@ const Navbar = ({ cashierPage = false }) => {
 
       <>
         <div
-          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg 3xl:py-0 py-2 overflow-x-hidden ${cashierPage ? "border-b" : ""}`}
+          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg py-2 overflow-x-hidden ${cashierPage ? "border-b" : ""}`}
         >
           <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 flex min-w-0">
           {/* logo */}
@@ -121,19 +121,14 @@ const Navbar = ({ cashierPage = false }) => {
               height={160}
               src={storeCustomizationSetting?.navbar?.logo}
               alt="logo"
-              className="h-12 sm:h-16 lg:h-20 3xl:h-[105px] w-auto object-contain 3xl:border-e-2 border-mainColor/20 me-2 pe-2"
+              className="h-12 sm:h-16 lg:h-20 w-auto object-contain me-2 pe-2"
             />
           </Link>
 
           {/* חיפוש + תפריט */}
           <div className="w-full min-w-0 flex flex-col-reverse md:flex-row items-center md:gap-3 gap-0">
             <div className="w-full min-w-0">
-              <div className="h-auto sm:h-16 lg:h-auto flex items-center justify-between mx-auto py-2.5 lg:py-5 3xl:py-0 relative">
-                {/* קטגוריות – בלי overflow-hidden כדי שהחצים והגלילה יעבדו גם במסכים גדולים */}
-                <div className="hidden 3xl:block w-full min-w-0 border-gray-200 bg-white">
-                  <NavbarPromo />
-                </div>
-
+                <div className="h-auto sm:h-16 lg:h-auto flex items-center justify-between mx-auto py-2.5 lg:py-5 relative">
                 {/* Search Bar */}
                 <div className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
                   <form onSubmit={handleSubmit}
@@ -271,12 +266,10 @@ const Navbar = ({ cashierPage = false }) => {
           </div>
         </div>
 
-        {/* פס קטגוריות מתחת ל-navbar - רק ב-xl ומטה */}
+        {/* פס קטגוריות מתחת ל-navbar - רקע מלא רוחב, בלי רווחים לבנים בצדדים */}
         {!cashierPage && (
-          <div className="3xl:hidden block w-full overflow-x-hidden">
-            <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4">
-              <NavbarPromo />
-            </div>
+          <div className="block w-full overflow-x-hidden">
+            <NavbarPromo />
           </div>
         )}
       </>
