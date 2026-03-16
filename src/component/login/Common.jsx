@@ -20,12 +20,16 @@ import { SidebarContext } from "@context/SidebarContext";
 
 const VALID_METHODS = ["login-regular", "login-bussines", "register", "reset-password"];
 
+// כיבוי טאב "לקוחות פרטיים" – רק כניסה עסקית. כיבוי קישור ההרשמה.
+const SHOW_PRIVATE_LOGIN_TAB = false;
+const SHOW_REGISTRATION_LINK = false;
+
 const Common = ({ setModalOpen }) => {
   const router = useRouter();
   const { loginModalOpen } = useContext(SidebarContext);
 
-  // סטייט של התוכן – Common מנהל, טעינה ראשונית לפי query
-  const [currentMethod, setCurrentMethod] = useState("login-regular");
+  // סטייט של התוכן – ברירת מחדל כניסה עסקית כש־לקוחות פרטיים כבוי
+  const [currentMethod, setCurrentMethod] = useState(SHOW_PRIVATE_LOGIN_TAB ? "login-regular" : "login-bussines");
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
 
   const { handleGoogleSignIn } = useLoginSubmit(setModalOpen, newsletterOptIn);
@@ -93,16 +97,16 @@ const Common = ({ setModalOpen }) => {
 
         {isResetPassword ? (
           <ResetPassword
-            setShowResetPassword={(val) => setMethod(val ? "reset-password" : "login-regular")}
+            setShowResetPassword={(val) => setMethod(val ? "reset-password" : (SHOW_PRIVATE_LOGIN_TAB ? "login-regular" : "login-bussines"))}
             setModalOpen={setModalOpen}
           />
         ) : isRegister ? (
           <Register
-            setShowResetPassword={(val) => setMethod(val ? "reset-password" : "login-regular")}
+            setShowResetPassword={(val) => setMethod(val ? "reset-password" : (SHOW_PRIVATE_LOGIN_TAB ? "login-regular" : "login-bussines"))}
             setModalOpen={setModalOpen}
             newsletterOptIn={newsletterOptIn}
           />
-        ) : (
+        ) : SHOW_PRIVATE_LOGIN_TAB ? (
           <Tabs
             activeTab={currentMethod}
             onTabChange={setMethod}
@@ -132,6 +136,13 @@ const Common = ({ setModalOpen }) => {
                 ),
               },
             ]}
+          />
+        ) : (
+          <Login
+            loginType="business"
+            setShowResetPassword={() => setMethod("reset-password")}
+            setModalOpen={setModalOpen}
+            newsletterOptIn={newsletterOptIn}
           />
         )}
 
@@ -176,17 +187,19 @@ const Common = ({ setModalOpen }) => {
             </>
           )}
         </div>
-        <div className="text-center text-sm text-gray-900 mt-4">
-          <div className="text-gray-500 mt-2.5">
-            {isRegister ? t('alreadyHaveAccount') : t('notAccount')}
-            <button
-              onClick={handleAuthToggle}
-              className="text-gray-800 hover:text-blackfont-bold mx-1 underline"
-            >
-              {isRegister ? t('loginBtn') : t('register')}
-            </button>
+        {SHOW_REGISTRATION_LINK && (
+          <div className="text-center text-sm text-gray-900 mt-4">
+            <div className="text-gray-500 mt-2.5">
+              {isRegister ? t('alreadyHaveAccount') : t('notAccount')}
+              <button
+                onClick={handleAuthToggle}
+                className="text-gray-800 hover:text-blackfont-bold mx-1 underline"
+              >
+                {isRegister ? t('loginBtn') : t('register')}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

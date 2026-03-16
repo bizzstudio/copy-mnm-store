@@ -152,37 +152,28 @@ const NavbarPromo = () => {
     <>
       <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} 3xl:bg-transparent w-full relative`}>
         <div className="relative w-full sm:ps-20 3xl:ps-0! md:pe-3 md:pt-2 3xl:pt-0 md:pb-1 3xl:pb-0 flex justify-center lg:justify-between items-center">
-          {/* קונטיינר גלילה אמיתי */}
-          <div className="w-full relative py-2">
-            {/* חץ שמאלה (צד שמאל של המסך) – גולל שמאלה */}
+          {/* קונטיינר גלילה – חצים מחוץ לאזור הגלילה כדי שלא יכסו קטגוריות */}
+          <div className="w-full flex items-center gap-1 py-2">
+            {/* חץ שמאלה – עמודה נפרדת, לא על התוכן */}
             {showLeftArrow && (
               <button
                 onClick={scrollLeft}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-full p-2 transition-all duration-200 drop-shadow-md"
+                type="button"
+                className="shrink-0 w-9 h-9 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 hover:border-mainColor/30 transition-colors rounded-full shadow-sm"
                 aria-label="גלול שמאלה"
               >
-                <FaAnglesLeft className="w-3 h-3 text-gray-600 left-right-animation" />
+                <FaAnglesLeft className="w-4 h-4 text-gray-600 left-right-animation" />
               </button>
             )}
 
-            {/* חץ ימינה (צד ימין של המסך) – גולל ימינה */}
-            {showRightArrow && (
-              <button
-                onClick={scrollRight}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-full p-2 transition-all duration-200 drop-shadow-md"
-                aria-label="גלול ימינה"
-              >
-                <FaAnglesRight className="w-3 h-3 text-gray-600 right-left-animation" />
-              </button>
-            )}
-
+            {/* אזור הגלילה בלבד – בלי חצים מעל */}
             <div
               dir="ltr"
               ref={scrollContainerRef}
-              className="flex flex-row-reverse justify-between lg:justify-center w-full scrollbar-hide 3xl:gap-8 xl:gap-6 lg:gap-4 gap-3 md:overflow-visible overflow-x-auto"
+              className="flex flex-row-reverse justify-between lg:justify-center flex-1 min-w-0 scrollbar-hide 3xl:gap-8 xl:gap-6 lg:gap-4 gap-3 overflow-x-auto"
               style={{
-                scrollbarWidth: "none", // Firefox
-                msOverflowStyle: "none", // IE/Edge
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
               }}
             >
               {storeCustomizationSetting?.navbar?.categories_menu_status &&
@@ -292,6 +283,18 @@ const NavbarPromo = () => {
                   );
                 })}
             </div>
+
+            {/* חץ ימינה – עמודה נפרדת, לא על התוכן */}
+            {showRightArrow && (
+              <button
+                onClick={scrollRight}
+                type="button"
+                className="shrink-0 w-9 h-9 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 hover:border-mainColor/30 transition-colors rounded-full shadow-sm"
+                aria-label="גלול ימינה"
+              >
+                <FaAnglesRight className="w-4 h-4 text-gray-600 right-left-animation" />
+              </button>
+            )}
           </div>
         </div>
       </div>

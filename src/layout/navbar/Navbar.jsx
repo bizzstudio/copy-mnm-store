@@ -108,8 +108,9 @@ const Navbar = ({ cashierPage = false }) => {
 
       <>
         <div
-          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg 3xl:py-0 py-2  ${cashierPage ? "border-b" : ""}`}
+          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg 3xl:py-0 py-2 overflow-x-hidden ${cashierPage ? "border-b" : ""}`}
         >
+          <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 flex min-w-0">
           {/* logo */}
           <Link
             href={cashierPage ? "/cashier-desk" : "/"}
@@ -125,11 +126,11 @@ const Navbar = ({ cashierPage = false }) => {
           </Link>
 
           {/* חיפוש + תפריט */}
-          <div className="w-full flex flex-col-reverse md:flex-row items-center md:gap-3 gap-0">
-            <div className="w-full">
+          <div className="w-full min-w-0 flex flex-col-reverse md:flex-row items-center md:gap-3 gap-0">
+            <div className="w-full min-w-0">
               <div className="h-auto sm:h-16 lg:h-auto flex items-center justify-between mx-auto py-2.5 lg:py-5 3xl:py-0 relative">
-                {/* קטגוריות */}
-                <div className="hidden 3xl:block w-full border-gray-200 bg-white">
+                {/* קטגוריות – בלי overflow-hidden כדי שהחצים והגלילה יעבדו גם במסכים גדולים */}
+                <div className="hidden 3xl:block w-full min-w-0 border-gray-200 bg-white">
                   <NavbarPromo />
                 </div>
 
@@ -267,12 +268,15 @@ const Navbar = ({ cashierPage = false }) => {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         {/* פס קטגוריות מתחת ל-navbar - רק ב-xl ומטה */}
         {!cashierPage && (
-          <div className="3xl:hidden block w-full">
-            <NavbarPromo />
+          <div className="3xl:hidden block w-full overflow-x-hidden">
+            <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4">
+              <NavbarPromo />
+            </div>
           </div>
         )}
       </>
