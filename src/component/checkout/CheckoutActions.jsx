@@ -7,8 +7,8 @@ import Cookies from "js-cookie";
 import MainBT from "@component/button/MainBT";
 import Calculating from "@component/cart/Calculating";
 
-// כיבוי תשלום באשראי – רק תשלום בהקפה. להחזיר ל־true כדי להפעיל שוב אשראי.
-const CARD_PAYMENT_ENABLED = false;
+// תשלום באשראי (כרטיס) מופעל. להגדיר ל־false כדי לכבות ולהותיר רק הזמנה בהקפה.
+const CARD_PAYMENT_ENABLED = true;
 
 const CheckoutActions = ({
     isEmpty,

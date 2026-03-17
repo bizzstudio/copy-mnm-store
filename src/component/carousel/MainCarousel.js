@@ -1,23 +1,27 @@
-import React from "react";
-import Link from "next/link";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation, EffectFade } from "swiper/modules";
+import { Pagination, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 import "swiper/css/effect-fade";
-
-// Internal import
 
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Router from "next/router";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 const MainCarousel = () => {
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue, showingUrl, showingImage } =
     useUtilsFunction();
+  const swiperRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+
+  const showArrows =
+    storeCustomizationSetting?.slider?.left_right_arrow ||
+    storeCustomizationSetting?.slider?.both_slider;
 
   const sliderData = [
     {
@@ -99,8 +103,30 @@ const MainCarousel = () => {
   ].filter(item => item.image);
 
   return (
-    <>
+    <div className="w-full flex items-stretch gap-2">
+      {/* חץ שמאלה – מחוץ לבאנר, לא על התמונה */}
+      {showArrows && (
+        <button
+          type="button"
+          onClick={() => swiperRef.current?.slidePrev()}
+          onKeyDown={(e) => e.key === "Enter" && swiperRef.current?.slidePrev()}
+          aria-label="שקף קודם"
+          className={`shrink-0 w-10 h-10 sm:w-12 sm:h-12 self-center flex items-center justify-center rounded-full bg-white/90 hover:bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all z-10 ${isBeginning ? "opacity-40 pointer-events-none" : ""}`}
+        >
+          <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+        </button>
+      )}
+
       <Swiper
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          setIsBeginning(swiper.isBeginning);
+          setIsEnd(swiper.isEnd);
+        }}
+        onSlideChange={(swiper) => {
+          setIsBeginning(swiper.isBeginning);
+          setIsEnd(swiper.isEnd);
+        }}
         spaceBetween={30}
         centeredSlides={true}
         autoplay={{
@@ -109,22 +135,16 @@ const MainCarousel = () => {
         }}
         speed={1500}
         loop={true}
-        effect="fade" // הוספת אפקט fade
-        fadeEffect={{ crossFade: true }} // הגדרת אפשרויות לאפקט fade
+        effect="fade"
+        fadeEffect={{ crossFade: true }}
         pagination={
           (storeCustomizationSetting?.slider?.bottom_dots ||
             storeCustomizationSetting?.slider?.both_slider) && {
             clickable: true,
           }
         }
-        navigation={
-          (storeCustomizationSetting?.slider?.left_right_arrow ||
-            storeCustomizationSetting?.slider?.both_slider) && {
-            clickable: true,
-          }
-        }
-        modules={[Autoplay, Pagination, Navigation, EffectFade]} // הוספת EffectFade למודולים
-        className="mySwiper"
+        modules={[Autoplay, Pagination, EffectFade]}
+        className="mySwiper flex-1 min-w-0"
       >
         {sliderData?.map((item, i) => (
           <SwiperSlide
@@ -142,26 +162,23 @@ const MainCarousel = () => {
                 priority
               />
             </div>
-            {/* <div className="absolute top-0 left-0 z-10 p-r-16 flex-col flex w-full h-full place-items-start justify-center">
-              <div className="flex flex-col pl-4 pr-12 sm:pl-10 sm:pr-16 w-10/12 lg:w-8/12 xl:w-7/12">
-                <h1 className="mb-2 font-serif text-xl sm:text-lg md:text-2xl line-clamp-1 md:line-clamp-none  lg:line-clamp-none  lg:text-3xl font-bold text-gray-800">
-                  {item.title}
-                </h1>
-                <p className="text-base leading-6 text-gray-600 font-sans line-clamp-1 md:line-clamp-none lg:line-clamp-none">
-                  {item.info}
-                </p>
-                <Link
-                  href={item.url}
-                  className="hidden w-fit sm:inline-block lg:inline-block mt-6 items-center gap-2 font-semibold cursor-pointer transition-all bg-mainColor text-white px-6 py-1.5 h-10 rounded-lg border-mainColor-dark border-b-4 hover:brightness-110 hover:-translate-y-px hover:border-b-[6px] active:border-b-2 active:brightness-90 active:translate-y-[2px]"
-                >
-                  {item.buttonName}
-                </Link>
-              </div>
-            </div> */}
           </SwiperSlide>
         ))}
       </Swiper>
-    </>
+
+      {/* חץ ימינה – מחוץ לבאנר, לא על התמונה */}
+      {showArrows && (
+        <button
+          type="button"
+          onClick={() => swiperRef.current?.slideNext()}
+          onKeyDown={(e) => e.key === "Enter" && swiperRef.current?.slideNext()}
+          aria-label="שקף הבא"
+          className={`shrink-0 w-10 h-10 sm:w-12 sm:h-12 self-center flex items-center justify-center rounded-full bg-white/90 hover:bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all z-10 ${isEnd ? "opacity-40 pointer-events-none" : ""}`}
+        >
+          <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+        </button>
+      )}
+    </div>
   );
 };
 
