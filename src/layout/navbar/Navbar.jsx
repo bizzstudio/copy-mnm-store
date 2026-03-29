@@ -1,5 +1,5 @@
 // src/layout/navbar/Navbar.jsx
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import Image from "next/image";
@@ -42,6 +42,7 @@ const Navbar = ({ cashierPage = false }) => {
   const [searchResults, setSearchResults] = useState();
   const [attributes, setAttributes] = useState();
   const [deliveriesPopup, setDeliveriesPopup] = useState(false);
+  const searchAnchorRef = useRef(null);
 
   const { toggleCartDrawer, setLoginModalOpen } = useContext(SidebarContext);
   const { state: { userInfo } } = useContext(UserContext);
@@ -130,7 +131,7 @@ const Navbar = ({ cashierPage = false }) => {
             <div className="w-full min-w-0">
                 <div className="h-auto sm:h-16 lg:h-auto flex items-center justify-between mx-auto py-2.5 lg:py-5 relative">
                 {/* Search Bar */}
-                <div className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
+                <div ref={searchAnchorRef} className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
                   <form onSubmit={handleSubmit}
                     className={`flex relative w-full h-[32px] sm:h-[40px] lg:min-w-[250px] items-center px-2 sm:px-3.5 rounded-[10px] transition-[border-radius] duration-500 ease-in-out bg-gray-100 focus-within:rounded-px before:content-[''] before:absolute before:bg-mainColor before:transform before:scale-x-0 before:origin-center before:w-full before:h-[2px] before:left-0 before:bottom-0 before:rounded-px before:transition-transform before:duration-300 before:ease-in-out focus-within:before:scale-100`}>
                     <button type="submit" className="border-none bg-none text-[#8b8ba7] focus:text-mainColor text-base sm:text-lg shrink-0">
@@ -154,6 +155,8 @@ const Navbar = ({ cashierPage = false }) => {
                     {searchResults && <ResultWindow
                       products={searchResults}
                       attributes={attributes}
+                      anchorRef={searchAnchorRef}
+                      searchQuery={searchText}
                       clearInput={() => { setSearchResults(), setSearchText("") }}
                       closeResultWindow={() => setSearchResults()}
                     />}

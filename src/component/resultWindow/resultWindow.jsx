@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { IoAdd, IoBagAddSharp, IoRemove } from 'react-icons/io5';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { IoAdd, IoRemove } from 'react-icons/io5';
 import { notifyError } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
 import useGetSetting from "@hooks/useGetSetting";
@@ -8,7 +9,6 @@ import { useTranslations } from "next-intl";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Link from 'next/link';
 import Price from '@component/common/Price';
-import Image from 'next/image';
 import Discount from '@component/common/Discount';
 import useCart from '@hooks/useCart';
 import getOfferNames from '@component/offer/getOfferNames';
@@ -16,7 +16,7 @@ import { SidebarContext } from '@context/SidebarContext';
 import { LiaCartPlusSolid } from 'react-icons/lia';
 import ImageWithFallback from '@component/common/ImageWithFallBack';
 
-export default function ResultWindow({ products = [], clearInput, closeResultWindow }) {
+export default function ResultWindow({ products = [], clearInput, closeResultWindow, anchorRef, searchQuery = '' }) {
     // console.log('products: ', products)
     const resultRef = useRef(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -31,14 +31,37 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
 
     const currency = globalSetting?.default_currency || "₪";
 
-    // בלחיצה מחוץ לחלון התוצאות הוא נסגר אם הפופאפ מוצר לא פתוח
+    const [mounted, setMounted] = useState(false);
+    const [dropdownTop, setDropdownTop] = useState(72);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const updateDropdownPosition = useCallback(() => {
+        const el = anchorRef?.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        setDropdownTop(rect.bottom + 8);
+    }, [anchorRef]);
+
+    useLayoutEffect(() => {
+        updateDropdownPosition();
+        window.addEventListener('resize', updateDropdownPosition);
+        window.addEventListener('scroll', updateDropdownPosition, true);
+        return () => {
+            window.removeEventListener('resize', updateDropdownPosition);
+            window.removeEventListener('scroll', updateDropdownPosition, true);
+        };
+    }, [updateDropdownPosition, products]);
+
+    // בלחיצה מחוץ לחלון התוצאות (ולא על שדה החיפוש) – סגירה. הפורטל ב-body לכן בודקים גם anchorRef
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                resultRef.current &&
-                !resultRef.current.contains(event.target) &&
-                !modalOpen
-            ) {
+            if (modalOpen) return;
+            const inPanel = resultRef.current?.contains(event.target);
+            const inSearch = anchorRef?.current?.contains(event.target);
+            if (!inPanel && !inSearch) {
                 closeResultWindow();
             }
         };
@@ -48,7 +71,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
         return () => {
             window.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [products, clearInput, closeResultWindow, modalOpen]);
+    }, [products, clearInput, closeResultWindow, modalOpen, anchorRef]);
 
     // חישוב מלאי המוצר
     const getProductStock = (product) => {
@@ -90,27 +113,15 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
         return <Discount search product={product} title={offerName} />
     }
 
-
-    return (
-        <>
-            {/* פופאפ מוצר בלחיצה על מוצר עם אפשרויות */}
-            {modalOpen && selectedProduct && (
-                <ProductModal
-                    modalOpen={modalOpen}
-                    setModalOpen={setModalOpen}
-                    product={selectedProduct}
-                    currency={currency}
-                    clearInput={clearInput}
-                />
-            )}
-
+    const panel = (
             <div
                 ref={resultRef}
-                className='fixed sm:absolute sm:top-10 top-16 left-1/2 sm:left-0 -translate-x-1/2 sm:translate-x-0 bg-white w-[90vw] sm:w-full lg:min-w-[585px] max-w-full shadow-xl overflow-hidden rounded-bl-lg rounded-br-lg z-10'
+                style={{ top: dropdownTop }}
+                className="fixed left-1/2 -translate-x-1/2 w-[min(92vw,40rem)] max-h-[min(85vh,720px)] bg-white shadow-2xl overflow-hidden rounded-xl z-[100] border border-gray-100"
             >
                 <div className="p-1">
-                    <h2 className="text-right text-xl p-4">{products.length} {t('itemsFound')}</h2>
-                    <div className="overflow-y-auto sm:max-h-[570px] max-h-[450px]">
+                    <h2 className="text-right text-xl p-4 border-b border-gray-100">{products.length} {t('itemsFound')}</h2>
+                    <div className="overflow-y-auto max-h-[min(70vh,570px)]">
                         {products.slice(0, 10).map((product) => (
                             <Link
                                 href={`/product/${product.slug}`} onClick={() => clearInput()}
@@ -197,17 +208,35 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                     </div>
                     {/* כפתור צפייה בכל התוצאות */}
                     {products.length > 10 && (
-                        <div className="text-center">
-                            <button
-                                className="text-blackhover:underline"
-                                type='submit'
+                        <div className="text-center py-3 border-t border-gray-100">
+                            <Link
+                                href={searchQuery.trim() ? `/search?query=${encodeURIComponent(searchQuery.trim())}` : '/search'}
+                                onClick={() => clearInput()}
+                                className="text-mainColor-dark font-semibold hover:underline"
                             >
                                 {t('showAll')} ({products.length})
-                            </button>
+                            </Link>
                         </div>
                     )}
                 </div>
             </div>
+    );
+
+    return (
+        <>
+            {modalOpen && selectedProduct && (
+                <ProductModal
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                    product={selectedProduct}
+                    currency={currency}
+                    clearInput={clearInput}
+                />
+            )}
+
+            {mounted && typeof document !== 'undefined'
+                ? createPortal(panel, document.body)
+                : null}
         </>
     );
 }
