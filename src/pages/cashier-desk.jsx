@@ -23,6 +23,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import useGetSetting from "@hooks/useGetSetting";
 import MainBT from "@component/button/MainBT";
 import { getI18nProps } from "@utils/i18n";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const CashierDesk = () => {
     const {
@@ -65,7 +66,7 @@ const CashierDesk = () => {
     // בדיקת הרשאות קופאי
     useEffect(() => {
         if (!userInfo) {
-            router.push("/");
+            router.push(getPostLogoutPath());
             return;
         }
 

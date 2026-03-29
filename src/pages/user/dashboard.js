@@ -29,6 +29,7 @@ import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import MyOrders from "./my-orders";
 import { getI18nProps } from "@utils/i18n";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const Dashboard = ({ title, description, children }) => {
   const router = useRouter();
@@ -67,13 +68,13 @@ const Dashboard = ({ title, description, children }) => {
     dispatch({ type: "USER_LOGOUT" });
     Cookies.remove("userInfo");
     Cookies.remove("couponInfo");
-    window.location = "/";
+    window.location = getPostLogoutPath();
   };
 
   useEffect(() => {
     setIsLoading(false);
     if (!userInfo) {
-      router.push("/");
+      router.push(getPostLogoutPath());
     }
   }, [userInfo]);
 

@@ -18,6 +18,7 @@ import OrderServices from "@services/OrderServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import MainBT from "@component/button/MainBT";
 import { getI18nProps } from "@utils/i18n";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const Order = ({ params }) => {
   const printRef = useRef();
@@ -46,7 +47,7 @@ const Order = ({ params }) => {
     })();
 
     if (!userInfo) {
-      router.push("/");
+      router.push(getPostLogoutPath());
     }
   }, []);
 

@@ -2,6 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
+import { getPostLogoutPath } from "@utils/storeAccess";
+
 const useAsync = (asyncFunction) => {
   const [data, setData] = useState([] || {});
   const [error, setError] = useState("");
@@ -58,7 +60,14 @@ const useAsync = (asyncFunction) => {
   useEffect(() => {
     if (errCode === 401) {
       Cookies.remove("userInfo");
-      window.location.replace(`${process.env.NEXT_PUBLIC_STORE_DOMAIN}`);
+      const path = getPostLogoutPath();
+      if (typeof window !== "undefined") {
+        window.location.replace(
+          path.startsWith("http")
+            ? path
+            : `${window.location.origin}${path}`
+        );
+      }
     }
   }, [errCode]);
 

@@ -17,6 +17,7 @@ import CheckInput from "@component/form/checkInput";
 import Tabs from "@component/common/Tabs";
 import MinimalTitle from "@component/common/MinimalTitle";
 import { SidebarContext } from "@context/SidebarContext";
+import { isStoreLoginRequired } from "@utils/storeAccess";
 
 const VALID_METHODS = ["login-regular", "login-bussines", "register", "reset-password"];
 
@@ -162,7 +163,9 @@ const Common = ({ setModalOpen }) => {
         )}
 
         <div>
-          {storeSetting?.google_login_status && isLoginRegular && (
+          {storeSetting?.google_login_status &&
+            isLoginRegular &&
+            !isStoreLoginRequired() && (
             <>
               <div className="mt-7 mb-3 after:bg-gray-100 before:bg-gray-100 fo10t-sans text-center font-medium">
                 {t('orGoogle')}

@@ -22,8 +22,43 @@ import { trackPageView as trackFlashyPageView } from "@services/flashy";
 import { trackPageView } from "@services/googleAnalytics";
 import { trackFbPageView } from "@services/facebookPixel";
 import { sanitizeScripts } from "@utils/sanitizeScripts";
+import {
+  getTokenFromUserInfoCookieValue,
+  isStoreLoginRequired,
+  STORE_LOGIN_METHOD_QUERY,
+  URL_LOGIN_QUERY_METHODS,
+} from "@utils/storeAccess";
 
 let persistor = persistStore(store);
+
+/** גיבוי מול ניווט בצד לקוח אם ה-middleware לא רץ / env לא הוגדר בפריסה */
+const loginMethodSet = new Set(URL_LOGIN_QUERY_METHODS);
+
+const StoreLoginEnforcer = ({ children }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!router.isReady || !isStoreLoginRequired()) return;
+
+    const p = router.pathname;
+    if (p.startsWith("/user/forget-password")) return;
+    if (p.startsWith("/user/email-verification")) return;
+
+    const token = getTokenFromUserInfoCookieValue(Cookies.get("userInfo") || "");
+    if (token) return;
+
+    const method = router.query.method;
+    if (p === "/" && typeof method === "string" && loginMethodSet.has(method)) {
+      return;
+    }
+
+    const path = router.asPath || "/";
+    const entry = `/?method=${STORE_LOGIN_METHOD_QUERY}&redirect=${encodeURIComponent(path)}`;
+    router.replace(entry);
+  }, [router.isReady, router.pathname, router.asPath, router.query.method]);
+
+  return children;
+};
 
 const siteId = 5076708;
 const hotjarVersion = 6;
@@ -246,7 +281,9 @@ function MyApp({ Component, pageProps }) {
               <PersistGate loading={null} persistor={persistor}>
                 <SidebarProvider>
                   <UserScopedCartProvider>
-                    <Component {...pageProps} />
+                    <StoreLoginEnforcer>
+                      <Component {...pageProps} />
+                    </StoreLoginEnforcer>
                   </UserScopedCartProvider>
                 </SidebarProvider>
               </PersistGate>

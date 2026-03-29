@@ -24,6 +24,7 @@ import useAddToCart from "@hooks/useAddToCart";
 import SubModal from "@component/modal/SubModal";
 import addingToCart from 'public/addingToCart.svg'
 import { getI18nProps } from "@utils/i18n";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const MyOrders = () => {
   const router = useRouter();
@@ -69,7 +70,7 @@ const MyOrders = () => {
   useEffect(() => {
     setIsLoading(false);
     if (!userInfo) {
-      router.push("/");
+      router.push(getPostLogoutPath());
     }
   }, [userInfo]);
 

@@ -29,6 +29,25 @@ import useFilter from "@hooks/useFilter";
 import { getI18nProps } from "@utils/i18n";
 import { getSeoProps } from "@utils/getSeoProps";
 import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
+import { isStoreLoginRequired } from "@utils/storeAccess";
+
+async function getEmptyHomeProps(context, cookies) {
+  const [seoProps, i18nProps] = await Promise.all([
+    getSeoProps(),
+    getI18nProps(context),
+  ]);
+  return {
+    props: {
+      popularProducts: [],
+      discountProducts: [],
+      cookies,
+      blogs: [],
+      totalBlogs: 0,
+      ...seoProps,
+      ...i18nProps,
+    },
+  };
+}
 
 const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => {
   const router = useRouter();
@@ -378,44 +397,51 @@ export const getServerSideProps = async (context) => {
   const { query, _id } = context.query;
   const userToken = getUserTokenFromCookies(cookies);
 
-  const [data, blogsData, seoProps, i18nProps] = await Promise.all([
-    ProductServices.getShowingStoreProducts({
-      category: _id ? _id : "",
-      title: query ? query : "",
-      token: userToken,
-    }),
+  if (isStoreLoginRequired() && !userToken) {
+    return getEmptyHomeProps(context, cookies);
+  }
 
-    BlogServices.getPublishedBlogs({
-      page: 1,
-      limit: 3,
-      category: "",
-      tag: ""
-    }),
+  try {
+    const [data, blogsData, seoProps, i18nProps] = await Promise.all([
+      ProductServices.getShowingStoreProducts({
+        category: _id ? _id : "",
+        title: query ? query : "",
+        token: userToken,
+      }),
 
-    getSeoProps(),
+      BlogServices.getPublishedBlogs({
+        page: 1,
+        limit: 3,
+        category: "",
+        tag: "",
+      }),
 
-    getI18nProps(context),
-  ]);
+      getSeoProps(),
 
-  const sortedPopularProducts = data.popularProducts;
+      getI18nProps(context),
+    ]);
 
-  // מוצרים עם מבצעי הצעות
-  // const sortedDiscountProducts = data.productsWithOffers;
+    const sortedPopularProducts = data.popularProducts;
+    const sortedDiscountProducts = data.discountedProducts;
 
-  // מוצרים עם מבצע סתם מחיר זול יותר
-  const sortedDiscountProducts = data.discountedProducts;
-
-  return {
-    props: {
-      popularProducts: sortedPopularProducts,
-      discountProducts: sortedDiscountProducts,
-      cookies: cookies,
-      blogs: blogsData?.blogs || [],
-      totalBlogs: blogsData?.totalBlogs || 0,
-      ...seoProps,
-      ...i18nProps,
-    },
-  };
+    return {
+      props: {
+        popularProducts: sortedPopularProducts,
+        discountProducts: sortedDiscountProducts,
+        cookies: cookies,
+        blogs: blogsData?.blogs || [],
+        totalBlogs: blogsData?.totalBlogs || 0,
+        ...seoProps,
+        ...i18nProps,
+      },
+    };
+  } catch (err) {
+    const status = err?.response?.status;
+    if (status === 401 || status === 403) {
+      return getEmptyHomeProps(context, cookies);
+    }
+    throw err;
+  }
 };
 
 export default Home;

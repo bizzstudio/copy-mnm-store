@@ -1,8 +1,14 @@
 // SidebarContext.js
 import OfferServices from "@services/OfferServices";
 import CategoryServices from "@services/CategoryServices";
-import React, { useState, useMemo, createContext, useEffect } from "react";
+import Cookies from "js-cookie";
+import React, { useState, useMemo, createContext, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import { UserContext } from "@context/UserContext";
+import {
+  getTokenFromUserInfoCookieValue,
+  isStoreLoginRequired,
+} from "@utils/storeAccess";
 // import useNotification from "@hooks/useNotification";
 
 // create context
@@ -10,6 +16,9 @@ export const SidebarContext = createContext();
 
 export const SidebarProvider = ({ children }) => {
   const router = useRouter();
+  const {
+    state: { userInfo },
+  } = useContext(UserContext);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,14 +31,20 @@ export const SidebarProvider = ({ children }) => {
 
   const VALID_LOGIN_METHODS = ["login-regular", "login-bussines", "register", "reset-password"];
 
-  // רק פתיחה: אם יש method תקין ב-URL – פותחים את המודאל
+  // רק פתיחה: אם יש method תקין ב-URL – פותחים את המודאל (לא כשכבר מחוברים)
   useEffect(() => {
     if (!router.isReady) return;
+    if (
+      userInfo?.token ||
+      getTokenFromUserInfoCookieValue(Cookies.get("userInfo") || "")
+    ) {
+      return;
+    }
     const method = router.query.method;
     if (typeof method === "string" && VALID_LOGIN_METHODS.includes(method)) {
       setLoginModalOpen(true);
     }
-  }, [router.isReady, router.query.method]);
+  }, [router.isReady, router.query.method, userInfo]);
 
   // שליפת המבצעים פעם אחת כשאתר נטען
   const fetchOffers = async () => {
@@ -52,16 +67,31 @@ export const SidebarProvider = ({ children }) => {
       const res = await CategoryServices.getShowingCategory();
       setCategories(res || []);
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Failed to fetch categories:", error);
+      }
+      setCategories([]);
     } finally {
       setCategoriesLoading(false);
     }
   };
 
+  const canFetchCatalogData = () => {
+    if (!isStoreLoginRequired()) return true;
+    if (userInfo?.token) return true;
+    return !!getTokenFromUserInfoCookieValue(Cookies.get("userInfo") || "");
+  };
+
   useEffect(() => {
+    if (!canFetchCatalogData()) {
+      setOffers([]);
+      setCategories([]);
+      setCategoriesLoading(false);
+      return;
+    }
     fetchOffers();
     fetchCategories();
-  }, []);
+  }, [userInfo]);
 
   // פונקציה לריענון
   const refreshOffers = async () => {
@@ -116,7 +146,17 @@ export const SidebarProvider = ({ children }) => {
       refreshCategories,
     }),
 
-    [cartDrawerOpen, categoryDrawerOpen, isModalOpen, loginModalOpen, currentPage, isLoading, offers, categories, categoriesLoading]
+    [
+      cartDrawerOpen,
+      categoryDrawerOpen,
+      isModalOpen,
+      loginModalOpen,
+      currentPage,
+      isLoading,
+      offers,
+      categories,
+      categoriesLoading,
+    ]
   );
 
   return (

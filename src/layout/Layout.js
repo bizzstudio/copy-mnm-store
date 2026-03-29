@@ -28,6 +28,7 @@ import RewardOffersManager from "@component/reward-offers/RewardOffersManager";
 import DefaultSeo from "@component/common/DefaultSeo";
 import LoginModal from "@component/modal/LoginModal";
 import { SidebarContext } from "@context/SidebarContext";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
@@ -200,10 +201,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
           dispatch({ type: "USER_LOGOUT" });
           Cookies.remove("userInfo");
           Cookies.remove("couponInfo");
-          // אם זה לא עמוד הבית - העבר לעמוד הבית
-          if (router.pathname !== "/") {
-            router.push("/");
-          }
+          router.replace(getPostLogoutPath());
         }
       } catch (error) {
         console.error("Token validation/refresh error:", error);
@@ -211,10 +209,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
         dispatch({ type: "USER_LOGOUT" });
         Cookies.remove("userInfo");
         Cookies.remove("couponInfo");
-        // אם זה לא עמוד הבית - העבר לעמוד הבית
-        if (router.pathname !== "/") {
-          router.push("/");
-        }
+        router.replace(getPostLogoutPath());
       }
     };
 

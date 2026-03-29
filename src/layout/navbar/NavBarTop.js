@@ -12,6 +12,7 @@ import { UserContext } from "@context/UserContext";
 import { SidebarContext } from "@context/SidebarContext";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import { getPostLogoutPath } from "@utils/storeAccess";
 
 const NavBarTop = () => {
   const {
@@ -36,7 +37,7 @@ const NavBarTop = () => {
     dispatch({ type: "USER_LOGOUT" });
     Cookies.remove("userInfo");
     Cookies.remove("couponInfo");
-    window.location = "/";
+    window.location = getPostLogoutPath();
   };
 
   console.log(' storeCustomizationSetting?.navbar', storeCustomizationSetting?.navbar)

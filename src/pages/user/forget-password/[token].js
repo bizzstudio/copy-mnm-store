@@ -13,6 +13,7 @@ import { notifyError } from "@utils/toast";
 import MainBT from "@component/button/MainBT";
 import MinimalTitle from "@component/common/MinimalTitle";
 import { getI18nProps } from "@utils/i18n";
+import { isStoreLoginRequired } from "@utils/storeAccess";
 
 const REDIRECT_DELAY_MS = 2000;
 
@@ -35,7 +36,9 @@ const ForgetPassword = () => {
   useEffect(() => {
     if (!successMessage) return;
     const timer = setTimeout(() => {
-      router.replace("/?method=login-regular");
+      router.replace(
+        isStoreLoginRequired() ? "/?method=login-bussines" : "/?method=login-regular"
+      );
     }, REDIRECT_DELAY_MS);
     return () => clearTimeout(timer);
   }, [successMessage, router]);
