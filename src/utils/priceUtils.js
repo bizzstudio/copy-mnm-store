@@ -6,6 +6,19 @@
  * @returns {Object} - { price, salePrice, originalPrice, warehousePrice, purchaseLimit, priceList }
  */
 export const getUserPrice = (product, userInfo = null) => {
+    const loggedIn = !!(userInfo && userInfo.token);
+    if (!loggedIn) {
+        return {
+            price: null,
+            salePrice: null,
+            originalPrice: null,
+            warehousePrice: null,
+            purchaseLimit: null,
+            priceList: null,
+            pricesHidden: true,
+        };
+    }
+
     // אם אין מוצר או אין מחירים
     if (!product || !product.prices || !Array.isArray(product.prices) || product.prices.length === 0) {
         return {
@@ -84,7 +97,8 @@ export const getUserPrice = (product, userInfo = null) => {
  * @returns {Number} - המחיר הסופי
  */
 export const getFinalPrice = (product, userInfo = null) => {
-    const { price, salePrice } = getUserPrice(product, userInfo);
+    const { price, salePrice, pricesHidden } = getUserPrice(product, userInfo);
+    if (pricesHidden) return 0;
     return salePrice && salePrice > 0 ? salePrice : price;
 };
 
@@ -95,6 +109,7 @@ export const getFinalPrice = (product, userInfo = null) => {
  * @returns {Boolean} - true אם יש מחיר מבצע
  */
 export const hasSalePrice = (product, userInfo = null) => {
-    const { salePrice, price } = getUserPrice(product, userInfo);
+    const { salePrice, price, pricesHidden } = getUserPrice(product, userInfo);
+    if (pricesHidden) return false;
     return salePrice && salePrice > 0 && salePrice < price;
 };

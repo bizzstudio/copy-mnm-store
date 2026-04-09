@@ -20,6 +20,8 @@
 
   "/=================* Titles * =================/": "",
   "loginTitle": "Login",
+  "loginToSeePrices": "Sign in to see prices",
+  "loginRequiredForCart": "Please sign in to use the cart or add items",
   "loginRegularTab": "Private customers",
   "loginBusinessTab": "Business / Institutional",
   "registerTitle": "Register",

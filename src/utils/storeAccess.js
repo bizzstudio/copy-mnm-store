@@ -1,21 +1,13 @@
 /**
- * ברירת מחדל: חנות נעולה (חייבים התחברות).
- * כדי לפתוח את החנות לכולם בלי התחברות: NEXT_PUBLIC_STORE_REQUIRES_LOGIN=false
- * (ב-.env מקומי וב-Vercel → Environment Variables, ואז build מחדש.)
+ * נעילת כניסה לאתר שלמה (רק מודאל/הפניה) — אופציונלי.
+ * ברירת מחדל: אתר פתוח; מחירים/עגלה מוגבלים בנפרד בקוד.
+ * להפעלה: NEXT_PUBLIC_STORE_REQUIRES_LOGIN=true
  */
 export const isStoreLoginRequired = () => {
   const v = (process.env.NEXT_PUBLIC_STORE_REQUIRES_LOGIN || "")
     .toLowerCase()
     .trim();
-  if (
-    v === "false" ||
-    v === "0" ||
-    v === "off" ||
-    v === "no"
-  ) {
-    return false;
-  }
-  return true;
+  return v === "true" || v === "1" || v === "yes" || v === "on";
 };
 
 /**
@@ -35,6 +27,12 @@ export function getTokenFromUserInfoCookieValue(raw) {
       return "";
     }
   }
+}
+
+/** לקוח מחובר (טוקן בהקשר או ב-cookie) */
+export function hasCustomerSession(userInfo, userInfoCookieRaw) {
+  if (userInfo?.token) return true;
+  return !!getTokenFromUserInfoCookieValue(userInfoCookieRaw || "");
 }
 
 /** פרמטר query שפותח את מודאל ההתחברות הקיים (ללא דף נפרד) */

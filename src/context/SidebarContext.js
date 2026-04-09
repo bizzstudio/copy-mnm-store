@@ -2,9 +2,11 @@
 import OfferServices from "@services/OfferServices";
 import CategoryServices from "@services/CategoryServices";
 import Cookies from "js-cookie";
-import React, { useState, useMemo, createContext, useEffect, useContext } from "react";
+import React, { useState, useMemo, createContext, useEffect, useContext, useCallback } from "react";
 import { useRouter } from "next/router";
+import { useTranslations } from "next-intl";
 import { UserContext } from "@context/UserContext";
+import { notifyError } from "@utils/toast";
 import {
   getTokenFromUserInfoCookieValue,
   isStoreLoginRequired,
@@ -16,6 +18,7 @@ export const SidebarContext = createContext();
 
 export const SidebarProvider = ({ children }) => {
   const router = useRouter();
+  const t = useTranslations();
   const {
     state: { userInfo },
   } = useContext(UserContext);
@@ -105,7 +108,23 @@ export const SidebarProvider = ({ children }) => {
 
   // const { socket } = useNotification();
 
-  const toggleCartDrawer = () => setCartDrawerOpen(!cartDrawerOpen);
+  const toggleCartDrawer = useCallback(() => {
+    setCartDrawerOpen((prev) => {
+      const opening = !prev;
+      if (opening) {
+        const token =
+          userInfo?.token ||
+          getTokenFromUserInfoCookieValue(Cookies.get("userInfo") || "");
+        if (!token) {
+          setLoginModalOpen(true);
+          notifyError(t("loginRequiredForCart"));
+          return prev;
+        }
+      }
+      return !prev;
+    });
+  }, [userInfo, t]);
+
   const closeCartDrawer = () => setCartDrawerOpen(false);
 
   const toggleCategoryDrawer = () => setCategoryDrawerOpen(!categoryDrawerOpen);
@@ -156,6 +175,7 @@ export const SidebarProvider = ({ children }) => {
       offers,
       categories,
       categoriesLoading,
+      toggleCartDrawer,
     ]
   );
 

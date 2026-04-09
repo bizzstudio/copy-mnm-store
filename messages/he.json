@@ -20,6 +20,8 @@
 
   "/=================* Titles * =================/": "",
   "loginTitle": "כניסה",
+  "loginToSeePrices": "התחברו לצפייה במחירים",
+  "loginRequiredForCart": "יש להתחבר כדי להשתמש בעגלה או להוסיף מוצרים",
   "loginRegularTab": "לקוחות פרטיים",
   "loginBusinessTab": "לקוחות עסקיים/מוסדיים",
   "registerTitle": "הרשמה",

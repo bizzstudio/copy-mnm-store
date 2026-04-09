@@ -1,8 +1,10 @@
 // src/hooks/useCart.jsx
 import { useCart as useOriginalCart } from 'react-use-cart';
+import Cookies from 'js-cookie';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { SidebarContext } from '@context/SidebarContext';
 import { UserContext } from '@context/UserContext';
+import { getTokenFromUserInfoCookieValue } from '@utils/storeAccess';
 import { debouncedCartUpdate } from '@services/flashy';
 import { trackAddToCart, trackRemoveFromCart } from '@services/googleAnalytics';
 import { trackFbAddToCart, trackFbCustomEvent } from '@services/facebookPixel';
@@ -13,15 +15,28 @@ import { getFinalPrice } from '@utils/priceUtils';
 
 const useCart = () => {
     const cart = useOriginalCart();
-    const { offers } = useContext(SidebarContext);
+    const { offers, setLoginModalOpen } = useContext(SidebarContext);
     const { state: { userInfo } } = useContext(UserContext);
     const t = useTranslations();
 
     // Ref לשמירת מצב קודם של העגלה למעקב שינויים
     const prevCartItemsRef = useRef([]);
 
+    const requireLoginForCart = () => {
+        const token =
+            userInfo?.token ||
+            getTokenFromUserInfoCookieValue(Cookies.get('userInfo') || '');
+        if (token) return true;
+        setLoginModalOpen(true);
+        notifyError(t('loginRequiredForCart'));
+        return false;
+    };
+
     // Wrapper ל-addItem עם בדיקת purchaseLimit
     const addItemWithLimitCheck = (product, quantity = 1) => {
+        if (!requireLoginForCart()) {
+            return { added: 0 };
+        }
         // בדיקת purchaseLimit
         if (product?.purchaseLimit && product?.purchaseLimit > 0) {
             const existingItem = cart.items.find((item) => item.id === product.id);
@@ -86,6 +101,18 @@ const useCart = () => {
     // Wrapper ל-updateItemQuantity עם בדיקת purchaseLimit
     const updateItemQuantityWithLimitCheck = (id, quantity) => {
         const existingItem = cart.items.find((item) => item.id === id);
+        const token =
+            userInfo?.token ||
+            getTokenFromUserInfoCookieValue(Cookies.get('userInfo') || '');
+        if (
+            !token &&
+            quantity > 0 &&
+            (!existingItem || quantity > existingItem.quantity)
+        ) {
+            setLoginModalOpen(true);
+            notifyError(t('loginRequiredForCart'));
+            return;
+        }
 
         if (existingItem && existingItem.purchaseLimit && existingItem.purchaseLimit > 0) {
             // בדיקה אם הכמות החדשה תעבור את המגבלה

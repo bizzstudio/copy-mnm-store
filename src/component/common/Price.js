@@ -1,5 +1,6 @@
 // src/component/common/Price.js
 import { useContext } from "react";
+import { useTranslations } from "next-intl";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
@@ -7,9 +8,29 @@ import { getUserPrice } from "@utils/priceUtils";
 const Price = ({ product, card, currency }) => {
   const { getNumberTwo } = useUtilsFunction();
   const { state: { userInfo } } = useContext(UserContext);
+  const t = useTranslations();
 
   // קבלת המחיר המדוייק ללקוח
-  const { price, salePrice, originalPrice } = getUserPrice(product, userInfo);
+  const { price, salePrice, originalPrice, pricesHidden } = getUserPrice(
+    product,
+    userInfo
+  );
+
+  if (pricesHidden) {
+    return (
+      <div className="flex flex-wrap gap-x-2 items-center font-serif product-price font-semibold me-auto">
+        <span
+          className={
+            card
+              ? "inline-block text-xs sm:text-sm text-gray-500"
+              : "inline-block text-base text-gray-500"
+          }
+        >
+          {t("loginToSeePrices")}
+        </span>
+      </div>
+    );
+  }
 
   // המחיר הסופי להצגה (אם יש מחיר מבצע, מציגים אותו, אחרת המחיר הרגיל)
   const finalPrice = salePrice && salePrice > 0 ? salePrice : price;
