@@ -12,6 +12,8 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+      <script src="https://bizzstudio.co.il/consent/cookie-consent.js"></script>
+<script src="https://cdn.enable.co.il/licenses/enable-L669sin2yb9r7u-1017-80592/init.js"></script>
         </body>
       </Html>
     );
