@@ -39,7 +39,7 @@ async function getEmptyHomeProps(context, cookies) {
   return {
     props: {
       popularProducts: [],
-      discountProducts: [],
+      recentProducts: [],
       cookies,
       blogs: [],
       totalBlogs: 0,
@@ -49,7 +49,7 @@ async function getEmptyHomeProps(context, cookies) {
   };
 }
 
-const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => {
+const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) => {
   const router = useRouter();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
@@ -61,8 +61,8 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
   // מיון מוצרים פופולריים
   const { productData: sortedPopularProducts } = useFilter(popularProducts);
 
-  // מיון מוצרים בהנחה
-  const { productData: sortedDiscountProducts } = useFilter(discountProducts);
+  // מוצרים אחרונים: לא דרך useFilter — שם ברירת המחדל "Popular" ממיין לפי ברקוד/מכירות ודורס את סדר createdAt מהבאקנד
+  const sortedRecentProducts = Array.isArray(recentProducts) ? [...recentProducts] : [];
 
   useEffect(() => {
     const fakeLoadingSession = sessionStorage.getItem('fakeLoading');
@@ -115,7 +115,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
     }
   }, [fakeLoading, carouselRef.current]);
 
-  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && discountProducts && Array.isArray(offers) && fakeLoading) {
+  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && Array.isArray(recentProducts) && Array.isArray(offers) && fakeLoading) {
     return (
       <>
         {isLoading ? (
@@ -125,14 +125,14 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
             <div className="min-h-screen w-full max-w-full overflow-hidden">
               <div className="3xl:bg-mainColor-superLight bg-white">
                 <div className="mx-auto sm:py-5 max-w-screen-2x1 px-3 sm:px-10">
-                  <div className="flex flex-col lg:flex-row gap-6 mx-auto py-5 max-w-screen-2xl px-3 sm:px-10">
-                    <div ref={carouselRef} className="shrink-0 lg:block w-full lg:w-3/5 h-fit">
+                  <div className="flex flex-col lg:flex-row gap-6 mx-auto py-5 max-w-screen-2xl px-3 sm:px-10 min-w-0">
+                    <div ref={carouselRef} className="shrink-0 w-full min-w-0 lg:w-3/5 lg:max-w-[60%] h-fit">
                       <MainCarousel />
                     </div>
-                    <div className="w-full hidden lg:flex">
+                    {/* flex-1 + min-w-0: לא לדרוס את עמודת "מוצרים אחרונים" עם w-full ליד הקרוסלה */}
+                    <div className="hidden min-w-0 flex-1 basis-0 lg:flex">
                       <OfferCard
-                        discountProducts={discountProducts}
-                        // קבלת הגובה של הבאנר המתחלף (קרוסלה)
+                        discountProducts={sortedRecentProducts}
                         height={carouselHeight}
                       />
                     </div>
@@ -281,7 +281,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
 
               {/* discounted products */}
               {storeCustomizationSetting?.home?.discount_product_status &&
-                discountProducts?.length > 0 && (
+                sortedRecentProducts?.length > 0 && (
                   <div
                     id="discount"
                     className="bg-mainColor-superLight lg:py-10 py-4 mx-auto max-w-screen-2xl px-3 sm:px-10"
@@ -299,7 +299,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
                       />
                     </div>
 
-                    {/* כרטיסי המוצרים שבמבצע */}
+                    {/* מוצרים אחרונים במערכת */}
                     <div className="flex">
                       <div className="w-full">
                         {loading ? (
@@ -311,7 +311,7 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
                           />
                         ) : (
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
-                            {sortedDiscountProducts
+                            {sortedRecentProducts
                               ?.slice(
                                 0,
                                 storeCustomizationSetting?.home
@@ -394,7 +394,9 @@ const Home = ({ popularProducts, discountProducts, blogs, totalBlogs, seo }) => 
 
 export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
-  const { query, _id } = context.query;
+  const q = context.query;
+  const queryParam = Array.isArray(q.query) ? q.query[0] : q.query;
+  const idParam = Array.isArray(q._id) ? q._id[0] : q._id;
   const userToken = getUserTokenFromCookies(cookies);
 
   if (isStoreLoginRequired() && !userToken) {
@@ -404,8 +406,8 @@ export const getServerSideProps = async (context) => {
   try {
     const [data, blogsData, seoProps, i18nProps] = await Promise.all([
       ProductServices.getShowingStoreProducts({
-        category: _id ? _id : "",
-        title: query ? query : "",
+        category: idParam ? String(idParam) : "",
+        title: queryParam ? String(queryParam) : "",
         token: userToken,
       }),
 
@@ -422,12 +424,14 @@ export const getServerSideProps = async (context) => {
     ]);
 
     const sortedPopularProducts = data.popularProducts;
-    const sortedDiscountProducts = data.discountedProducts;
+    const recentList = Array.isArray(data.recentProducts)
+      ? data.recentProducts
+      : (data.discountedProducts || []);
 
     return {
       props: {
         popularProducts: sortedPopularProducts,
-        discountProducts: sortedDiscountProducts,
+        recentProducts: recentList,
         cookies: cookies,
         blogs: blogsData?.blogs || [],
         totalBlogs: blogsData?.totalBlogs || 0,

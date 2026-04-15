@@ -11,7 +11,7 @@ const useFilter = (data) => {
   // console.log("sortedfield", sortedField, data);
 
   const productData = useMemo(() => {
-    let services = data;
+    let services = Array.isArray(data) ? [...data] : [];
     //filter user order
     if (router.pathname === "/user/dashboard") {
       const orderPending = services?.filter(

@@ -104,7 +104,7 @@ const MainCarousel = () => {
 
   return (
     <div className="w-full flex items-stretch gap-2">
-      {/* חץ שמאלה – מחוץ לבאנר, לא על התמונה */}
+      {/* חץ קודם (אייקון מותאם RTL – מחוץ לבאנר) */}
       {showArrows && (
         <button
           type="button"
@@ -113,7 +113,7 @@ const MainCarousel = () => {
           aria-label="שקף קודם"
           className={`shrink-0 w-10 h-10 sm:w-12 sm:h-12 self-center flex items-center justify-center rounded-full bg-white/90 hover:bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all z-10 ${isBeginning ? "opacity-40 pointer-events-none" : ""}`}
         >
-          <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+          <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
         </button>
       )}
 
@@ -166,7 +166,7 @@ const MainCarousel = () => {
         ))}
       </Swiper>
 
-      {/* חץ ימינה – מחוץ לבאנר, לא על התמונה */}
+      {/* חץ הבא (אייקון מותאם RTL – מחוץ לבאנר) */}
       {showArrows && (
         <button
           type="button"
@@ -175,7 +175,7 @@ const MainCarousel = () => {
           aria-label="שקף הבא"
           className={`shrink-0 w-10 h-10 sm:w-12 sm:h-12 self-center flex items-center justify-center rounded-full bg-white/90 hover:bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all z-10 ${isEnd ? "opacity-40 pointer-events-none" : ""}`}
         >
-          <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+          <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
         </button>
       )}
     </div>

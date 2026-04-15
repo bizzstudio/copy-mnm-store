@@ -5,10 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { IoHome, IoNewspaperOutline, IoSearchOutline } from "react-icons/io5";
+import { IoHome, IoSearchOutline } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
 import { FaX } from "react-icons/fa6";
-import { MdPointOfSale } from "react-icons/md";
+import { MdAccessibilityNew, MdPointOfSale } from "react-icons/md";
 import { useTranslations } from "next-intl";
 import debounce from "lodash.debounce";
 import { RiCustomerServiceLine } from "react-icons/ri";
@@ -27,7 +27,6 @@ import ProductServices from "@services/ProductServices";
 import ResultWindow from "@component/resultWindow/resultWindow";
 import AttributeServices from "@services/AttributeServices";
 import useCart from "@hooks/useCart";
-import VoiceSearchButton from "@component/voice-search/VoiceSearchButton";
 import DropdownMenu from "@component/menu/DropdownMenu";
 import NavbarUserButton from "@layout/navbar/NavbarUserButton";
 import MainModal from "@component/modal/MainModal";
@@ -149,9 +148,6 @@ const Navbar = ({ cashierPage = false }) => {
                       <FaX size={10} className="sm:w-3 sm:h-3" />
                     </button>
 
-                    {/* כפתור התמלול הקולי */}
-                    <VoiceSearchButton />
-
                     {searchResults && <ResultWindow
                       products={searchResults}
                       attributes={attributes}
@@ -191,10 +187,10 @@ const Navbar = ({ cashierPage = false }) => {
                       },
                       {
                         label: (
-                          <Link href="/blogs" className="group hover:underline">
+                          <Link href="/accessibility-statement" className="group hover:underline">
                             <div className="flex items-center justify-center gap-1.5 font-semibold">
-                              <IoNewspaperOutline size={20} />
-                              <span>{t('blogsTitle')}</span>
+                              <MdAccessibilityNew size={22} />
+                              <span>{t('accessibilityStatementTitle')}</span>
                             </div>
                           </Link>
                         ),

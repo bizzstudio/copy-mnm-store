@@ -1,5 +1,5 @@
 // OfferCard.js
-import React, { useContext, useRef } from "react";
+import React, { useContext, useLayoutEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 // Internal import
@@ -16,7 +16,25 @@ const OfferCard = ({ discountProducts, height }) => {
   const { storeCustomizationSetting } = useGetSetting();
   const { offers } = useContext(SidebarContext);
   const headerRef = useRef(null);
+  const [headerPx, setHeaderPx] = useState(0);
   const t = useTranslations();
+
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const measure = () => setHeaderPx(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const carouselH = Number(height) || 0;
+  const innerHeight = Math.max(0, carouselH - headerPx);
+  const scrollContainerStyle =
+    innerHeight > 0
+      ? { height: innerHeight }
+      : { minHeight: "clamp(240px, 42vh, 520px)" };
 
   const isProductWithDiscount = (product) => {
     const offerName = getOfferNames(offers, product);
@@ -42,14 +60,14 @@ const OfferCard = ({ discountProducts, height }) => {
   };
 
   return (
-    <div className="w-full group">
+    <div className="w-full min-w-0 min-h-0 group">
       <div className="transition duration-150 ease-linear transform border-mainColor">
         <div className="text-gray-900 pb-2 border-b rounded-t flex items-center justify-center" ref={headerRef}>
           <div className="w-full bg-white rounded-xl p-3 border-s-4 border-b-4 border-mainColor">
             <MinimalTitle title={t('lastOffers')} />
           </div>
         </div>
-        <div className="scroll-container" style={{ height: height - headerRef.current?.offsetHeight || 0 }}>
+        <div className="scroll-container" style={scrollContainerStyle}>
           <div className="scroll-content"
             ref={scrollContentRef}
             onMouseEnter={handleMouseEnter}
