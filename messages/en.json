@@ -322,6 +322,13 @@
   "totalToPay": "Total to pay",
   "maxQuantityReached": "You have reached the maximum quantity for this product",
   "exceedingMaxQuantity": "Maximum allowed quantity is {limit}",
+  "invalidQuantity": "Invalid quantity",
+  "weightInvalidAmount": "Enter a positive weight (kg or grams, decimals allowed)",
+  "weightUnitKg": "kg",
+  "weightUnitGram": "g",
+  "weightAmountLabel": "Amount",
+  "weightKgSuffix": "kg",
+  "weightHintLine": "Price is per kg. Choose quantity in kg or grams (decimals allowed).",
 
   "/=================* Login Popup * =================/": "",
   "loginBoxText": "Login with your email and password",

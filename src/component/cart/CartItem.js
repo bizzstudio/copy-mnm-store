@@ -13,6 +13,8 @@ import { UserContext } from "@context/UserContext";
 import useCart from "@hooks/useCart";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getUserPrice } from "@utils/priceUtils";
+import { cartDecrementQuantity } from "@utils/productSoldByWeight";
+import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const CartItem = ({ item, currency, updateTotalPrice }) => {
   const { updateItemQuantity, removeItem, updateItem, items } = useCart();
@@ -105,6 +107,11 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
   }, [items, item.id, itemPrice, item.quantity]);
 
   // console.log('item :>> ', item);
+
+  const getLineStock = (p) => {
+    if (p?.manageStock === false) return 9999;
+    return p?.stock || 0;
+  };
 
   const placeholderImage = "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
   const imageSrc = Array.isArray(item?.image)
@@ -219,15 +226,24 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
                 <button
                   type="button"
                   className="px-1"
-                  onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
+                  onClick={() => {
+                    const next = cartDecrementQuantity(item);
+                    if (next <= 0) removeItem(item.id);
+                    else updateItemQuantity(item.id, next);
+                  }}
                 >
                   <span className="text-dark text-base">
                     <FiMinus />
                   </span>
                 </button>
-                <p className="text-sm font-semibold text-dark px-2">
-                  {item.quantity}
-                </p>
+                <div className="px-1 flex items-center justify-center min-w-0">
+                  <CartWeightQtyField
+                    item={item}
+                    getProductStock={getLineStock}
+                    updateItemQuantity={updateItemQuantity}
+                    variant="onLight"
+                  />
+                </div>
                 <button type="button" onClick={() => handleIncreaseQuantity(item)} className="px-1">
                   <span className="text-dark text-base">
                     <FiPlus />

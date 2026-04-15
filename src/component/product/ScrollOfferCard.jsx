@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useContext, useState } from "react";
+import { UserContext } from "@context/UserContext";
 import { IoAdd, IoBagAddSharp, IoRemove } from "react-icons/io5";
 
 // Internal import
@@ -21,11 +22,19 @@ import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
 import { getPrimaryProductImageUrl } from "@utils/productImage";
+import { getUserPrice } from "@utils/priceUtils";
+import {
+  DEFAULT_WEIGHT_CART_KG,
+  productSoldByWeight,
+  cartDecrementQuantity,
+} from "@utils/productSoldByWeight";
+import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const ScrollOfferCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { toggleCartDrawer, closeCartDrawer } = useContext(SidebarContext)
-  const { items, addItem, updateItemQuantity, inCart } = useCart();
+  const { state: { userInfo } } = useContext(UserContext);
+  const { items, addItem, updateItemQuantity, inCart, removeItem } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
@@ -44,22 +53,26 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
     return p?.stock || 0;
   };
 
+  const productPricing = getUserPrice(product, userInfo);
+
   const handleAddItem = (p) => {
     const stock = getProductStock(p);
-    if (stock < 1) return notifyError(t('productStockOut'));
+    const defaultQty = productSoldByWeight(p) ? DEFAULT_WEIGHT_CART_KG : 1;
+    if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
-    const productPrice = p?.prices?.[0];
     const newItem = {
       ...updatedProduct,
       title: p.title,
       id: p._id,
-      price: productPrice?.salePrice || productPrice?.price || 0,
-      originalPrice: productPrice?.price || 0,
+      price: productPricing.salePrice || productPricing.price,
+      originalPrice: productPricing.price,
+      purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
       image: getPrimaryProductImageUrl(p),
+      soldByWeight: productSoldByWeight(p),
     };
-    addItem(newItem);
+    addItem(newItem, defaultQty);
   };
 
   const handleModalOpen = (event, id) => {
@@ -168,17 +181,24 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
                       >
                         <button
                           className="pl-1"
-                          onClick={() =>
-                            updateItemQuantity(item.id, item.quantity - 1)
-                          }
+                          onClick={() => {
+                            const next = cartDecrementQuantity(item);
+                            if (next <= 0) removeItem(item.id);
+                            else updateItemQuantity(item.id, next);
+                          }}
                         >
                           <span className="text-dark text-base">
                             <IoRemove />
                           </span>
                         </button>
-                        <p className="text-sm text-dark px-1 font-serif font-semibold">
-                          {item.quantity}
-                        </p>
+                        <div className="px-1 flex items-center justify-center min-w-0">
+                          <CartWeightQtyField
+                            item={item}
+                            getProductStock={getProductStock}
+                            updateItemQuantity={updateItemQuantity}
+                            variant="onPrimary"
+                          />
+                        </div>
                         <button
                           className="pr-1"
                           onClick={() => handleIncreaseQuantity(item)}

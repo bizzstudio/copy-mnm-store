@@ -44,6 +44,13 @@ import { getI18nProps } from "@utils/i18n";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
 import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
+import SoldByWeightQtyInput from "@component/product/SoldByWeightQtyInput";
+import {
+  MIN_ORDER_KG,
+  parseWeightInputToKg,
+  productSoldByWeight,
+  roundCartQty,
+} from "@utils/productSoldByWeight";
 
 const ProductScreen = ({ product, relatedProducts }) => {
   const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();
@@ -60,6 +67,8 @@ const ProductScreen = ({ product, relatedProducts }) => {
   const [discount, setDiscount] = useState(0);
   const [isReadMore, setIsReadMore] = useState(true);
   const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
+  const [weightUnit, setWeightUnit] = useState("kg");
+  const [weightStr, setWeightStr] = useState("0.5");
 
   const { items } = useCart();
   const [offerTitle, setOfferTitle] = useState();
@@ -137,6 +146,16 @@ const ProductScreen = ({ product, relatedProducts }) => {
   ]);
 
   useEffect(() => {
+    if (!product?._id) return;
+    if (productSoldByWeight(product)) {
+      setWeightUnit("kg");
+      setWeightStr("0.5");
+    } else {
+      setItem(1);
+    }
+  }, [product, setItem]);
+
+  useEffect(() => {
     setIsLoading(false);
     setStockLoaded(false);
   }, [product]);
@@ -147,15 +166,26 @@ const ProductScreen = ({ product, relatedProducts }) => {
     // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
     const productPricing = getUserPrice(p, userInfo);
     const purchaseLimit = productPricing.purchaseLimit;
+    const byWeight = productSoldByWeight(p);
+    const qtyKg = byWeight
+      ? roundCartQty(parseWeightInputToKg(weightStr, weightUnit))
+      : item;
 
-    // בדיקת הגבלת רכישה
-    if (purchaseLimit && purchaseLimit > 0 && item > purchaseLimit) {
+    if (byWeight) {
+      if (!Number.isFinite(qtyKg) || qtyKg < MIN_ORDER_KG) {
+        notifyError(t('weightInvalidAmount'));
+        return;
+      }
+    }
+
+    // בדיקת הגבלת רכישה (למוצרי משקל — המגבלה בק״ג)
+    if (purchaseLimit && purchaseLimit > 0 && qtyKg > purchaseLimit + 1e-6) {
       notifyError(t('maxQuantityReached') || `לא ניתן לרכוש יותר מ-${purchaseLimit} יחידות`);
       return;
     }
 
-    // בדיקת מלאי
-    if (item > stock) {
+    // בדיקת מלאי (מלאי בק״ג למוצרי משקל)
+    if (qtyKg > stock + 1e-6) {
       notifyError(t('productStockOut') || `אין מספיק מלאי. במלאי: ${stock} יחידות`);
       return;
     }
@@ -170,9 +200,10 @@ const ProductScreen = ({ product, relatedProducts }) => {
       price: getNumber(productPricing.salePrice || productPricing.price || 0),
       originalPrice: getNumber(productPricing.price || 0),
       purchaseLimit: purchaseLimit,
+      soldByWeight: byWeight,
     };
 
-    const addResult = handleAddItem(newItem);
+    const addResult = byWeight ? handleAddItem(newItem, qtyKg) : handleAddItem(newItem);
     if (product?.isComplementaryProduct && addResult?.added > 0) {
       setComplementaryReminderOpen(true);
     }
@@ -459,43 +490,53 @@ const ProductScreen = ({ product, relatedProducts }) => {
                         </div>}
 
                       <div className="flex items-center mt-4">
-                        <div className="flex items-center justify-start space-s-3 sm:space-s-4 w-full gap-3">
-                          <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300">
-                            <button
-                              onClick={() => setItem(item - 1)}
-                              disabled={item === 1}
-                              className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
-                            >
-                              <span className="text-dark text-base">
-                                <FiMinus />
-                              </span>
-                            </button>
-                            <p className="font-semibold flex items-center justify-center h-full  transition-colors duration-250 ease-in-out cursor-default shrink-0 text-base text-heading w-8  md:w-20 xl:w-24">
-                              {item}
-                            </p>
-                            <button
-                              onClick={() => {
-                                // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
-                                const productPricing = getUserPrice(product, userInfo);
-                                const purchaseLimit = productPricing.purchaseLimit;
-                                // בדיקת הגבלת רכישה ומלאי
-                                if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
-                                  return;
-                                }
-                                setItem(item + 1);
-                              }}
-                              disabled={(() => {
-                                const productPricing = getUserPrice(product, userInfo);
-                                const purchaseLimit = productPricing.purchaseLimit;
-                                return stock <= item || stock === 0 || (purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit);
-                              })()}
-                              className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
-                            >
-                              <span className="text-dark text-base">
-                                <FiPlus />
-                              </span>
-                            </button>
-                          </div>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start space-s-3 sm:space-s-4 w-full gap-3">
+                          {productSoldByWeight(product) ? (
+                            <SoldByWeightQtyInput
+                              weightUnit={weightUnit}
+                              setWeightUnit={setWeightUnit}
+                              weightStr={weightStr}
+                              setWeightStr={setWeightStr}
+                              className="w-full sm:max-w-md"
+                            />
+                          ) : (
+                            <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300">
+                              <button
+                                onClick={() => setItem(item - 1)}
+                                disabled={item === 1}
+                                className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
+                              >
+                                <span className="text-dark text-base">
+                                  <FiMinus />
+                                </span>
+                              </button>
+                              <p className="font-semibold flex items-center justify-center h-full  transition-colors duration-250 ease-in-out cursor-default shrink-0 text-base text-heading w-8  md:w-20 xl:w-24">
+                                {item}
+                              </p>
+                              <button
+                                onClick={() => {
+                                  // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
+                                  const productPricing = getUserPrice(product, userInfo);
+                                  const purchaseLimit = productPricing.purchaseLimit;
+                                  // בדיקת הגבלת רכישה ומלאי
+                                  if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
+                                    return;
+                                  }
+                                  setItem(item + 1);
+                                }}
+                                disabled={(() => {
+                                  const productPricing = getUserPrice(product, userInfo);
+                                  const purchaseLimit = productPricing.purchaseLimit;
+                                  return stock <= item || stock === 0 || (purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit);
+                                })()}
+                                className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
+                              >
+                                <span className="text-dark text-base">
+                                  <FiPlus />
+                                </span>
+                              </button>
+                            </div>
+                          )}
                           <MainBT
                             onClick={() => handleAddToCart(product)}
                             className="text-sm w-full h-12 px-6"

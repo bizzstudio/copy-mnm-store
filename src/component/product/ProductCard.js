@@ -21,12 +21,18 @@ import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
 import { getUserPrice } from "@utils/priceUtils";
 import { getPrimaryProductImageUrl } from "@utils/productImage";
+import {
+  DEFAULT_WEIGHT_CART_KG,
+  productSoldByWeight,
+  cartDecrementQuantity,
+} from "@utils/productSoldByWeight";
+import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const ProductCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
   const { state: { userInfo } } = useContext(UserContext);
-  const { items, addItem, updateItemQuantity, inCart } = useCart();
+  const { items, addItem, updateItemQuantity, inCart, removeItem } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
@@ -48,7 +54,8 @@ const ProductCard = ({ product, offers = [] }) => {
 
   const handleAddItem = (p) => {
     const stock = getProductStock(p);
-    if (stock < 1) return notifyError(t('productStockOut'));
+    const defaultQty = productSoldByWeight(p) ? DEFAULT_WEIGHT_CART_KG : 1;
+    if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
     const newItem = {
@@ -60,8 +67,9 @@ const ProductCard = ({ product, offers = [] }) => {
       purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
       image: getPrimaryProductImageUrl(p),
+      soldByWeight: productSoldByWeight(p),
     };
-    const result = addItem(newItem);
+    const result = addItem(newItem, defaultQty);
     if (product?.isComplementaryProduct && result && result.added > 0) {
       setComplementaryReminderOpen(true);
     }
@@ -146,17 +154,24 @@ const ProductCard = ({ product, offers = [] }) => {
                         >
                           <button
                             className="pl-0.5 sm:pl-1"
-                            onClick={() =>
-                              updateItemQuantity(item.id, item.quantity - 1)
-                            }
+                            onClick={() => {
+                              const next = cartDecrementQuantity(item);
+                              if (next <= 0) removeItem(item.id);
+                              else updateItemQuantity(item.id, next);
+                            }}
                           >
                             <span className="text-dark text-sm sm:text-base">
                               <IoRemove />
                             </span>
                           </button>
-                          <p className="text-xs sm:text-sm text-dark px-0.5 sm:px-1 font-serif font-semibold">
-                            {item.quantity}
-                          </p>
+                          <div className="px-0.5 sm:px-1 flex items-center justify-center min-w-0">
+                            <CartWeightQtyField
+                              item={item}
+                              getProductStock={getProductStock}
+                              updateItemQuantity={updateItemQuantity}
+                              variant="onPrimary"
+                            />
+                          </div>
                           <button
                             className="pr-0.5 sm:pr-1"
                             onClick={() => handleIncreaseQuantity(item)}

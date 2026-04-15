@@ -325,6 +325,13 @@
   "totalToPay": "סה״כ לתשלום",
   "maxQuantityReached": "הגעת לכמות המקסימלית במוצר זה",
   "exceedingMaxQuantity": "הכמות המקסימלית המורשית היא {limit}",
+  "invalidQuantity": "כמות לא חוקית",
+  "weightInvalidAmount": "נא להזין משקל חיובי (ק״ג או גרם, כולל עשרוני)",
+  "weightUnitKg": "ק״ג",
+  "weightUnitGram": "גרם",
+  "weightAmountLabel": "כמות",
+  "weightKgSuffix": "ק״ג",
+  "weightHintLine": "המחיר לפי ק״ג. ניתן לבחור כמות בק״ג או בגרם (כולל שבר עשרוני).",
 
   "/=================* Login Popup * =================/": "",
   "loginBoxText": "התחברו לחשבון עם אימייל וסיסמה",

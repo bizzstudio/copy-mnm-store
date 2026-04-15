@@ -13,6 +13,14 @@ import Discount from '@component/common/Discount';
 import useCart from '@hooks/useCart';
 import getOfferNames from '@component/offer/getOfferNames';
 import { SidebarContext } from '@context/SidebarContext';
+import { UserContext } from '@context/UserContext';
+import { getUserPrice } from '@utils/priceUtils';
+import {
+    DEFAULT_WEIGHT_CART_KG,
+    productSoldByWeight,
+    cartDecrementQuantity,
+} from '@utils/productSoldByWeight';
+import CartWeightQtyField from '@component/product/CartWeightQtyField';
 import { LiaCartPlusSolid } from 'react-icons/lia';
 import ImageWithFallback from '@component/common/ImageWithFallBack';
 
@@ -22,7 +30,8 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
-    const { items, addItem, updateItemQuantity, inCart } = useCart();
+    const { state: { userInfo } } = useContext(UserContext);
+    const { items, addItem, updateItemQuantity, inCart, removeItem } = useCart();
     const { handleIncreaseQuantity } = useAddToCart();
     const { globalSetting } = useGetSetting();
     const { showingTranslateValue } = useUtilsFunction();
@@ -84,21 +93,24 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
 
     const handleAddToCart = (product) => {
         const stock = getProductStock(product);
-        if (stock < 1) return notifyError(t('productStockOut'));
+        const defaultQty = productSoldByWeight(product) ? DEFAULT_WEIGHT_CART_KG : 1;
+        if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
         const { slug, categories, description, ...updatedProduct } = product;
-        const productPrice = product?.prices?.[0];
+        const productPricing = getUserPrice(product, userInfo);
         const newItem = {
             ...updatedProduct,
             id: product._id,
             title: product.title,
-            price: productPrice?.salePrice || productPrice?.price || 0,
-            originalPrice: productPrice?.price || 0,
+            price: productPricing.salePrice || productPricing.price || 0,
+            originalPrice: productPricing.price || 0,
+            purchaseLimit: productPricing.purchaseLimit,
             image: product.image?.[0],
             slug: product.slug,
+            soldByWeight: productSoldByWeight(product),
         };
 
-        addItem(newItem);
+        addItem(newItem, defaultQty);
     };
 
     const handleModalOpen = (product) => {
@@ -165,17 +177,24 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                                             <button
                                                                 type='button'
                                                                 className="sm:pl-1"
-                                                                onClick={() =>
-                                                                    updateItemQuantity(item.id, item.quantity - 1)
-                                                                }
+                                                                onClick={() => {
+                                                                    const next = cartDecrementQuantity(item);
+                                                                    if (next <= 0) removeItem(item.id);
+                                                                    else updateItemQuantity(item.id, next);
+                                                                }}
                                                             >
                                                                 <span className="text-dark text-base">
                                                                     <IoRemove />
                                                                 </span>
                                                             </button>
-                                                            <p className="text-sm text-dark px-1 font-serif font-semibold">
-                                                                {item.quantity}
-                                                            </p>
+                                                            <div className="px-1 flex items-center justify-center min-w-0">
+                                                                <CartWeightQtyField
+                                                                    item={item}
+                                                                    getProductStock={getProductStock}
+                                                                    updateItemQuantity={updateItemQuantity}
+                                                                    variant="onPrimary"
+                                                                />
+                                                            </div>
                                                             <button
                                                                 type='button'
                                                                 className="sm:pr-1"

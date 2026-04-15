@@ -5,15 +5,23 @@ import { useContext } from "react";
 import SettingServices from "@services/SettingServices";
 import useAsync from "@hooks/useAsync";
 import useCart from "@hooks/useCart";
+import useAddToCart from "@hooks/useAddToCart";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
-
+import { cartDecrementQuantity } from "@utils/productSoldByWeight";
+import CartWeightQtyField from "@component/product/CartWeightQtyField";
 const CheckoutCard = ({ item }) => {
-  const { updateItemQuantity } = useCart();
+  const { updateItemQuantity, removeItem } = useCart();
+  const { handleIncreaseQuantity } = useAddToCart();
   const { state: { userInfo } } = useContext(UserContext);
   const { data: globalSetting } = useAsync(SettingServices.getGlobalSetting);
 
   const currency = globalSetting?.default_currency || "₪";
+
+  const getLineStock = (p) => {
+    if (p?.manageStock === false) return 9999;
+    return p?.stock || 0;
+  };
 
   // קבלת המחיר המדוייק ללקוח (אם יש salePrice, משתמש בו, אחרת price)
   const { price, salePrice } = getUserPrice(item, userInfo);
@@ -38,21 +46,30 @@ const CheckoutCard = ({ item }) => {
               {itemPrice.toFixed(2)}
             </span>
           </p>
-          <div className="h-8 w-20 flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">
+          <div className="h-8 min-w-[5.5rem] flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">
             <div
               className="cursor-pointer"
-              onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
+              onClick={() => {
+                const next = cartDecrementQuantity(item);
+                if (next <= 0) removeItem(item.id);
+                else updateItemQuantity(item.id, next);
+              }}
             >
               <span className="text-dark text-base">
                 <FiMinus />
               </span>
             </div>
-            <p className="text-sm font-semibold text-dark px-1">
-              {item.quantity}
-            </p>
+            <div className="px-0.5 flex items-center justify-center min-w-0">
+              <CartWeightQtyField
+                item={item}
+                getProductStock={getLineStock}
+                updateItemQuantity={updateItemQuantity}
+                variant="onLight"
+              />
+            </div>
             <div
               className="cursor-pointer"
-              onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
+              onClick={() => handleIncreaseQuantity(item)}
             >
               <span className="text-dark text-base">
                 <FiPlus />

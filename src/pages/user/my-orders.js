@@ -25,6 +25,7 @@ import SubModal from "@component/modal/SubModal";
 import addingToCart from 'public/addingToCart.svg'
 import { getI18nProps } from "@utils/i18n";
 import { getPostLogoutPath } from "@utils/storeAccess";
+import { productSoldByWeight } from "@utils/productSoldByWeight";
 
 const MyOrders = () => {
   const router = useRouter();
@@ -122,9 +123,10 @@ const MyOrders = () => {
           image: img,
           price: price,
           originalPrice: originalPrice,
+          soldByWeight: productSoldByWeight(product),
         };
 
-        if (stock >= item.quantity) {
+        if (stock + 1e-6 >= Number(item.quantity)) {
           handleAddItem(newItem, item.quantity);
         } else {
           notifyError(`Not enough stock for ${showingTranslateValue(product.title)}.`);

@@ -25,6 +25,13 @@ import { trackProductModalView } from "@services/flashy";
 import { trackFbViewContent } from "@services/facebookPixel";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
+import SoldByWeightQtyInput from "@component/product/SoldByWeightQtyInput";
+import {
+  MIN_ORDER_KG,
+  parseWeightInputToKg,
+  productSoldByWeight,
+  roundCartQty,
+} from "@utils/productSoldByWeight";
 
 const ProductModal = ({
   modalOpen,
@@ -34,7 +41,6 @@ const ProductModal = ({
   clearInput = () => { },
   title = ''
 }) => {
-  console.log('ProductModal product: ', product);
   const router = useRouter();
   const { setIsLoading, isLoading } = useContext(SidebarContext);
   const { state: { userInfo } } = useContext(UserContext);
@@ -50,6 +56,8 @@ const ProductModal = ({
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
+  const [weightUnit, setWeightUnit] = useState("kg");
+  const [weightStr, setWeightStr] = useState("0.5");
 
   // סגירת הפופאפ באנימצייה
   const [isClosing, setIsClosing] = useState(false);
@@ -109,6 +117,15 @@ const ProductModal = ({
     product?.image,
   ]);
 
+  useEffect(() => {
+    if (!product?._id) return;
+    if (productSoldByWeight(product)) {
+      setWeightUnit("kg");
+      setWeightStr("0.5");
+    } else {
+      setItem(1);
+    }
+  }, [product, setItem]);
 
   // Flashy Product Modal View Tracking
   useEffect(() => {
@@ -129,15 +146,24 @@ const ProductModal = ({
     // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
     const productPricing = getUserPrice(p, userInfo);
     const purchaseLimit = productPricing.purchaseLimit;
+    const byWeight = productSoldByWeight(p);
+    const qtyKg = byWeight
+      ? roundCartQty(parseWeightInputToKg(weightStr, weightUnit))
+      : item;
 
-    // בדיקת הגבלת רכישה
-    if (purchaseLimit && purchaseLimit > 0 && item > purchaseLimit) {
+    if (byWeight) {
+      if (!Number.isFinite(qtyKg) || qtyKg < MIN_ORDER_KG) {
+        notifyError(t('weightInvalidAmount'));
+        return;
+      }
+    }
+
+    if (purchaseLimit && purchaseLimit > 0 && qtyKg > purchaseLimit + 1e-6) {
       notifyError(t('maxQuantityReached') || `לא ניתן לרכוש יותר מ-${purchaseLimit} יחידות`);
       return;
     }
 
-    // בדיקת מלאי
-    if (item > stock) {
+    if (qtyKg > stock + 1e-6) {
       notifyError(t('productStockOut') || `אין מספיק מלאי. במלאי: ${stock} יחידות`);
       return;
     }
@@ -152,9 +178,10 @@ const ProductModal = ({
       price: getNumber(productPricing.salePrice || productPricing.price || 0),
       originalPrice: getNumber(productPricing.price || 0),
       purchaseLimit: purchaseLimit,
+      soldByWeight: byWeight,
     };
 
-    const addResult = handleAddItem(newItem);
+    const addResult = byWeight ? handleAddItem(newItem, qtyKg) : handleAddItem(newItem);
     if (product?.isComplementaryProduct && addResult?.added > 0) {
       setComplementaryReminderOpen(true);
     }
@@ -281,68 +308,73 @@ const ProductModal = ({
 
               {/* בחירת כמות והוספה */}
               <div className="flex items-center mt-4">
-                <div className="flex sm:flex-row flex-col items-center gap-3 justify-between space-s-3 sm:space-s-4 w-full">
-                  <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300 w-full sm:w-auto">
-                    <button
-                      onClick={() => setItem(item - 1)}
-                      disabled={item === 1}
-                      className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
-                    >
-                      <span className="text-dark text-base">
-                        <FiMinus />
-                      </span>
-                    </button>
-                    <input
-                      type="number"
-                      min={1}
-                      max={9999}
-                      value={item === 0 ? "" : item}
-                      onChange={e => {
-                        // אם המשתמש מוחק הכל, תן לערך להיות ריק
-                        if (e.target.value === "") {
-                          setItem(0);
-                          return;
-                        }
-                        let val = Number(e.target.value);
-                        if (isNaN(val)) val = 1;
-                        // לא מגביל כאן, כדי לאפשר למשתמש להקליד מספרים גדולים ואז לתקן
-                        setItem(val);
-                      }}
-                      onBlur={e => {
-                        // אם נשאר ריק או לא חוקי, מחזיר ל-1
-                        let val = Number(e.target.value);
-                        if (isNaN(val) || val < 1) val = 1;
-                        if (val > 9999) val = 9999;
-                        setItem(val);
-                      }}
-                      className="no-spinner font-semibold flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-text shrink-0 text-base text-heading w-8 md:w-20 xl:w-24 text-center outline-none"
-                      style={{ MozAppearance: 'textfield' }}
+                <div className="flex sm:flex-row flex-col items-stretch sm:items-center gap-3 justify-between space-s-3 sm:space-s-4 w-full">
+                  {productSoldByWeight(product) ? (
+                    <SoldByWeightQtyInput
+                      weightUnit={weightUnit}
+                      setWeightUnit={setWeightUnit}
+                      weightStr={weightStr}
+                      setWeightStr={setWeightStr}
+                      className="w-full sm:max-w-md"
                     />
-                    <button
-                      onClick={() => {
-                        // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
-                        const productPricing = getUserPrice(product, userInfo);
-                        const purchaseLimit = productPricing.purchaseLimit;
-                        // בדיקת הגבלת רכישה ומלאי
-                        if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
-                          return;
-                        }
-                        setItem(item + 1);
-                      }}
-                      disabled={
-                        stock < item || stock === item || stock === 0 || (() => {
+                  ) : (
+                    <div className="group flex items-center justify-between rounded-md overflow-hidden shrink-0 border h-11 md:h-12 border-gray-300 w-full sm:w-auto">
+                      <button
+                        onClick={() => setItem(item - 1)}
+                        disabled={item === 1}
+                        className="flex items-center justify-center shrink-0 h-full transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-e border-gray-300 hover:text-gray-500"
+                      >
+                        <span className="text-dark text-base">
+                          <FiMinus />
+                        </span>
+                      </button>
+                      <input
+                        type="number"
+                        min={1}
+                        max={9999}
+                        value={item === 0 ? "" : item}
+                        onChange={e => {
+                          if (e.target.value === "") {
+                            setItem(0);
+                            return;
+                          }
+                          let val = Number(e.target.value);
+                          if (isNaN(val)) val = 1;
+                          setItem(val);
+                        }}
+                        onBlur={e => {
+                          let val = Number(e.target.value);
+                          if (isNaN(val) || val < 1) val = 1;
+                          if (val > 9999) val = 9999;
+                          setItem(val);
+                        }}
+                        className="no-spinner font-semibold flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-text shrink-0 text-base text-heading w-8 md:w-20 xl:w-24 text-center outline-none"
+                        style={{ MozAppearance: 'textfield' }}
+                      />
+                      <button
+                        onClick={() => {
                           const productPricing = getUserPrice(product, userInfo);
                           const purchaseLimit = productPricing.purchaseLimit;
-                          return purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit;
-                        })()
-                      }
-                      className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
-                    >
-                      <span className="text-dark text-base">
-                        <FiPlus />
-                      </span>
-                    </button>
-                  </div>
+                          if ((purchaseLimit && purchaseLimit > 0 && item + 1 > purchaseLimit) || item + 1 > stock) {
+                            return;
+                          }
+                          setItem(item + 1);
+                        }}
+                        disabled={
+                          stock < item || stock === item || stock === 0 || (() => {
+                            const productPricing = getUserPrice(product, userInfo);
+                            const purchaseLimit = productPricing.purchaseLimit;
+                            return purchaseLimit && purchaseLimit > 0 && item >= purchaseLimit;
+                          })()
+                        }
+                        className="flex items-center justify-center h-full shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-12 text-heading border-s border-gray-300 hover:text-gray-500"
+                      >
+                        <span className="text-dark text-base">
+                          <FiPlus />
+                        </span>
+                      </button>
+                    </div>
+                  )}
                   <MainBT
                     onClick={() => handleAddToCart(product)}
                     disabled={stock < 1}
