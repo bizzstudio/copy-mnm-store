@@ -49,24 +49,24 @@ const useAddToCart = () => {
         if (addResult?.added > 0) {
           notifySuccess(`${addResult.added} ${currentLang ? product.title?.he : product.title?.en} ${t('addedToCart!')}`);
         }
-      } else {
-        notifyError(t('productStockOut'));
+        return addResult || { added: 0 };
       }
+      notifyError(t('productStockOut'));
+      return { added: 0 };
     }
     // הוספה של מוצר חדש
-    else {
-      if (item <= productStock) {
-        const itemToPass = quantity ? quantity : item;
-        const addResult = addItem(updatedProduct, itemToPass);
-        // רק אם נוספו מוצרים בפועל - הצגת התראה
-        if (!quantity && addResult?.added > 0) {
-          const actualAdded = addResult.requested ? addResult.added : addResult.added;
-          notifySuccess(`${actualAdded} ${currentLang ? product.title?.he : product.title?.en} ${t('addedToCart!')}`);
-        }
-      } else {
-        notifyError(t('productStockOut'));
+    if (item <= productStock) {
+      const itemToPass = quantity ? quantity : item;
+      const addResult = addItem(updatedProduct, itemToPass);
+      // רק אם נוספו מוצרים בפועל - הצגת התראה
+      if (!quantity && addResult?.added > 0) {
+        const actualAdded = addResult.requested ? addResult.added : addResult.added;
+        notifySuccess(`${actualAdded} ${currentLang ? product.title?.he : product.title?.en} ${t('addedToCart!')}`);
       }
+      return addResult || { added: 0 };
     }
+    notifyError(t('productStockOut'));
+    return { added: 0 };
   };
 
   const handleIncreaseQuantity = (product) => {

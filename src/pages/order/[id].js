@@ -1,11 +1,10 @@
 // src/pages/order/[id].js
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { IoCloudDownloadOutline, IoPrintOutline } from "react-icons/io5";
 import { useTranslations } from "next-intl";
-import ReactToPrint from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import Cookies from "js-cookie";
 
 // Internal import
@@ -21,16 +20,22 @@ import { getI18nProps } from "@utils/i18n";
 import { getPostLogoutPath } from "@utils/storeAccess";
 
 const Order = ({ params }) => {
-  const printRef = useRef();
-  const orderId = params.id;
+  const printRef = useRef(null);
+  const orderId = params?.id;
   const router = useRouter();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Order",
+    pageStyle: "@media print { body { direction: rtl; } }",
+  });
+
   const {
     state: { userInfo },
   } = useContext(UserContext);
-  const { showingTranslateValue, getNumberTwo, currency } = useUtilsFunction();
+  const { showingTranslateValue, currency } = useUtilsFunction();
   const { storeCustomizationSetting, globalSetting } = useGetSetting();
   const t = useTranslations();
 
@@ -122,23 +127,20 @@ const Order = ({ params }) => {
                   }
                 </PDFDownloadLink> */}
 
-                <ReactToPrint
-                  trigger={() => (
-                    <MainBT className="w-auto! mb-3 sm:mb-0 md:mb-0 lg:mb-0 bg-mainColor text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md me-auto">
-                      <div className={`flex justify-center items-center gap-2 ${currentLang ? 'flex-row-reverse' : ''}`}>
-                        {showingTranslateValue(
-                          storeCustomizationSetting?.dashboard?.print_button
-                        )}{" "}
-                        <span>
-                          <IoPrintOutline />
-                        </span>
-                      </div>
-                    </MainBT>
-                  )}
-                  content={() => printRef.current}
-                  documentTitle="Order"
-                  pageStyle="@media print { body { direction: rtl; } }"
-                />
+                <MainBT
+                  type="button"
+                  onClick={handlePrint}
+                  className="w-auto! mb-3 sm:mb-0 md:mb-0 lg:mb-0 bg-mainColor text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md me-auto"
+                >
+                  <div className={`flex justify-center items-center gap-2 ${currentLang ? "flex-row-reverse" : ""}`}>
+                    {showingTranslateValue(
+                      storeCustomizationSetting?.dashboard?.print_button
+                    )}{" "}
+                    <span>
+                      <IoPrintOutline />
+                    </span>
+                  </div>
+                </MainBT>
               </div>
             </div>
           </div>
@@ -149,12 +151,16 @@ const Order = ({ params }) => {
 };
 
 export const getServerSideProps = async (context) => {
+  const raw = context.params;
+  const routeParams =
+    raw != null && typeof raw.then === "function" ? await raw : raw ?? {};
+
   const i18nProps = await getI18nProps(context);
 
   return {
     props: {
-      params,
-      ...i18nProps
+      params: routeParams,
+      ...i18nProps,
     },
   };
 };

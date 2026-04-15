@@ -109,7 +109,7 @@ const Navbar = ({ cashierPage = false }) => {
 
       <>
         <div
-          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg py-2 overflow-x-hidden ${cashierPage ? "border-b" : ""}`}
+          className={`sticky top-0 z-20 bg-white flex w-full drop-shadow-lg py-2 ${cashierPage ? "border-b" : ""}`}
         >
           <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 flex min-w-0">
           {/* logo */}
@@ -131,7 +131,7 @@ const Navbar = ({ cashierPage = false }) => {
             <div className="w-full min-w-0">
                 <div className="h-auto sm:h-16 lg:h-auto flex items-center justify-between mx-auto py-2.5 lg:py-5 relative">
                 {/* Search Bar */}
-                <div ref={searchAnchorRef} className="flex flex-col w-full max-w-[700px] mx-auto px-1.5 sm:px-2">
+                <div ref={searchAnchorRef} className="flex flex-col w-full max-w-[700px] mx-auto min-w-0 px-1.5 sm:px-2 overflow-x-hidden">
                   <form onSubmit={handleSubmit}
                     className={`flex relative w-full h-[32px] sm:h-[40px] lg:min-w-[250px] items-center px-2 sm:px-3.5 rounded-[10px] transition-[border-radius] duration-500 ease-in-out bg-gray-100 focus-within:rounded-px before:content-[''] before:absolute before:bg-mainColor before:transform before:scale-x-0 before:origin-center before:w-full before:h-[2px] before:left-0 before:bottom-0 before:rounded-px before:transition-transform before:duration-300 before:ease-in-out focus-within:before:scale-100`}>
                     <button type="submit" className="border-none bg-none text-[#8b8ba7] focus:text-mainColor text-base sm:text-lg shrink-0">

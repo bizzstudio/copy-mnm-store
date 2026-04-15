@@ -31,12 +31,15 @@ const FeatureCategory = () => {
   // הקטגוריות האמיתיות נמצאות ב-children של הקטגוריה הראשונה (Home)
   const actualCategories = categories?.[0]?.children || [];
 
+  /** גודל כרטיסי קטגוריה בדף הבית: אייקון = ICON_PX, כותרת = className ב-h3, padding ב-div החיצוני */
+  const FEATURE_CATEGORY_ICON_PX = 52;
+
   return (
     <div className="container mx-auto">
       {!actualCategories?.length ? (
         <CMSkeleton count={10} height={20} />
       ) : (
-        <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2">
           {actualCategories?.map((category, i) => {
             const icon = getCategoryIcon(category);
             const title = showingTranslateValue(category?.name);
@@ -50,30 +53,33 @@ const FeatureCategory = () => {
                 onMouseEnter={() => category.children?.length > 0 && setActivePopover(category?._id)}
                 onMouseLeave={() => setActivePopover(null)}
               >
-                <div className="flex justify-center md:justify-start w-full h-full border border-gray-100 shadow-sm bg-white p-4 cursor-pointer transition duration-200 ease-linear transform group-hover:shadow-lg">
-                  <div className="flex sm:flex-row flex-col gap-2 items-center justify-center w-full">
-                    <div className="p-2 flex items-center gap-2 group">
-                      <div className="relative w-[55px] h-[55px]">
+                <div className="flex justify-center md:justify-start w-full h-full border border-gray-100 shadow-sm bg-white p-3 cursor-pointer transition duration-200 ease-linear transform group-hover:shadow-lg">
+                  <div className="flex sm:flex-row flex-col gap-1.5 items-center justify-center w-full">
+                    <div className="p-1.5 flex items-center gap-2 group">
+                      <div
+                        className="relative shrink-0"
+                        style={{ width: FEATURE_CATEGORY_ICON_PX, height: FEATURE_CATEGORY_ICON_PX }}
+                      >
                         <Image
                           src={icon.bw}
-                          width={55}
-                          height={55}
+                          width={FEATURE_CATEGORY_ICON_PX}
+                          height={FEATURE_CATEGORY_ICON_PX}
                           alt="Category BW"
                           className="absolute top-0 left-0 object-contain transition-opacity duration-200 sm:group-hover:opacity-0 sm:block hidden filter-custom-blue"
                         />
                         <Image
                           src={icon.color}
-                          width={55}
-                          height={55}
+                          width={FEATURE_CATEGORY_ICON_PX}
+                          height={FEATURE_CATEGORY_ICON_PX}
                           alt="Category Color"
                           className="absolute top-0 left-0 object-contain opacity-100 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100"
                         />
                       </div>
                     </div>
 
-                    <div className="sm:pl-4 w-full">
+                    <div className="sm:pl-2.5 w-full">
                       <div>
-                        <h3 className="text-customBlue font-serif font-medium leading-tight line-clamp-1 group-hover group-hover:text-customRed sm:text-start text-center">
+                        <h3 className="text-sm md:text-base text-customBlue font-serif font-medium leading-tight line-clamp-1 group-hover group-hover:text-customRed sm:text-start text-center">
                           {title}
                         </h3>
                       </div>

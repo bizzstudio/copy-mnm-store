@@ -11,6 +11,7 @@ import useGetSetting from "@hooks/useGetSetting";
 import Discount from "@component/common/Discount";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import ProductModal from "@component/modal/ProductModal";
+import ComplementaryCartReminderModal from "@component/modal/ComplementaryCartReminderModal";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { handleLogEvent } from "@utils/analytics";
 import { UserContext } from "@context/UserContext";
@@ -22,6 +23,7 @@ import { getUserPrice } from "@utils/priceUtils";
 
 const ProductCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
   const { state: { userInfo } } = useContext(UserContext);
   const { items, addItem, updateItemQuantity, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
@@ -58,7 +60,10 @@ const ProductCard = ({ product, offers = [] }) => {
       slug: p.slug,
       image: p?.image?.[0],
     };
-    addItem(newItem);
+    const result = addItem(newItem);
+    if (product?.isComplementaryProduct && result && result.added > 0) {
+      setComplementaryReminderOpen(true);
+    }
   };
 
   const handleModalOpen = (event, id) => {
@@ -78,6 +83,11 @@ const ProductCard = ({ product, offers = [] }) => {
           title={offerName}
         />
       )}
+
+      <ComplementaryCartReminderModal
+        open={complementaryReminderOpen}
+        onClose={() => setComplementaryReminderOpen(false)}
+      />
 
       <div className="group box-border overflow-hidden flex justify-between rounded-md shadow-md pe-0 flex-col items-center bg-white relative">
         <div className="w-full flex justify-between">

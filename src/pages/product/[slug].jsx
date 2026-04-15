@@ -37,6 +37,7 @@ import useCart from "@hooks/useCart";
 import getOfferNames from "@component/offer/getOfferNames";
 import MainBT from "@component/button/MainBT";
 import MinimalTitle from "@component/common/MinimalTitle";
+import ComplementaryCartReminderModal from "@component/modal/ComplementaryCartReminderModal";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { trackFbViewContent } from "@services/facebookPixel";
 import { getI18nProps } from "@utils/i18n";
@@ -58,6 +59,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
   const [stockLoaded, setStockLoaded] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [isReadMore, setIsReadMore] = useState(true);
+  const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
 
   const { items } = useCart();
   const [offerTitle, setOfferTitle] = useState();
@@ -170,7 +172,10 @@ const ProductScreen = ({ product, relatedProducts }) => {
       purchaseLimit: purchaseLimit,
     };
 
-    handleAddItem(newItem);
+    const addResult = handleAddItem(newItem);
+    if (product?.isComplementaryProduct && addResult?.added > 0) {
+      setComplementaryReminderOpen(true);
+    }
   };
 
   const handleChangeImage = (img) => {
@@ -307,6 +312,11 @@ const ProductScreen = ({ product, relatedProducts }) => {
           }}
         />
       </Head>
+
+      <ComplementaryCartReminderModal
+        open={complementaryReminderOpen}
+        onClose={() => setComplementaryReminderOpen(false)}
+      />
 
       {isLoading ? (
         <Loading loading={isLoading} />
@@ -599,10 +609,10 @@ const ProductScreen = ({ product, relatedProducts }) => {
                   <div className="flex">
                     <div className="w-full">
                       <div className="grid grid-cols-1 xss:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
-                        {relatedProducts?.slice(1, 13).map((product, i) => (
+                        {relatedProducts?.slice(1, 13).map((relatedProduct) => (
                           <ProductCard
-                            key={product._id}
-                            product={product}
+                            key={relatedProduct._id}
+                            product={relatedProduct}
                             offers={offers}
                           />
                         ))}

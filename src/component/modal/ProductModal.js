@@ -17,6 +17,7 @@ import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { handleLogEvent } from "@utils/analytics";
 import MainBT from "@component/button/MainBT";
+import ComplementaryCartReminderModal from "@component/modal/ComplementaryCartReminderModal";
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import ProductDescription from "@component/product/ProductDescription";
 import ImageCarousel from "@component/carousel/ImageCarousel";
@@ -48,6 +49,7 @@ const ProductModal = ({
   const [originalPrice, setOriginalPrice] = useState(0);
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
 
   // סגירת הפופאפ באנימצייה
   const [isClosing, setIsClosing] = useState(false);
@@ -152,7 +154,10 @@ const ProductModal = ({
       purchaseLimit: purchaseLimit,
     };
 
-    handleAddItem(newItem);
+    const addResult = handleAddItem(newItem);
+    if (product?.isComplementaryProduct && addResult?.added > 0) {
+      setComplementaryReminderOpen(true);
+    }
     handleClose();
   };
 
@@ -174,6 +179,10 @@ const ProductModal = ({
 
   return (
     <>
+      <ComplementaryCartReminderModal
+        open={complementaryReminderOpen}
+        onClose={() => setComplementaryReminderOpen(false)}
+      />
       <MainModal modalOpen={modalOpen && !isClosing} setModalOpen={setModalOpen}>
         <div className="inline-block w-full overflow-y-auto h-full align-middle transition-all transform bg-white shadow-xl rounded-2xl">
           <div className="flex flex-col items-center justify-center lg:flex-row md:flex-row w-full max-w-4xl overflow-hidden">

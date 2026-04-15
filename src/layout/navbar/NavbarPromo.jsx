@@ -1,14 +1,12 @@
 // src/layout/navbar/NavbarPromo.jsx
-import { Fragment, useState, useEffect, useContext, useRef } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import SettingServices from "@services/SettingServices";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 // Internal import
-import { notifyError } from "@utils/toast";
 import useGetSetting from "@hooks/useGetSetting";
 import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -21,10 +19,6 @@ const NavbarPromo = () => {
   const { categories, categoriesLoading } = useContext(SidebarContext);
 
   const { showingTranslateValue, getCategorySlug, findMainCategory } = useUtilsFunction();
-
-  const scrollContainerRef = useRef(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
 
   const handleLanguage = (lang) => {
     Cookies.set("_lang", lang?.iso_code, {
@@ -81,100 +75,24 @@ const NavbarPromo = () => {
     }
   }, [asPath, categories]);
 
-  const updateScrollArrows = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const children = el.children;
-    if (!children || children.length === 0) {
-      setShowLeftArrow(false);
-      setShowRightArrow(false);
-      return;
-    }
-
-    const containerRect = el.getBoundingClientRect();
-
-    let minLeft = Infinity;
-    let maxRight = -Infinity;
-
-    Array.from(children).forEach((child) => {
-      const rect = child.getBoundingClientRect();
-      minLeft = Math.min(minLeft, rect.left);
-      maxRight = Math.max(maxRight, rect.right);
-    });
-
-    const threshold = 4;
-
-    // אם יש תוכן שמתחיל לפני תחילת הקונטיינר → יש מה לגלול לשמאל
-    setShowLeftArrow(minLeft < containerRect.left - threshold);
-
-    // אם יש תוכן שממשיך אחרי סוף הקונטיינר → יש מה לגלול לימין
-    setShowRightArrow(maxRight > containerRect.right + threshold);
-  };
-
-  useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    // בדיקה ראשונית
-    updateScrollArrows();
-
-    el.addEventListener("scroll", updateScrollArrows);
-    window.addEventListener("resize", updateScrollArrows);
-
-    // לעזור אחרי רנדר / שינוי קטגוריות
-    const t1 = setTimeout(updateScrollArrows, 100);
-    const t2 = setTimeout(updateScrollArrows, 400);
-
-    return () => {
-      el.removeEventListener("scroll", updateScrollArrows);
-      window.removeEventListener("resize", updateScrollArrows);
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [categories, categoriesLoading]);
-
-  const SCROLL_AMOUNT = 300;
-
-  const scrollRight = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: SCROLL_AMOUNT, behavior: "smooth" });
-  };
-
-  const scrollLeft = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: -SCROLL_AMOUNT, behavior: "smooth" });
-  };
+  /**
+   * גודל קטגוריות בשורת הניו העליונה (אייקון + טקסט + ריווח בין פריטים).
+   * להגדלה/הקטנה: עדכן את המחרוזות כאן בלבד — אין צורך לחפש בכל הקובץ.
+   */
+  const categoryNavIconClass =
+    "object-cover overflow-visible xl:w-[72px] xl:h-[72px] lg:w-[68px] lg:h-[68px] md:w-[60px] md:h-[60px] sm:w-[54px] sm:h-[54px] w-[48px] h-[48px] -mb-[5px]";
+  const categoryNavLabelClass =
+    "inline-flex items-center justify-center text-center xl:text-[17px] lg:text-[17px] md:text-[16px] sm:text-[15px] text-[14px] font-light w-full whitespace-nowrap pb-1";
 
   return (
     <>
       <div className={`${asPath === "/" ? "bg-mainColor-superLight" : "bg-white"} w-full relative`}>
-        <div className="relative w-full px-2 sm:px-4 md:pe-3 md:pt-2 md:pb-1 flex justify-center lg:justify-between items-center">
-          {/* קונטיינר גלילה – חצים מחוץ לאזור הגלילה כדי שלא יכסו קטגוריות */}
-          <div className="w-full flex items-center gap-1 py-2">
-            {/* חץ שמאלה – עמודה נפרדת, לא על התוכן */}
-            {showLeftArrow && (
-              <button
-                onClick={scrollLeft}
-                type="button"
-                className="shrink-0 w-9 h-9 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 hover:border-mainColor/30 transition-colors rounded-full shadow-sm"
-                aria-label="גלול שמאלה"
-              >
-                <FaAnglesLeft className="w-4 h-4 text-gray-600 left-right-animation" />
-              </button>
-            )}
-
-            {/* אזור הגלילה בלבד – בלי חצים מעל */}
+        <div className="relative w-full px-2 sm:px-4 md:pe-3 md:pt-1.5 md:pb-1 flex justify-center items-start">
+          {/* קטגוריות בשורה/שתיים עם wrap — בלי גלילה ובלי חצים */}
+          <div className="w-full flex justify-center py-1.5">
             <div
               dir="ltr"
-              ref={scrollContainerRef}
-              className="flex flex-row-reverse justify-between lg:justify-center flex-1 min-w-0 scrollbar-hide xl:gap-6 lg:gap-4 gap-3 overflow-x-auto"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              }}
+              className="flex flex-row-reverse flex-wrap justify-center content-start items-start w-full gap-x-2 gap-y-1.5 sm:gap-x-2.5 lg:gap-x-3 xl:gap-x-4"
             >
               {storeCustomizationSetting?.navbar?.categories_menu_status &&
                 !categoriesLoading &&
@@ -186,7 +104,7 @@ const NavbarPromo = () => {
                   return (
                     <div
                       key={category._id}
-                      className="relative"
+                      className="relative shrink-0"
                       onMouseEnter={() =>
                         category.children?.length > 0 &&
                         setActivePopover(category._id)
@@ -197,7 +115,7 @@ const NavbarPromo = () => {
                         onMouseEnter={() => setIsHover(index)}
                         onMouseLeave={() => setIsHover(null)}
                         href={"/product-category/" + categorySlug}
-                        className={`px-2 flex flex-col items-center rounded-md transform transition duration-300 hover:scale-105 hover:text-mainColor-dark ${selectedCategory == index ? "scale-105" : ""
+                        className={`px-1.5 flex flex-col items-center rounded-md transform transition duration-300 hover:scale-105 hover:text-mainColor-dark ${selectedCategory == index ? "scale-105" : ""
                           }`}
                         role="button"
                       >
@@ -208,7 +126,7 @@ const NavbarPromo = () => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
+                              className={categoryNavIconClass}
                             />
                           ) : (
                             <Image
@@ -216,7 +134,7 @@ const NavbarPromo = () => {
                               width={130}
                               height={130}
                               alt="Category"
-                              className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] opacity-90 -mb-[7px]"
+                              className={`${categoryNavIconClass} opacity-90`}
                             />
                           )
                         ) : (
@@ -225,12 +143,12 @@ const NavbarPromo = () => {
                             width={400}
                             height={400}
                             alt="category"
-                            className="object-cover overflow-visible xl:w-[75px] xl:h-[75px] lg:w-[70px] lg:h-[70px] md:w-[60px] md:h-[60px] sm:w-[55px] sm:h-[55px] w-[50px] h-[50px] -mb-[7px]"
+                            className={categoryNavIconClass}
                           />
                         )}
 
                         <div
-                          className={`inline-flex items-center justify-center text-center xl:text-[18px] lg:text-[18px] md:text-[16px] sm:text-[16px] text-[15px] font-light w-full whitespace-nowrap pb-1.5 ${selectedCategory == index ? "text-mainColor-dark" : ""
+                          className={`${categoryNavLabelClass} ${selectedCategory == index ? "text-mainColor-dark" : ""
                             }`}
                         >
                           {title}
@@ -251,7 +169,7 @@ const NavbarPromo = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <div className="fixed sm:absolute top-[137px] sm:top-[105%] left-1/2 sm:left-auto sm:end-0 -translate-x-1/2 sm:translate-x-0 z-20 min-w-[200px] bg-white shadow-lg rounded-md ring-1 ring-black ring-opacity-5"
+                        <div className="absolute top-full left-1/2 sm:left-auto sm:end-0 -translate-x-1/2 sm:translate-x-0 z-20 mt-1 min-w-[200px] bg-white shadow-lg rounded-md ring-1 ring-black ring-opacity-5"
                         >
                           <ul dir="rtl">
                             {category.children &&
@@ -283,18 +201,6 @@ const NavbarPromo = () => {
                   );
                 })}
             </div>
-
-            {/* חץ ימינה – עמודה נפרדת, לא על התוכן */}
-            {showRightArrow && (
-              <button
-                onClick={scrollRight}
-                type="button"
-                className="shrink-0 w-9 h-9 flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 hover:border-mainColor/30 transition-colors rounded-full shadow-sm"
-                aria-label="גלול ימינה"
-              >
-                <FaAnglesRight className="w-4 h-4 text-gray-600 right-left-animation" />
-              </button>
-            )}
           </div>
         </div>
       </div>
