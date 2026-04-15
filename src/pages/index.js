@@ -61,7 +61,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
   // מיון מוצרים פופולריים
   const { productData: sortedPopularProducts } = useFilter(popularProducts);
 
-  // מוצרים אחרונים: לא דרך useFilter — שם ברירת המחדל "Popular" ממיין לפי ברקוד/מכירות ודורס את סדר createdAt מהבאקנד
+  // מוצרים חדשים: לא דרך useFilter — שם ברירת המחדל "Popular" ממיין לפי ברקוד/מכירות ודורס את סדר createdAt מהבאקנד
   const sortedRecentProducts = Array.isArray(recentProducts) ? [...recentProducts] : [];
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
                     <div ref={carouselRef} className="shrink-0 w-full min-w-0 lg:w-3/5 lg:max-w-[60%] h-fit">
                       <MainCarousel />
                     </div>
-                    {/* flex-1 + min-w-0: לא לדרוס את עמודת "מוצרים אחרונים" עם w-full ליד הקרוסלה */}
+                    {/* flex-1 + min-w-0: לא לדרוס את עמודת "מוצרים חדשים" עם w-full ליד הקרוסלה */}
                     <div className="hidden min-w-0 flex-1 basis-0 lg:flex">
                       <OfferCard
                         discountProducts={sortedRecentProducts}
@@ -299,7 +299,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
                       />
                     </div>
 
-                    {/* מוצרים אחרונים במערכת */}
+                    {/* מוצרים חדשים במערכת */}
                     <div className="flex">
                       <div className="w-full">
                         {loading ? (

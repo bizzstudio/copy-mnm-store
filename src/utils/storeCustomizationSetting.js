@@ -130,14 +130,14 @@ const storeCustomization = {
       quick_delivery_img:
         "https://res.cloudinary.com/ahossain/image/upload/v1697688032/settings/delivery-boy_rluuoq.webp",
       latest_discount_title: {
-        he: "מוצרים אחרונים",
-        en: "Latest products",
-        de: "Neueste Produkte",
+        he: "מוצרים חדשים",
+        en: "New products",
+        de: "Neue Produkte",
       },
       latest_discount_description: {
-        he: "מוצרים שנוספו לאחרונה למערכת — עדכונים שוטפים למלאי.",
-        en: "Products most recently added to our catalog.",
-        de: "Zuletzt hinzugefügte Produkte in unserem Katalog.",
+        he: "מוצרים חדשים במערכת — עדכונים שוטפים למלאי.",
+        en: "New products in our catalog.",
+        de: "Neue Produkte in unserem Katalog.",
       },
       latest_discount_product_limit: 18,
       daily_need_title: {

@@ -227,7 +227,7 @@ html {
   display: flex;
   flex-direction: column;
   animation: scroll 210s linear infinite;
-  /* איטי יותר — רשימת "מוצרים אחרונים" ליד הקרוסלה */
+  /* איטי יותר — רשימת "מוצרים חדשים" ליד הקרוסלה */
 }
 
 .scroll-content.paused {
