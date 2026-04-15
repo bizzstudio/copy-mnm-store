@@ -226,8 +226,8 @@ html {
 .scroll-content {
   display: flex;
   flex-direction: column;
-  animation: scroll 210s linear infinite;
-  /* איטי יותר — רשימת "מוצרים חדשים" ליד הקרוסלה */
+  /* משך קצר יותר = גלילה מהירה יותר (רשימת מוצרים חדשים ליד הקרוסלה) */
+  animation: scroll 50s linear infinite;
 }
 
 .scroll-content.paused {

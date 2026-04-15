@@ -20,6 +20,7 @@ import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
 import { getUserPrice } from "@utils/priceUtils";
+import { getPrimaryProductImageUrl } from "@utils/productImage";
 
 const ProductCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,7 +59,7 @@ const ProductCard = ({ product, offers = [] }) => {
       originalPrice: productPricing.originalPrice,
       purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
-      image: p?.image?.[0],
+      image: getPrimaryProductImageUrl(p),
     };
     const result = addItem(newItem);
     if (product?.isComplementaryProduct && result && result.added > 0) {
@@ -107,7 +108,7 @@ const ProductCard = ({ product, offers = [] }) => {
         >
           <div className="relative w-full h-full p-1 sm:p-2">
             <ImageWithFallback
-              src={product.image[0]}
+              src={getPrimaryProductImageUrl(product)}
               outOfStock={getProductStock(product) <= 0}
               alt="product"
               card={true}

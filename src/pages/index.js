@@ -40,6 +40,7 @@ async function getEmptyHomeProps(context, cookies) {
     props: {
       popularProducts: [],
       recentProducts: [],
+      discountedProducts: [],
       cookies,
       blogs: [],
       totalBlogs: 0,
@@ -49,7 +50,14 @@ async function getEmptyHomeProps(context, cookies) {
   };
 }
 
-const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) => {
+const Home = ({
+  popularProducts,
+  recentProducts = [],
+  discountedProducts = [],
+  blogs,
+  totalBlogs,
+  seo,
+}) => {
   const router = useRouter();
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
@@ -63,6 +71,9 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
 
   // מוצרים חדשים: לא דרך useFilter — שם ברירת המחדל "Popular" ממיין לפי ברקוד/מכירות ודורס את סדר createdAt מהבאקנד
   const sortedRecentProducts = Array.isArray(recentProducts) ? [...recentProducts] : [];
+  const sortedDiscountProducts = Array.isArray(discountedProducts)
+    ? [...discountedProducts]
+    : [];
 
   useEffect(() => {
     const fakeLoadingSession = sessionStorage.getItem('fakeLoading');
@@ -281,7 +292,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
 
               {/* discounted products */}
               {storeCustomizationSetting?.home?.discount_product_status &&
-                sortedRecentProducts?.length > 0 && (
+                sortedDiscountProducts?.length > 0 && (
                   <div
                     id="discount"
                     className="bg-mainColor-superLight lg:py-10 py-4 mx-auto max-w-screen-2xl px-3 sm:px-10"
@@ -299,7 +310,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
                       />
                     </div>
 
-                    {/* מוצרים חדשים במערכת */}
+                    {/* מוצרים במבצע — מ-discountedProducts בלבד */}
                     <div className="flex">
                       <div className="w-full">
                         {loading ? (
@@ -311,7 +322,7 @@ const Home = ({ popularProducts, recentProducts = [], blogs, totalBlogs, seo }) 
                           />
                         ) : (
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
-                            {sortedRecentProducts
+                            {sortedDiscountProducts
                               ?.slice(
                                 0,
                                 storeCustomizationSetting?.home
@@ -424,14 +435,16 @@ export const getServerSideProps = async (context) => {
     ]);
 
     const sortedPopularProducts = data.popularProducts;
-    const recentList = Array.isArray(data.recentProducts)
-      ? data.recentProducts
-      : (data.discountedProducts || []);
+    const recentList = Array.isArray(data.recentProducts) ? data.recentProducts : [];
+    const discountList = Array.isArray(data.discountedProducts)
+      ? data.discountedProducts
+      : [];
 
     return {
       props: {
         popularProducts: sortedPopularProducts,
         recentProducts: recentList,
+        discountedProducts: discountList,
         cookies: cookies,
         blogs: blogsData?.blogs || [],
         totalBlogs: blogsData?.totalBlogs || 0,

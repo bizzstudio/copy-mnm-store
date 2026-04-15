@@ -20,6 +20,7 @@ import { useTranslations } from "next-intl";
 import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
 import { LiaCartPlusSolid } from "react-icons/lia";
+import { getPrimaryProductImageUrl } from "@utils/productImage";
 
 const ScrollOfferCard = ({ product, offers = [] }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,7 +57,7 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
       price: productPrice?.salePrice || productPrice?.price || 0,
       originalPrice: productPrice?.price || 0,
       slug: p.slug,
-      image: p?.image?.[0],
+      image: getPrimaryProductImageUrl(p),
     };
     addItem(newItem);
   };
@@ -111,9 +112,9 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
           }}
           className="relative flex justify-center cursor-pointer h-full"
         >
-          <div className="relative w-28 h-full">
+          <div className="relative w-28 min-h-[5rem] shrink-0">
             <ImageWithFallback
-              src={product?.image?.[0]}
+              src={getPrimaryProductImageUrl(product)}
               outOfStock={getProductStock(product) <= 0}
               alt="product"
               noPadding={true}

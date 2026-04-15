@@ -1,10 +1,20 @@
 // src/component/common/ImageWithFallBack.js
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { DEFAULT_PRODUCT_IMAGE } from "@utils/productImage";
+
+const resolveImageSrc = (value, fallbackUrl) => {
+  if (value == null || value === false) return fallbackUrl;
+  if (typeof value !== "string") return fallbackUrl;
+  const t = value.trim();
+  if (!t || t === "null" || t === "undefined" || t === "NaN") return fallbackUrl;
+  if (!(t.startsWith("http") || t.startsWith("/") || t.startsWith("data:"))) return fallbackUrl;
+  return t;
+};
 
 const ImageWithFallback = ({
-  fallback = "https://nmplus.co.il/wp-content/uploads/2025/03/%D7%A9%D7%95%D7%9E%D7%A8-%D7%9E%D7%A7%D7%95%D7%9D-1.png",
+  fallback: fallbackProp = DEFAULT_PRODUCT_IMAGE,
   alt,
   src,
   outOfStock,
@@ -20,7 +30,16 @@ const ImageWithFallback = ({
   const t = useTranslations();
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isHovering, setIsHovering] = useState(false);
+  const [imgSrc, setImgSrc] = useState(() => resolveImageSrc(src, fallbackProp));
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    setImgSrc(resolveImageSrc(src, fallbackProp));
+  }, [src, fallbackProp]);
+
+  const handleImageError = useCallback(() => {
+    setImgSrc((prev) => (prev === fallbackProp ? prev : fallbackProp));
+  }, [fallbackProp]);
 
   const handleMouseMove = (e) => {
     if (!enableZoom || !containerRef.current) return;
@@ -73,7 +92,8 @@ const ImageWithFallback = ({
       )}
       <Image
         alt={alt}
-        src={src || fallback}
+        src={imgSrc}
+        onError={handleImageError}
         {...props}
         fill
         style={{
