@@ -57,7 +57,19 @@ const DropdownMenu = ({ title, options = [{ label: '', onClick: () => { } }], ad
                             key={index}
                             style={{ '--delay': `${delay}s` }}
                             className={`${styles.menuList} hover:bg-gray-200 ${option.disabled ? '!opacity-40 cursor-not-allowed' : ''}`}
-                            onClick={option.disabled ? (e) => e.preventDefault() : option.onClick}
+                            onClick={(e) => {
+                                if (option.disabled) {
+                                    e.preventDefault();
+                                    return;
+                                }
+                                // קישור בתוך <label> — בלי stopPropagation הלחיצה מפעילה את ה-checkbox ולעיתים חוסמת ניווט עד רענון
+                                if (e.target instanceof Element && e.target.closest("a")) {
+                                    e.stopPropagation();
+                                    if (inputRef.current) inputRef.current.checked = true;
+                                    return;
+                                }
+                                option.onClick?.(e);
+                            }}
                         >
                             {option.label}
                         </div>

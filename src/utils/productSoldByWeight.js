@@ -33,6 +33,35 @@ function isProduceCategory(cat) {
   );
 }
 
+/** בשר, עוף ודומים — כמו פירות/ירקות, כמות בעגלה בק״ג עם עשרוני (אלא אם מסומן מארז/יחידה). */
+function isMeatPoultryCategory(cat) {
+  if (!cat) return false;
+  const parts = [];
+  if (typeof cat === "string") parts.push(cat);
+  if (typeof cat?.slug === "string") parts.push(cat.slug);
+  if (typeof cat?.name === "string") parts.push(cat.name);
+  if (cat?.name && typeof cat.name === "object") {
+    parts.push(cat.name.he || "", cat.name.en || "");
+  }
+  const hay = parts.join(" ").toLowerCase();
+  return (
+    hay.includes("meat") ||
+    hay.includes("beef") ||
+    hay.includes("poultry") ||
+    hay.includes("chicken") ||
+    hay.includes("turkey") ||
+    hay.includes("lamb") ||
+    hay.includes("butcher") ||
+    hay.includes("בשר") ||
+    hay.includes("בשרים") ||
+    hay.includes("עוף") ||
+    hay.includes("עופות") ||
+    hay.includes("הודו") ||
+    hay.includes("טלה") ||
+    hay.includes("כבש")
+  );
+}
+
 /** מכירה לפי יחידה/מארז — לא לפי משקל, גם אם בקטגוריית פירות וירקות */
 function explicitUnitOnly(p) {
   const raw = `${p?.unit || ""} ${p?.weightUnit || ""}`;
@@ -45,13 +74,15 @@ function explicitUnitOnly(p) {
 /**
  * true אם המוצר נספר בק״ג (עם עשרוניים):
  * - soldByWeight=true מהשרת, או
- * - קטגוריית פירות וירקות ולא מסומן במפורש כמארז/יחידה בלבד.
+ * - קטגוריית פירות וירקות / בשר ועוף ולא מסומן במפורש כמארז/יחידה בלבד.
  */
 export function productSoldByWeight(p) {
   if (!p) return false;
   if (p.soldByWeight === true) return true;
   if (explicitUnitOnly(p)) return false;
-  return categoryBlobs(p).some(isProduceCategory);
+  return categoryBlobs(p).some(
+    (cat) => isProduceCategory(cat) || isMeatPoultryCategory(cat)
+  );
 }
 
 export function roundCartQty(kg) {
