@@ -1,4 +1,5 @@
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { IoAdd, IoRemove } from 'react-icons/io5';
 import { notifyError } from "@utils/toast";
@@ -19,12 +20,18 @@ import {
     DEFAULT_WEIGHT_CART_KG,
     productSoldByWeight,
     cartDecrementQuantity,
+    weightOptsFromAsPath,
 } from '@utils/productSoldByWeight';
 import CartWeightQtyField from '@component/product/CartWeightQtyField';
 import { LiaCartPlusSolid } from 'react-icons/lia';
 import ImageWithFallback from '@component/common/ImageWithFallBack';
 
 export default function ResultWindow({ products = [], clearInput, closeResultWindow, anchorRef, searchQuery = '' }) {
+    const router = useRouter();
+    const pathWeightOpts = useMemo(
+        () => weightOptsFromAsPath(router.asPath),
+        [router.asPath]
+    );
     // console.log('products: ', products)
     const resultRef = useRef(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -93,7 +100,9 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
 
     const handleAddToCart = (product) => {
         const stock = getProductStock(product);
-        const defaultQty = productSoldByWeight(product) ? DEFAULT_WEIGHT_CART_KG : 1;
+        const defaultQty = productSoldByWeight(product, pathWeightOpts)
+            ? DEFAULT_WEIGHT_CART_KG
+            : 1;
         if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
         const { slug, categories, description, ...updatedProduct } = product;
@@ -107,7 +116,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
             purchaseLimit: productPricing.purchaseLimit,
             image: product.image?.[0],
             slug: product.slug,
-            soldByWeight: productSoldByWeight(product),
+            soldByWeight: productSoldByWeight(product, pathWeightOpts),
         };
 
         addItem(newItem, defaultQty);
@@ -178,7 +187,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                                                 type='button'
                                                                 className="sm:pl-1"
                                                                 onClick={() => {
-                                                                    const next = cartDecrementQuantity(item);
+                                                                    const next = cartDecrementQuantity(item, pathWeightOpts);
                                                                     if (next <= 0) removeItem(item.id);
                                                                     else updateItemQuantity(item.id, next);
                                                                 }}
@@ -193,12 +202,13 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                                                     getProductStock={getProductStock}
                                                                     updateItemQuantity={updateItemQuantity}
                                                                     variant="onPrimary"
+                                                                    weightListOpts={pathWeightOpts}
                                                                 />
                                                             </div>
                                                             <button
                                                                 type='button'
                                                                 className="sm:pr-1"
-                                                                onClick={() => handleIncreaseQuantity(item)}
+                                                                onClick={() => handleIncreaseQuantity(item, pathWeightOpts)}
                                                             >
                                                                 <span className="text-dark text-base">
                                                                     <IoAdd />

@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiMinus, FiPlus } from "react-icons/fi";
 import {
   FacebookIcon,
@@ -50,14 +50,20 @@ import {
   parseWeightInputToKg,
   productSoldByWeight,
   roundCartQty,
+  weightContextFromProductNavTree,
 } from "@utils/productSoldByWeight";
 
 const ProductScreen = ({ product, relatedProducts }) => {
   const { showingTranslateValue, getNumber, currency, lang } = useUtilsFunction();
 
-  const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
+  const { isLoading, setIsLoading, offers, categories } = useContext(SidebarContext);
   const { state: { userInfo } } = useContext(UserContext);
   const { handleAddItem, item, setItem } = useAddToCart();
+
+  const weightOpts = useMemo(() => {
+    const ctx = weightContextFromProductNavTree(product, categories).trim();
+    return ctx ? { listCategoryContext: ctx } : undefined;
+  }, [product?._id, product?.category, categories]);
 
   const [price, setPrice] = useState(0);
   const [img, setImg] = useState("");
@@ -147,13 +153,13 @@ const ProductScreen = ({ product, relatedProducts }) => {
 
   useEffect(() => {
     if (!product?._id) return;
-    if (productSoldByWeight(product)) {
+    if (productSoldByWeight(product, weightOpts)) {
       setWeightUnit("kg");
       setWeightStr("0.5");
     } else {
       setItem(1);
     }
-  }, [product, setItem]);
+  }, [product, setItem, weightOpts]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -166,7 +172,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
     // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
     const productPricing = getUserPrice(p, userInfo);
     const purchaseLimit = productPricing.purchaseLimit;
-    const byWeight = productSoldByWeight(p);
+    const byWeight = productSoldByWeight(p, weightOpts);
     const qtyKg = byWeight
       ? roundCartQty(parseWeightInputToKg(weightStr, weightUnit))
       : item;
@@ -215,7 +221,6 @@ const ProductScreen = ({ product, relatedProducts }) => {
 
   const t = useTranslations();
   const { getCategorySlug, findMainCategory, findSubCategory } = useUtilsFunction();
-  const { categories } = useContext(SidebarContext);
 
   // זיהוי אם הקטגוריה היא קטגוריה ראשית או תת-קטגוריה
   const currentCategory = product?.category;
@@ -491,7 +496,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
 
                       <div className="flex items-center mt-4">
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start space-s-3 sm:space-s-4 w-full gap-3">
-                          {productSoldByWeight(product) ? (
+                          {productSoldByWeight(product, weightOpts) ? (
                             <SoldByWeightQtyInput
                               weightUnit={weightUnit}
                               setWeightUnit={setWeightUnit}
@@ -655,6 +660,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                             key={relatedProduct._id}
                             product={relatedProduct}
                             offers={offers}
+                            listCategoryContext={weightOpts?.listCategoryContext}
                           />
                         ))}
                       </div>

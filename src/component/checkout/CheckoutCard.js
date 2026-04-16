@@ -1,16 +1,25 @@
 // src/component/checkout/CheckoutCard.js
 import Image from "next/image";
 import { FiPlus, FiMinus } from "react-icons/fi";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
+import { useRouter } from "next/router";
 import SettingServices from "@services/SettingServices";
 import useAsync from "@hooks/useAsync";
 import useCart from "@hooks/useCart";
 import useAddToCart from "@hooks/useAddToCart";
 import { UserContext } from "@context/UserContext";
 import { getUserPrice } from "@utils/priceUtils";
-import { cartDecrementQuantity } from "@utils/productSoldByWeight";
+import {
+  cartDecrementQuantity,
+  weightOptsFromAsPath,
+} from "@utils/productSoldByWeight";
 import CartWeightQtyField from "@component/product/CartWeightQtyField";
 const CheckoutCard = ({ item }) => {
+  const router = useRouter();
+  const pathWeightOpts = useMemo(
+    () => weightOptsFromAsPath(router.asPath),
+    [router.asPath]
+  );
   const { updateItemQuantity, removeItem } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { state: { userInfo } } = useContext(UserContext);
@@ -50,7 +59,7 @@ const CheckoutCard = ({ item }) => {
             <div
               className="cursor-pointer"
               onClick={() => {
-                const next = cartDecrementQuantity(item);
+                const next = cartDecrementQuantity(item, pathWeightOpts);
                 if (next <= 0) removeItem(item.id);
                 else updateItemQuantity(item.id, next);
               }}
@@ -65,11 +74,12 @@ const CheckoutCard = ({ item }) => {
                 getProductStock={getLineStock}
                 updateItemQuantity={updateItemQuantity}
                 variant="onLight"
+                weightListOpts={pathWeightOpts}
               />
             </div>
             <div
               className="cursor-pointer"
-              onClick={() => handleIncreaseQuantity(item)}
+              onClick={() => handleIncreaseQuantity(item, pathWeightOpts)}
             >
               <span className="text-dark text-base">
                 <FiPlus />

@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 
 // Internal import
@@ -31,6 +31,7 @@ import {
   parseWeightInputToKg,
   productSoldByWeight,
   roundCartQty,
+  weightContextFromProductNavTree,
 } from "@utils/productSoldByWeight";
 
 const ProductModal = ({
@@ -39,10 +40,24 @@ const ProductModal = ({
   product,
   currency = '₪',
   clearInput = () => { },
-  title = ''
+  title = '',
+  listCategoryContext,
 }) => {
+  const { setIsLoading, isLoading, categories } = useContext(SidebarContext);
+  const mergedListCategoryContext = useMemo(() => {
+    const fromPage = listCategoryContext ? String(listCategoryContext).trim() : "";
+    const fromNav = weightContextFromProductNavTree(product, categories).trim();
+    return [fromPage, fromNav].filter(Boolean).join(" ");
+  }, [listCategoryContext, product?._id, product?.category, categories]);
+
+  const weightOpts = useMemo(
+    () =>
+      mergedListCategoryContext
+        ? { listCategoryContext: mergedListCategoryContext }
+        : undefined,
+    [mergedListCategoryContext]
+  );
   const router = useRouter();
-  const { setIsLoading, isLoading } = useContext(SidebarContext);
   const { state: { userInfo } } = useContext(UserContext);
   const t = useTranslations();
 
@@ -119,13 +134,13 @@ const ProductModal = ({
 
   useEffect(() => {
     if (!product?._id) return;
-    if (productSoldByWeight(product)) {
+    if (productSoldByWeight(product, weightOpts)) {
       setWeightUnit("kg");
       setWeightStr("0.5");
     } else {
       setItem(1);
     }
-  }, [product, setItem]);
+  }, [product, setItem, weightOpts]);
 
   // Flashy Product Modal View Tracking
   useEffect(() => {
@@ -146,7 +161,7 @@ const ProductModal = ({
     // קבלת המחיר והגבלת רכישה לפי המחירון של המשתמש
     const productPricing = getUserPrice(p, userInfo);
     const purchaseLimit = productPricing.purchaseLimit;
-    const byWeight = productSoldByWeight(p);
+    const byWeight = productSoldByWeight(p, weightOpts);
     const qtyKg = byWeight
       ? roundCartQty(parseWeightInputToKg(weightStr, weightUnit))
       : item;
@@ -309,7 +324,7 @@ const ProductModal = ({
               {/* בחירת כמות והוספה */}
               <div className="flex items-center mt-4">
                 <div className="flex sm:flex-row flex-col items-stretch sm:items-center gap-3 justify-between space-s-3 sm:space-s-4 w-full">
-                  {productSoldByWeight(product) ? (
+                  {productSoldByWeight(product, weightOpts) ? (
                     <SoldByWeightQtyInput
                       weightUnit={weightUnit}
                       setWeightUnit={setWeightUnit}

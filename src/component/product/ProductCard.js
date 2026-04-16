@@ -1,6 +1,6 @@
 // src/component/product/ProductCard.jsx
 import dynamic from "next/dynamic";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { IoAdd, IoRemove } from "react-icons/io5";
 
 // Internal import
@@ -28,7 +28,12 @@ import {
 } from "@utils/productSoldByWeight";
 import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
-const ProductCard = ({ product, offers = [] }) => {
+const ProductCard = ({ product, offers = [], listCategoryContext }) => {
+  const weightOpts = useMemo(() => {
+    const s =
+      listCategoryContext != null ? String(listCategoryContext).trim() : "";
+    return s ? { listCategoryContext: s } : undefined;
+  }, [listCategoryContext]);
   const [modalOpen, setModalOpen] = useState(false);
   const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
   const { state: { userInfo } } = useContext(UserContext);
@@ -54,7 +59,9 @@ const ProductCard = ({ product, offers = [] }) => {
 
   const handleAddItem = (p) => {
     const stock = getProductStock(p);
-    const defaultQty = productSoldByWeight(p) ? DEFAULT_WEIGHT_CART_KG : 1;
+    const defaultQty = productSoldByWeight(p, weightOpts)
+      ? DEFAULT_WEIGHT_CART_KG
+      : 1;
     if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
@@ -67,7 +74,7 @@ const ProductCard = ({ product, offers = [] }) => {
       purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
       image: getPrimaryProductImageUrl(p),
-      soldByWeight: productSoldByWeight(p),
+      soldByWeight: productSoldByWeight(p, weightOpts),
     };
     const result = addItem(newItem, defaultQty);
     if (product?.isComplementaryProduct && result && result.added > 0) {
@@ -90,6 +97,7 @@ const ProductCard = ({ product, offers = [] }) => {
           product={product}
           currency={currency}
           title={offerName}
+          listCategoryContext={listCategoryContext}
         />
       )}
 
@@ -155,7 +163,7 @@ const ProductCard = ({ product, offers = [] }) => {
                           <button
                             className="pl-0.5 sm:pl-1"
                             onClick={() => {
-                              const next = cartDecrementQuantity(item);
+                              const next = cartDecrementQuantity(item, weightOpts);
                               if (next <= 0) removeItem(item.id);
                               else updateItemQuantity(item.id, next);
                             }}
@@ -170,11 +178,14 @@ const ProductCard = ({ product, offers = [] }) => {
                               getProductStock={getProductStock}
                               updateItemQuantity={updateItemQuantity}
                               variant="onPrimary"
+                              weightListOpts={weightOpts}
                             />
                           </div>
                           <button
                             className="pr-0.5 sm:pr-1"
-                            onClick={() => handleIncreaseQuantity(item)}
+                            onClick={() =>
+                              handleIncreaseQuantity(item, weightOpts)
+                            }
                           >
                             <span className="text-dark text-sm sm:text-base">
                               <IoAdd />

@@ -101,14 +101,15 @@ const useAddToCart = () => {
     return { added: 0 };
   };
 
-  const handleIncreaseQuantity = (product) => {
+  const handleIncreaseQuantity = (product, weightOpts) => {
     const result = items?.find((p) => p.id === product.id);
     const productStock = getProductStock(product);
-    const step = productSoldByWeight(product) ? WEIGHT_STEP_KG : 1;
+    const byW = productSoldByWeight(product, weightOpts);
+    const step = byW ? WEIGHT_STEP_KG : 1;
 
     if (result) {
       const newQty = roundCartQty(product.quantity + step);
-      if (newQty <= productStock + (productSoldByWeight(product) ? 1e-6 : 0)) {
+      if (newQty <= productStock + (byW ? 1e-6 : 0)) {
         updateItemQuantity(product.id, newQty);
       } else {
         notifyError(t("productStockOut"));

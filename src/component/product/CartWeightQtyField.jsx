@@ -17,6 +17,8 @@ export default function CartWeightQtyField({
   getProductStock,
   updateItemQuantity,
   variant = "onPrimary",
+  /** הקשר מהעמוד (קטגוריה) — מאפשר משקל גם כשבשורת העגלה אין soldByWeight */
+  weightListOpts,
 }) {
   const t = useTranslations();
   const [draft, setDraft] = useState(null);
@@ -52,7 +54,7 @@ export default function CartWeightQtyField({
     setDraft(null);
   }, [draft, item, getProductStock, updateItemQuantity, t]);
 
-  if (!productSoldByWeight(item)) {
+  if (!productSoldByWeight(item, weightListOpts)) {
     return (
       <span className="text-xs sm:text-sm text-dark px-0.5 sm:px-1 font-serif font-semibold tabular-nums">
         {item.quantity}

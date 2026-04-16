@@ -1,7 +1,8 @@
 // ScrollOfferCard.jsx
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { UserContext } from "@context/UserContext";
 import { IoAdd, IoBagAddSharp, IoRemove } from "react-icons/io5";
 
@@ -27,10 +28,16 @@ import {
   DEFAULT_WEIGHT_CART_KG,
   productSoldByWeight,
   cartDecrementQuantity,
+  weightOptsFromAsPath,
 } from "@utils/productSoldByWeight";
 import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const ScrollOfferCard = ({ product, offers = [] }) => {
+  const router = useRouter();
+  const pathWeightOpts = useMemo(
+    () => weightOptsFromAsPath(router.asPath),
+    [router.asPath]
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const { toggleCartDrawer, closeCartDrawer } = useContext(SidebarContext)
   const { state: { userInfo } } = useContext(UserContext);
@@ -57,7 +64,9 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
 
   const handleAddItem = (p) => {
     const stock = getProductStock(p);
-    const defaultQty = productSoldByWeight(p) ? DEFAULT_WEIGHT_CART_KG : 1;
+    const defaultQty = productSoldByWeight(p, pathWeightOpts)
+      ? DEFAULT_WEIGHT_CART_KG
+      : 1;
     if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
 
     const { slug, categories, description, ...updatedProduct } = product;
@@ -70,7 +79,7 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
       purchaseLimit: productPricing.purchaseLimit,
       slug: p.slug,
       image: getPrimaryProductImageUrl(p),
-      soldByWeight: productSoldByWeight(p),
+      soldByWeight: productSoldByWeight(p, pathWeightOpts),
     };
     addItem(newItem, defaultQty);
   };
@@ -182,7 +191,7 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
                         <button
                           className="pl-1"
                           onClick={() => {
-                            const next = cartDecrementQuantity(item);
+                            const next = cartDecrementQuantity(item, pathWeightOpts);
                             if (next <= 0) removeItem(item.id);
                             else updateItemQuantity(item.id, next);
                           }}
@@ -197,11 +206,14 @@ const ScrollOfferCard = ({ product, offers = [] }) => {
                             getProductStock={getProductStock}
                             updateItemQuantity={updateItemQuantity}
                             variant="onPrimary"
+                            weightListOpts={pathWeightOpts}
                           />
                         </div>
                         <button
                           className="pr-1"
-                          onClick={() => handleIncreaseQuantity(item)}
+                          onClick={() =>
+                            handleIncreaseQuantity(item, pathWeightOpts)
+                          }
                         >
                           <span className="text-dark text-base">
                             <IoAdd />

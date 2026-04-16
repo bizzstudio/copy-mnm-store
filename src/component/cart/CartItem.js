@@ -2,7 +2,7 @@
 import { useContext } from "react";
 import Link from "next/link";
 import { FiPlus, FiMinus, FiTrash2, FiGift } from "react-icons/fi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 
@@ -13,7 +13,10 @@ import { UserContext } from "@context/UserContext";
 import useCart from "@hooks/useCart";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getUserPrice } from "@utils/priceUtils";
-import { cartDecrementQuantity } from "@utils/productSoldByWeight";
+import {
+  cartDecrementQuantity,
+  weightOptsFromAsPath,
+} from "@utils/productSoldByWeight";
 import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const CartItem = ({ item, currency, updateTotalPrice }) => {
@@ -24,6 +27,10 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
   const { showingTranslateValue } = useUtilsFunction();
   const router = useRouter();
   const t = useTranslations();
+  const pathWeightOpts = useMemo(
+    () => weightOptsFromAsPath(router.asPath),
+    [router.asPath]
+  );
 
   // קבלת המחיר המדוייק ללקוח (אם יש salePrice, משתמש בו, אחרת price)
   const { price, salePrice } = getUserPrice(item, userInfo);
@@ -227,7 +234,7 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
                   type="button"
                   className="px-1"
                   onClick={() => {
-                    const next = cartDecrementQuantity(item);
+                    const next = cartDecrementQuantity(item, pathWeightOpts);
                     if (next <= 0) removeItem(item.id);
                     else updateItemQuantity(item.id, next);
                   }}
@@ -242,9 +249,14 @@ const CartItem = ({ item, currency, updateTotalPrice }) => {
                     getProductStock={getLineStock}
                     updateItemQuantity={updateItemQuantity}
                     variant="onLight"
+                    weightListOpts={pathWeightOpts}
                   />
                 </div>
-                <button type="button" onClick={() => handleIncreaseQuantity(item)} className="px-1">
+                <button
+                  type="button"
+                  onClick={() => handleIncreaseQuantity(item, pathWeightOpts)}
+                  className="px-1"
+                >
                   <span className="text-dark text-base">
                     <FiPlus />
                   </span>

@@ -1,5 +1,5 @@
 // src/pages/product-category/[categoryName].jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
@@ -17,6 +17,10 @@ import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getI18nProps } from "@utils/i18n";
 import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
+import {
+  weightContextFromCategoryTree,
+  categoryPathHintsFromAsPath,
+} from "@utils/productSoldByWeight";
 
 const CategoryPage = ({ products }) => {
     // console.log('products :>> ', products);
@@ -40,6 +44,26 @@ const CategoryPage = ({ products }) => {
     }, [products]);
 
     const { setSortedField, productData, sortedField } = useFilter(products);
+
+    const categorySlugParam = Array.isArray(categoryName)
+        ? categoryName[0]
+        : categoryName;
+    const displayNameStr =
+        displayCategoryName != null && String(displayCategoryName).trim() !== ""
+            ? String(displayCategoryName)
+            : "";
+    const pathHints = useMemo(
+        () => categoryPathHintsFromAsPath(router.asPath),
+        [router.asPath]
+    );
+    const listCategoryContext = useMemo(
+        () =>
+            weightContextFromCategoryTree(
+                [currentCategory],
+                [categorySlugParam, displayNameStr, ...pathHints]
+            ).trim(),
+        [currentCategory, categorySlugParam, displayNameStr, pathHints]
+    );
 
     return (
         <Layout title={displayCategoryName}
@@ -108,6 +132,7 @@ const CategoryPage = ({ products }) => {
                                                 key={i + 1}
                                                 product={product}
                                                 offers={offers}
+                                                listCategoryContext={listCategoryContext}
                                             />
                                         ))}
                                     </div>

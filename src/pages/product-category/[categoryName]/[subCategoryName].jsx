@@ -1,5 +1,5 @@
 // src/pages/product-category/[categoryName]/[subCategoryName].jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
@@ -17,6 +17,10 @@ import SortDropdown from "@component/common/SortDropdown";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { getI18nProps } from "@utils/i18n";
 import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
+import {
+  weightContextFromCategoryTree,
+  categoryPathHintsFromAsPath,
+} from "@utils/productSoldByWeight";
 
 const SubCategoryPage = ({ products }) => {
     const t = useTranslations();
@@ -46,6 +50,39 @@ const SubCategoryPage = ({ products }) => {
     }, [products]);
 
     const { setSortedField, productData, sortedField } = useFilter(products);
+
+    const mainSlugParam = Array.isArray(categoryName) ? categoryName[0] : categoryName;
+    const subSlugParam = Array.isArray(subCategoryName)
+        ? subCategoryName[0]
+        : subCategoryName;
+    const mainDisplayStr =
+        displayCategoryName != null && String(displayCategoryName).trim() !== ""
+            ? String(displayCategoryName)
+            : "";
+    const subDisplayStr =
+        displaySubCategoryName != null && String(displaySubCategoryName).trim() !== ""
+            ? String(displaySubCategoryName)
+            : "";
+    const pathHints = useMemo(
+        () => categoryPathHintsFromAsPath(router.asPath),
+        [router.asPath]
+    );
+    const listCategoryContext = useMemo(
+        () =>
+            weightContextFromCategoryTree(
+                [currentCategory, currentSubCategory],
+                [mainSlugParam, subSlugParam, mainDisplayStr, subDisplayStr, ...pathHints]
+            ).trim(),
+        [
+            currentCategory,
+            currentSubCategory,
+            mainSlugParam,
+            subSlugParam,
+            mainDisplayStr,
+            subDisplayStr,
+            pathHints,
+        ]
+    );
 
     return (
         <Layout title={`${displayCategoryName} - ${displaySubCategoryName}`}
@@ -114,6 +151,7 @@ const SubCategoryPage = ({ products }) => {
                                                 key={i + 1}
                                                 product={product}
                                                 offers={offers}
+                                                listCategoryContext={listCategoryContext}
                                             />
                                         ))}
                                     </div>
