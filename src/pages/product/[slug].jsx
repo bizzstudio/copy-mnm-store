@@ -42,7 +42,7 @@ import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { trackFbViewContent } from "@services/facebookPixel";
 import { getI18nProps } from "@utils/i18n";
 import { UserContext } from "@context/UserContext";
-import { getUserPrice } from "@utils/priceUtils";
+import { getUserPrice, getCatalogSeoPricing, getFinalPrice } from "@utils/priceUtils";
 import { getUserTokenFromCookies } from "@utils/getUserTokenFromCookies";
 import SoldByWeightQtyInput from "@component/product/SoldByWeightQtyInput";
 import {
@@ -92,14 +92,15 @@ const ProductScreen = ({ product, relatedProducts }) => {
   // Meta Pixel - ViewContent עבור עמוד מוצר
   useEffect(() => {
     if (product?._id) {
-      // מומלץ לוודא שה־sku קיים ומתאים לפיד
+      const fbPrice = userInfo?.token
+        ? getFinalPrice(product, userInfo)
+        : getCatalogSeoPricing(product).current;
       trackFbViewContent({
         ...product,
-        // לוודא שיש price בסיסי
-        price: product?.prices?.[0]?.price || product?.prices?.[0]?.salePrice || 0,
+        price: fbPrice,
       });
     }
-  }, [product?._id]);
+  }, [product?._id, userInfo]);
 
   useEffect(() => {
     if (!product) return;
@@ -117,31 +118,25 @@ const ProductScreen = ({ product, relatedProducts }) => {
       setStockLoaded(true);
     }
 
-    // הגדרת מחירים - לוקח את המחיר הראשון מהמערך prices
-    const productPrice = product?.prices?.[0];
-    if (productPrice) {
-      // אם יש salePrice, זה המחיר המחוק, אחרת price הוא המחיר הרגיל
-      const currentPrice = getNumber(productPrice?.salePrice || productPrice?.price);
-      const originalPriceValue = productPrice?.salePrice
-        ? getNumber(productPrice?.price)
-        : getNumber(productPrice?.price);
-
+    // מחירים: למשתמש מחובר — לפי מחירון + מע״מ על קטלוג; לאורח — מחירון ברירת מחדל + מע״מ (ל־SEO / מטא)
+    if (userInfo?.token) {
+      const p = getUserPrice(product, userInfo);
+      const currentPrice = getNumber(p.salePrice || p.price);
+      const originalPriceValue = getNumber(p.price);
       setPrice(currentPrice);
       setOriginalPrice(originalPriceValue);
-
-      // חישוב הנחה
-      if (productPrice?.salePrice && productPrice?.salePrice < productPrice?.price) {
-        const discountPercentage = getNumber(
-          ((originalPriceValue - currentPrice) / originalPriceValue) * 100
+      if (p.salePrice && p.salePrice > 0 && p.salePrice < p.price) {
+        setDiscount(
+          getNumber(((originalPriceValue - currentPrice) / originalPriceValue) * 100)
         );
-        setDiscount(discountPercentage);
       } else {
         setDiscount(0);
       }
     } else {
-      setPrice(0);
-      setOriginalPrice(0);
-      setDiscount(0);
+      const seo = getCatalogSeoPricing(product);
+      setPrice(getNumber(seo.current));
+      setOriginalPrice(getNumber(seo.original));
+      setDiscount(getNumber(seo.discount));
     }
   }, [
     product,
@@ -149,6 +144,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
     product?.stock,
     product?.manageStock,
     product?.image,
+    userInfo,
   ]);
 
   useEffect(() => {
@@ -291,7 +287,9 @@ const ProductScreen = ({ product, relatedProducts }) => {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const productUrl = `${siteUrl}/product/${product.slug}`;
   const productImage = product?.image?.[0] || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-  const basePrice = price || product?.prices?.price || 0;
+  const basePrice = userInfo?.token
+    ? getFinalPrice(product, userInfo) || price
+    : getCatalogSeoPricing(product).current || price;
   const availability =
     stock > 0
       ? "https://schema.org/InStock"

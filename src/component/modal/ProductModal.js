@@ -24,7 +24,7 @@ import ImageCarousel from "@component/carousel/ImageCarousel";
 import { trackProductModalView } from "@services/flashy";
 import { trackFbViewContent } from "@services/facebookPixel";
 import { UserContext } from "@context/UserContext";
-import { getUserPrice } from "@utils/priceUtils";
+import { getUserPrice, getCatalogSeoPricing, getFinalPrice } from "@utils/priceUtils";
 import SoldByWeightQtyInput from "@component/product/SoldByWeightQtyInput";
 import {
   MIN_ORDER_KG,
@@ -98,31 +98,24 @@ const ProductModal = ({
       setStock(product?.stock || 0);
     }
 
-    // הגדרת מחירים - לוקח את המחיר הראשון מהמערך prices
-    const productPrice = product?.prices?.[0];
-    if (productPrice) {
-      // אם יש salePrice, זה המחיר המחוק, אחרת price הוא המחיר הרגיל
-      const currentPrice = getNumber(productPrice?.salePrice || productPrice?.price);
-      const originalPriceValue = productPrice?.salePrice
-        ? getNumber(productPrice?.price)
-        : getNumber(productPrice?.price);
-
+    if (userInfo?.token) {
+      const p = getUserPrice(product, userInfo);
+      const currentPrice = getNumber(p.salePrice || p.price);
+      const originalPriceValue = getNumber(p.price);
       setPrice(currentPrice);
       setOriginalPrice(originalPriceValue);
-
-      // חישוב הנחה
-      if (productPrice?.salePrice && productPrice?.salePrice < productPrice?.price) {
-        const discountPercentage = getNumber(
-          ((originalPriceValue - currentPrice) / originalPriceValue) * 100
+      if (p.salePrice && p.salePrice > 0 && p.salePrice < p.price) {
+        setDiscount(
+          getNumber(((originalPriceValue - currentPrice) / originalPriceValue) * 100)
         );
-        setDiscount(discountPercentage);
       } else {
         setDiscount(0);
       }
     } else {
-      setPrice(0);
-      setOriginalPrice(0);
-      setDiscount(0);
+      const seo = getCatalogSeoPricing(product);
+      setPrice(getNumber(seo.current));
+      setOriginalPrice(getNumber(seo.original));
+      setDiscount(getNumber(seo.discount));
     }
   }, [
     product,
@@ -130,6 +123,7 @@ const ProductModal = ({
     product?.stock,
     product?.manageStock,
     product?.image,
+    userInfo,
   ]);
 
   useEffect(() => {
@@ -148,12 +142,15 @@ const ProductModal = ({
       trackProductModalView(product._id);
 
       // Meta Pixel ViewContent גם לפופאפ
+      const fbPrice = userInfo?.token
+        ? getFinalPrice(product, userInfo)
+        : getCatalogSeoPricing(product).current;
       trackFbViewContent({
         ...product,
-        price: product?.prices?.[0]?.price || product?.prices?.[0]?.salePrice || 0,
+        price: fbPrice,
       });
     }
-  }, [modalOpen, product?._id]);
+  }, [modalOpen, product?._id, userInfo]);
 
   const handleAddToCart = (p) => {
     if (stock <= 0) return notifyError(t('productStockOut'));

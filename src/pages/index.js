@@ -415,22 +415,24 @@ export const getServerSideProps = async (context) => {
   }
 
   try {
+    const blogsForHome = BlogServices.getPublishedBlogs({
+      page: 1,
+      limit: 3,
+      category: "",
+      tag: "",
+    }).catch((err) => {
+      console.error("getPublishedBlogs (home SSR):", err?.response?.status, err?.message);
+      return { blogs: [], totalBlogs: 0 };
+    });
+
     const [data, blogsData, seoProps, i18nProps] = await Promise.all([
       ProductServices.getShowingStoreProducts({
         category: idParam ? String(idParam) : "",
         title: queryParam ? String(queryParam) : "",
         token: userToken,
       }),
-
-      BlogServices.getPublishedBlogs({
-        page: 1,
-        limit: 3,
-        category: "",
-        tag: "",
-      }),
-
+      blogsForHome,
       getSeoProps(),
-
       getI18nProps(context),
     ]);
 

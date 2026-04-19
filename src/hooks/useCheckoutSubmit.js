@@ -13,6 +13,7 @@ import CouponServices from "@services/CouponServices";
 import { notifyError, notifySuccess } from "@utils/toast";
 import SettingServices from "@services/SettingServices";
 import useCart from "./useCart";
+import { getFinalPrice, getUserPrice } from "@utils/priceUtils";
 import { SidebarContext } from "@context/SidebarContext";
 import notifyApiResponse from "@utils/notifyApiResponse";
 import { identifyUser, trackNewsletterSignup } from "@services/flashy";
@@ -631,9 +632,10 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
         const oldQuantity = product?.oldQuantity ?? 1;
 
-        const productPrice = product?.prices?.[0];
-        const fallbackPrice = productPrice?.salePrice ?? productPrice?.price ?? 0;
-        const originalPrice = productPrice?.price ?? 0;
+        const fallbackPrice = getFinalPrice(product, userInfo);
+        const up = getUserPrice(product, userInfo);
+        const originalPrice =
+          up.pricesHidden !== true ? Number(up.price) || 0 : Number(fallbackPrice) || 0;
         const img = product?.image?.[0];
 
         const { categories, description, ...updatedProduct } = product || {};
@@ -643,7 +645,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
           title: product?.title,
           image: img,
           price: serverPrice != null ? Number(serverPrice) : fallbackPrice,
-          originalPrice: originalPrice,
+          originalPrice,
         };
 
         addItem(newItem, oldQuantity);
