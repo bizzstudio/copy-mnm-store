@@ -61,30 +61,46 @@ const Navbar = ({ cashierPage = false }) => {
 
   // חיפוש מיידי
   useEffect(() => {
+    let active = true;
+
     const fetchData = async () => {
-      if (searchText.trim()) {
-        // קבלת המוצרים המתאימים מהשרת
-        let serverProducts = await ProductServices.getShowingStoreProducts({
+      if (!searchText.trim()) {
+        if (active) setSearchResults();
+        return;
+      }
+
+      try {
+        const serverProducts = await ProductServices.getShowingStoreProducts({
           title: searchText,
         });
-        setSearchResults(serverProducts.products);
-        // קבלת התכונות מהשרת
-        let attributes = await AttributeServices.getShowingAttributes();
-        setAttributes(attributes);
-      } else {
-        setSearchResults();
+        if (!active) return;
+        setSearchResults(serverProducts?.products ?? []);
+
+        try {
+          const attrs = await AttributeServices.getShowingAttributes();
+          if (active) setAttributes(attrs);
+        } catch {
+          /* תכונות לא קריטיות לחיפוש */
+        }
+      } catch (error) {
+        if (!active) return;
+        console.error("Navbar search:", error);
+        setSearchResults([]);
       }
     };
 
     // הוצאה לפועל של הפונקציה אחרי מינימום 300 אלפיות כדי למנוע הצפת בקשות
-    const debouncedFetch = debounce(fetchData, 300);
+    const debouncedFetch = debounce(() => {
+      void fetchData();
+    }, 300);
 
     debouncedFetch();
 
     return () => {
+      active = false;
       debouncedFetch.cancel();
     };
-  }, [searchText])
+  }, [searchText]);
 
 
   useEffect(() => {

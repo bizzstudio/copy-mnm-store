@@ -18,9 +18,12 @@ import { UserContext } from '@context/UserContext';
 import { getUserPrice } from '@utils/priceUtils';
 import {
     DEFAULT_WEIGHT_CART_KG,
+    MIN_ORDER_KG,
     productSoldByWeight,
     cartDecrementQuantity,
     weightOptsFromAsPath,
+    roundCartQty,
+    formatWeightDisplayKg,
 } from '@utils/productSoldByWeight';
 import CartWeightQtyField from '@component/product/CartWeightQtyField';
 import { LiaCartPlusSolid } from 'react-icons/lia';
@@ -49,6 +52,8 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
 
     const [mounted, setMounted] = useState(false);
     const [dropdownTop, setDropdownTop] = useState(72);
+    /** כמות לפני הוספה ראשונה לעגלה (שורת חיפוש) */
+    const [preAddQtyDraft, setPreAddQtyDraft] = useState({});
 
     useEffect(() => {
         setMounted(true);
@@ -98,12 +103,32 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
         return product?.stock || 0;
     };
 
-    const handleAddToCart = (product) => {
+    const handleAddToCart = (product, rawQty) => {
         const stock = getProductStock(product);
-        const defaultQty = productSoldByWeight(product, pathWeightOpts)
-            ? DEFAULT_WEIGHT_CART_KG
-            : 1;
-        if (stock + 1e-6 < defaultQty) return notifyError(t('productStockOut'));
+        const byWeight = productSoldByWeight(product, pathWeightOpts);
+        let qty;
+
+        if (byWeight) {
+            const s =
+                rawQty != null && String(rawQty).trim() !== ""
+                    ? String(rawQty).trim().replace(",", ".")
+                    : String(DEFAULT_WEIGHT_CART_KG);
+            qty = roundCartQty(parseFloat(s));
+            if (!Number.isFinite(qty) || qty < MIN_ORDER_KG) {
+                return notifyError(t("weightInvalidAmount"));
+            }
+        } else {
+            const s =
+                rawQty != null && String(rawQty).trim() !== ""
+                    ? String(rawQty).trim()
+                    : "1";
+            qty = parseInt(s, 10);
+            if (!Number.isFinite(qty) || qty < 1) {
+                return notifyError(t("invalidQuantity"));
+            }
+        }
+
+        if (stock + 1e-6 < qty) return notifyError(t("productStockOut"));
 
         const { slug, categories, description, ...updatedProduct } = product;
         const productPricing = getUserPrice(product, userInfo);
@@ -116,10 +141,23 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
             purchaseLimit: productPricing.purchaseLimit,
             image: product.image?.[0],
             slug: product.slug,
-            soldByWeight: productSoldByWeight(product, pathWeightOpts),
+            soldByWeight: byWeight,
         };
 
-        addItem(newItem, defaultQty);
+        addItem(newItem, qty);
+        setPreAddQtyDraft((prev) => {
+            const next = { ...prev };
+            delete next[product._id];
+            return next;
+        });
+    };
+
+    const preAddInputValue = (product) => {
+        const id = product._id;
+        if (preAddQtyDraft[id] !== undefined) return preAddQtyDraft[id];
+        return productSoldByWeight(product, pathWeightOpts)
+            ? formatWeightDisplayKg(DEFAULT_WEIGHT_CART_KG)
+            : "1";
     };
 
     const handleModalOpen = (product) => {
@@ -172,8 +210,13 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                         </div>
                                     </div>
                                     {/* ProductCard-כפתורים דינאמיים כמו ב */}
-                                    <div className="flex items-center"
-                                        onClick={e => { e.preventDefault(), e.stopPropagation() }}>
+                                    <div
+                                        className="flex items-center gap-1.5 shrink-0"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}
+                                    >
                                         {inCart(product._id) ? (
                                             items.map(
                                                 (item) =>
@@ -203,6 +246,7 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                                                     updateItemQuantity={updateItemQuantity}
                                                                     variant="onPrimary"
                                                                     weightListOpts={pathWeightOpts}
+                                                                    unitQuantityEditable={!productSoldByWeight(item, pathWeightOpts)}
                                                                 />
                                                             </div>
                                                             <button
@@ -218,17 +262,48 @@ export default function ResultWindow({ products = [], clearInput, closeResultWin
                                                     )
                                             )
                                         ) : (
-                                            <button
-                                                type='button'
-                                                onClick={() => handleAddToCart(product)}
-                                                aria-label="cart"
-                                                disabled={getProductStock(product) <= 0}
-                                                className={getProductStock(product) <= 0 ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400" : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all"}
-                                            >
-                                                <span className="text-2xl">
-                                                    <LiaCartPlusSolid />
-                                                </span>
-                                            </button>
+                                            <>
+                                                <input
+                                                    type="number"
+                                                    inputMode={productSoldByWeight(product, pathWeightOpts) ? "decimal" : "numeric"}
+                                                    min={productSoldByWeight(product, pathWeightOpts) ? MIN_ORDER_KG : 1}
+                                                    step={productSoldByWeight(product, pathWeightOpts) ? "any" : 1}
+                                                    lang="en"
+                                                    disabled={getProductStock(product) <= 0}
+                                                    value={preAddInputValue(product)}
+                                                    onChange={(e) =>
+                                                        setPreAddQtyDraft((prev) => ({
+                                                            ...prev,
+                                                            [product._id]: e.target.value,
+                                                        }))
+                                                    }
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="no-spinner w-11 sm:w-14 min-w-0 shrink-0 text-center text-sm font-semibold tabular-nums border border-gray-300 rounded py-1.5 px-0.5 text-heading outline-none focus:border-mainColor-dark disabled:bg-gray-100 disabled:text-gray-400"
+                                                    style={{ MozAppearance: "textfield" }}
+                                                    title={t("quantity")}
+                                                    aria-label={t("quantity")}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleAddToCart(
+                                                            product,
+                                                            preAddQtyDraft[product._id]
+                                                        )
+                                                    }
+                                                    aria-label="cart"
+                                                    disabled={getProductStock(product) <= 0}
+                                                    className={
+                                                        getProductStock(product) <= 0
+                                                            ? "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-gray-400 shrink-0"
+                                                            : "h-9 px-2 flex items-center justify-center border border-gray-200 rounded text-mainColor-dark hover:bg-mainColor-dark hover:text-white transition-all shrink-0"
+                                                    }
+                                                >
+                                                    <span className="text-2xl">
+                                                        <LiaCartPlusSolid />
+                                                    </span>
+                                                </button>
+                                            </>
                                         )}
                                     </div>
                                 </div>
