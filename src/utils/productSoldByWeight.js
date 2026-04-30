@@ -2,8 +2,9 @@
 
 export const DEFAULT_WEIGHT_CART_KG = 0.5;
 export const WEIGHT_STEP_KG = 0.05;
-export const MIN_ORDER_KG = 0.001;
-export const WEIGHT_QTY_DECIMALS = 3;
+/** מינימום בהתאם ל־WEIGHT_QTY_DECIMALS (0.01 ק״ג) */
+export const MIN_ORDER_KG = 0.01;
+export const WEIGHT_QTY_DECIMALS = 2;
 
 function categoryBlobs(p) {
   const list = [];

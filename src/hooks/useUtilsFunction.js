@@ -25,11 +25,15 @@ const useUtilsFunction = () => {
   //for formatting number
 
   const getNumber = (value = 0) => {
-    return Number(parseFloat(value || 0).toFixed(1));
+    return Number(parseFloat(value || 0).toFixed(2));
   };
 
   const getNumberTwo = (value = 0) => {
-    return parseFloat(value || 0).toFixed(globalSetting?.floating_number || 2);
+    const configured = Number(globalSetting?.floating_number);
+    const decimals = Number.isFinite(configured)
+      ? Math.min(2, Math.max(0, configured))
+      : 2;
+    return parseFloat(value || 0).toFixed(decimals);
   };
 
   //for translation
