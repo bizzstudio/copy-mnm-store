@@ -1,7 +1,7 @@
 // src/hooks/useCart.jsx
 import { useCart as useOriginalCart } from 'react-use-cart';
 import Cookies from 'js-cookie';
-import { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef, useMemo } from 'react';
 import { SidebarContext } from '@context/SidebarContext';
 import { UserContext } from '@context/UserContext';
 import { getTokenFromUserInfoCookieValue } from '@utils/storeAccess';
@@ -12,6 +12,7 @@ import { notifyError } from '@utils/toast';
 import { useTranslations } from "next-intl";
 import { findOptimalOfferCombination } from '@utils/offerCalculations';
 import { getFinalPrice } from '@utils/priceUtils';
+import { roundCartQty } from '@utils/productSoldByWeight';
 
 const useCart = () => {
     const cart = useOriginalCart();
@@ -230,8 +231,15 @@ const useCart = () => {
         prevCartItemsRef.current = updatedCartItems;
     }, [cart, offers, userInfo]);
 
+    const totalItems = useMemo(() => {
+        const raw = cart.totalItems;
+        if (typeof raw !== 'number' || !Number.isFinite(raw)) return raw;
+        return roundCartQty(raw);
+    }, [cart.totalItems]);
+
     return {
         ...cart,
+        totalItems,
         customCartTotal: customCart.customCartTotal,
         items: customCart.updatedCartItems,
         thresholdDiscount: customCart.thresholdDiscount,
