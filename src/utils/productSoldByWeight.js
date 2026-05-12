@@ -22,7 +22,7 @@ function isProduceCategory(cat) {
   if (typeof cat?.name === "string") parts.push(cat.name);
   if (cat?.name && typeof cat.name === "object") {
     parts.push(cat.name.he || "", cat.name.en || "");
-  }
+  }   
   const hay = parts.join(" ").toLowerCase();
   return (
     hay.includes("fruit") ||
