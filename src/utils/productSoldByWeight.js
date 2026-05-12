@@ -29,8 +29,12 @@ function isProduceCategory(cat) {
     hay.includes("vegetable") ||
     hay.includes("vegetables") ||
     hay.includes("produce") ||
+    hay.includes("frozen") ||
+    hay.includes("freeze") ||
     hay.includes("פירות") ||
-    hay.includes("ירקות")
+    hay.includes("ירקות") ||
+    hay.includes("קפוא") ||
+    hay.includes("קפואים")
   );
 }
 
