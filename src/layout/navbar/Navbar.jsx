@@ -283,7 +283,7 @@ const Navbar = ({ cashierPage = false }) => {
 
         {/* פס קטגוריות מתחת ל-navbar - רקע מלא רוחב, בלי רווחים לבנים בצדדים */}
         {!cashierPage && (
-          <div className="block w-full overflow-x-hidden">
+          <div className="block w-full">
             <NavbarPromo />
           </div>
         )}

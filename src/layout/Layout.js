@@ -204,8 +204,11 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
           router.replace(getPostLogoutPath());
         }
       } catch (error) {
-        console.error("Token validation/refresh error:", error);
-        // אם יש שגיאה - נתק את המשתמש
+        const status = error?.response?.status;
+        // 401 = טוקן פג תוקף — מצב צפוי, ניתוק שקט ללא הודעת שגיאה
+        if (status !== 401) {
+          console.error("Token validation/refresh error:", error);
+        }
         dispatch({ type: "USER_LOGOUT" });
         Cookies.remove("userInfo");
         Cookies.remove("couponInfo");
@@ -213,7 +216,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
       }
     };
 
-    validateAndRefreshUser();
+    validateAndRefreshUser().catch(() => {});
   }, []); // רץ רק פעם אחת בריענון
 
   return (
