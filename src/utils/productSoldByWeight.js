@@ -143,6 +143,22 @@ export function weightOptsFromAsPath(asPath) {
 }
 
 /**
+ * מחזיר את שרשרת ההורים מהשורש ועד הקטגוריה עם idStr בעץ הקטגוריות, או null אם לא נמצאה.
+ * נדרש כדי לתמוך בהיררכיה עמוקה מ-2 רמות (קפואים > בשרים > חזה עוף וכד׳).
+ */
+function findCategoryPath(nodes, idStr) {
+  for (const node of nodes || []) {
+    if (!node) continue;
+    if (String(node._id) === idStr) return [node];
+    if (Array.isArray(node.children) && node.children.length) {
+      const sub = findCategoryPath(node.children, idStr);
+      if (sub) return [node, ...sub];
+    }
+  }
+  return null;
+}
+
+/**
  * הקשר משקל מעץ הקטגוריות ב-sidebar + product.category (כמו בדף product/[slug]).
  * כשאין קטגוריה על המוצר או שהמזהה לא נמצא בעץ — מחזיר מחרוזת ריקה.
  */
@@ -152,20 +168,9 @@ export function weightContextFromProductNavTree(product, categoriesData) {
     current && typeof current === "object" ? current._id : current;
   if (catId == null || catId === "" || !categoriesData?.[0]?.children) return "";
   const roots = categoriesData[0].children;
-  const idStr = String(catId);
-
-  const asMain = roots.find((cat) => String(cat._id) === idStr);
-  if (asMain) {
-    return weightContextFromCategoryTree([asMain], []);
-  }
-  for (const mainCat of roots) {
-    if (!mainCat?.children?.length) continue;
-    const sub = mainCat.children.find((s) => String(s._id) === idStr);
-    if (sub) {
-      return weightContextFromCategoryTree([mainCat, sub], []);
-    }
-  }
-  return "";
+  const path = findCategoryPath(roots, String(catId));
+  if (!path) return "";
+  return weightContextFromCategoryTree(path, []);
 }
 
 /** התאמה לפי מחרוזת אחת (למשל slug מה-URL + שם תצוגה מהקטגוריה) */

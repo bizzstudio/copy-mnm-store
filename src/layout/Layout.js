@@ -205,8 +205,9 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
         }
       } catch (error) {
         const status = error?.response?.status;
-        // 401 = טוקן פג תוקף — מצב צפוי, ניתוק שקט ללא הודעת שגיאה
-        if (status !== 401) {
+        // 401 = טוקן פג תוקף, 404 = משתמש לא נמצא ב-DB — שני מצבים צפויים של "משתמש לא תקף":
+        // ניתוק שקט בלי לרעוש ב-console (אחרת Next dev overlay מציג runtime error).
+        if (status !== 401 && status !== 404) {
           console.error("Token validation/refresh error:", error);
         }
         dispatch({ type: "USER_LOGOUT" });
