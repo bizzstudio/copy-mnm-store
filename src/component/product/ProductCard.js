@@ -15,6 +15,7 @@ import ComplementaryCartReminderModal from "@component/modal/ComplementaryCartRe
 import ImageWithFallback from "@component/common/ImageWithFallBack";
 import { handleLogEvent } from "@utils/analytics";
 import { UserContext } from "@context/UserContext";
+import { SidebarContext } from "@context/SidebarContext";
 import { useTranslations } from "next-intl";
 import getOfferNames from "@component/offer/getOfferNames";
 import useCart from "@hooks/useCart";
@@ -25,15 +26,24 @@ import {
   DEFAULT_WEIGHT_CART_KG,
   productSoldByWeight,
   cartDecrementQuantity,
+  weightContextFromProductNavTree,
 } from "@utils/productSoldByWeight";
 import CartWeightQtyField from "@component/product/CartWeightQtyField";
 
 const ProductCard = ({ product, offers = [], listCategoryContext }) => {
-  const weightOpts = useMemo(() => {
-    const s =
-      listCategoryContext != null ? String(listCategoryContext).trim() : "";
-    return s ? { listCategoryContext: s } : undefined;
-  }, [listCategoryContext]);
+  const { categories } = useContext(SidebarContext);
+  const mergedListCategoryContext = useMemo(() => {
+    const fromPage = listCategoryContext ? String(listCategoryContext).trim() : "";
+    const fromNav = weightContextFromProductNavTree(product, categories).trim();
+    return [fromPage, fromNav].filter(Boolean).join(" ");
+  }, [listCategoryContext, product?._id, product?.category, categories]);
+  const weightOpts = useMemo(
+    () =>
+      mergedListCategoryContext
+        ? { listCategoryContext: mergedListCategoryContext }
+        : undefined,
+    [mergedListCategoryContext]
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [complementaryReminderOpen, setComplementaryReminderOpen] = useState(false);
   const { state: { userInfo } } = useContext(UserContext);
