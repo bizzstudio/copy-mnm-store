@@ -26,6 +26,9 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
   const { refreshOffers, setLoginModalOpen } = useContext(SidebarContext);
   const t = useTranslations();
 
+  // לקוח עם "ללא משלוח": איסוף עצמי בלבד, ללא חיוב/רכיב משלוח
+  const noShipping = !!userInfo?.noShipping;
+
   const [error, setError] = useState("");
   const [total, setTotal] = useState("");
   const [couponInfo, setCouponInfo] = useState({});
@@ -152,6 +155,15 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
     setTotal(totalValue);
   }, [customCartTotal, shippingCost, discountPercentage, isCashierMode, thresholdDiscount]);
+
+  // לקוח "ללא משלוח": כפיית איסוף עצמי וללא דמי משלוח (מבטל כל חישוב משלוח)
+  useEffect(() => {
+    if (noShipping) {
+      setShippingCost(0);
+      setIsDeliveryMetod(true);
+      setValue("shippingOption", "1");
+    }
+  }, [noShipping, setValue]);
 
   // מילוי נתוני משלוח רק אם המשתמש מחובר
   useEffect(() => {
@@ -290,14 +302,14 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
         }
       }
 
-      // וולידציות כלליות (לכל המשתמשים)
-      if (isDeliverable !== undefined && !isDeliverable) {
+      // וולידציות כלליות (לכל המשתמשים) – לקוח "ללא משלוח" פטור מבדיקות המשלוח
+      if (!noShipping && isDeliverable !== undefined && !isDeliverable) {
         notifyError(t('noDeliveryToAddress'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return; // עצור את הביצוע
       }
 
-      if (isDeliveryMetod !== undefined && !isDeliveryMetod) {
+      if (!noShipping && isDeliveryMetod !== undefined && !isDeliveryMetod) {
         notifyError(t('selectDeliveryMethod'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return; // עצור את הביצוע
@@ -371,14 +383,14 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
           orderInfo = {
             user_info: userDetails,
-            shippingOption: data.shippingOption,
+            shippingOption: noShipping ? "1" : data.shippingOption,
             callOnArrival: data.callOnArrival,
             customer_note: data.customer_note,
             paymentMethod: "card",
             status: "Pending",
             cart: items.sort((a, b) => a.barcode - b.barcode) || items,
             subTotal: Number(customCartTotal.toFixed(2)),
-            shippingCost: shippingCost,
+            shippingCost: noShipping ? 0 : shippingCost,
             discount: discountAmount,
             total: total,
             coupon: couponInfo._id || null,
@@ -511,15 +523,15 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
 
       // וולידציות כלליות
 
-      // אם אין משלוח לכתובת
-      if (isDeliverable !== undefined && !isDeliverable) {
+      // אם אין משלוח לכתובת – לקוח "ללא משלוח" פטור (איסוף עצמי)
+      if (!noShipping && isDeliverable !== undefined && !isDeliverable) {
         notifyError(t('noDeliveryToAddress'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
 
       // אם אין שיטת משלוח
-      if (isDeliveryMetod !== undefined && !isDeliveryMetod) {
+      if (!noShipping && isDeliveryMetod !== undefined && !isDeliveryMetod) {
         notifyError(t('selectDeliveryMethod'));
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
@@ -552,14 +564,14 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
       // בניית פרטי ההזמנה
       const orderInfo = {
         user_info: userDetails,
-        shippingOption: data.shippingOption,
+        shippingOption: noShipping ? "1" : data.shippingOption,
         callOnArrival: data.callOnArrival,
         customer_note: data.customer_note,
         paymentMethod: "credit",
         status: "Pending",
         cart: items.sort((a, b) => a.barcode - b.barcode) || items,
         subTotal: Number(customCartTotal.toFixed(2)),
-        shippingCost: shippingCost,
+        shippingCost: noShipping ? 0 : shippingCost,
         discount: discountAmount,
         total: total,
         coupon: couponInfo._id || null,
@@ -825,6 +837,7 @@ const useCheckoutSubmit = (isCashierMode = false, newsletterOptIn = false) => {
     isCheckoutSubmit,
     isCouponApplied,
     isDeliveryMetod,
+    noShipping,
     paymentSrc,
     setPaymentSrc,
     shippingPercentageIncrease,

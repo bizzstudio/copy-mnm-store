@@ -82,6 +82,7 @@ const Checkout = () => {
     currency,
     isCheckoutSubmit,
     isDeliveryMetod,
+    noShipping,
     paymentSrc,
     shippingPercentageIncrease,
 
@@ -344,6 +345,8 @@ const Checkout = () => {
   // בדיקת משלוח לפי כתובת - משתמש מחובר או אורח. מתעדכן גם כשסכום העגלה/הנחות משתנה (דמי משלוח לפי כללי אזור).
   const orderTotalAfterDiscounts = Number(customCartTotal || 0) - Number(discountAmount || 0) - Number(thresholdDiscount || 0);
   useEffect(() => {
+    // לקוח "ללא משלוח": איסוף עצמי – לא מבצעים בדיקת/חישוב משלוח כלל
+    if (noShipping) return;
     const fetchData = async () => {
       try {
         const addressToCheck =
@@ -386,7 +389,7 @@ const Checkout = () => {
     };
 
     fetchData();
-  }, [city, guestChosenCity, guestCityFromForm, chosenCityFromForm, orderTotalAfterDiscounts, customCartTotal]);
+  }, [city, guestChosenCity, guestCityFromForm, chosenCityFromForm, orderTotalAfterDiscounts, customCartTotal, noShipping]);
 
   const navToPaymentPage = () => {
     router.push(paymentSrc)
@@ -582,6 +585,7 @@ const Checkout = () => {
                               watch={watch}
                               guestChosenCity={guestChosenCity}
                               setGuestChosenCity={setGuestChosenCity}
+                              noShipping={noShipping}
                             />
 
                             {/* 2. בחירת אופן המשלוח */}
@@ -589,6 +593,7 @@ const Checkout = () => {
                               register={register}
                               selectedCallOnArrival={selectedCallOnArrival}
                               isDeliverable={isDeliverable}
+                              noShipping={noShipping}
                             />
 
                             {/* 3. מוצרים בהזמנה */}
@@ -627,6 +632,7 @@ const Checkout = () => {
                               newsletterOptIn={newsletterOptIn}
                               setNewsletterOptIn={setNewsletterOptIn}
                               onFetchShipping={onFetchShippingFromSummary}
+                              noShipping={noShipping}
                             />
 
                             {/* 6. כפתורי אישור וחזרה */}
@@ -673,6 +679,7 @@ const Checkout = () => {
                               watch={watch}
                               guestChosenCity={guestChosenCity}
                               setGuestChosenCity={setGuestChosenCity}
+                              noShipping={noShipping}
                             />
 
                             {/* 3. בחירת אופן המשלוח */}
@@ -680,6 +687,7 @@ const Checkout = () => {
                               register={register}
                               selectedCallOnArrival={selectedCallOnArrival}
                               isDeliverable={isDeliverable}
+                              noShipping={noShipping}
                             />
 
                             {/* 4. הערות לקוח */}
@@ -709,6 +717,7 @@ const Checkout = () => {
                               newsletterOptIn={newsletterOptIn}
                               setNewsletterOptIn={setNewsletterOptIn}
                               onFetchShipping={onFetchShippingFromSummary}
+                              noShipping={noShipping}
                             />
 
                             {/* 6. כפתורי אישור וחזרה */}

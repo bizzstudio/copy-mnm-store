@@ -4,8 +4,11 @@ import { MdOutlinePhoneEnabled, MdOutlineLocalShipping } from "react-icons/md";
 import { FaDoorOpen } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 
-const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable }) => {
+const DeliveryOptions = ({ register, selectedCallOnArrival, isDeliverable, noShipping }) => {
     const t = useTranslations();
+
+    // לקוח "ללא משלוח" (איסוף עצמי) – אין בחירת אופן משלוח
+    if (noShipping) return null;
 
     if (!isDeliverable) return null;
 

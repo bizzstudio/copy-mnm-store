@@ -22,6 +22,7 @@ const PersonalDetails = ({
     watch,
     guestChosenCity,
     setGuestChosenCity,
+    noShipping,
 }) => {
     const t = useTranslations();
 
@@ -66,15 +67,17 @@ const PersonalDetails = ({
                                     </button>
                                 </div>
 
-                                {/* הודעת אין משלוח - רק אם אין משלוח */}
-                                <NoDeliveryWarning
-                                    isDeliverable={isDeliverable}
-                                    city={city}
-                                    guestChosenCity={guestChosenCity}
-                                    nextTime={nextTime}
-                                    availableDays={availableDays}
-                                    setDeliveriesPopupOpen={setDeliveriesPopupOpen}
-                                />
+                                {/* הודעת אין משלוח - רק אם אין משלוח (לא רלוונטי ללקוח "ללא משלוח") */}
+                                {!noShipping && (
+                                    <NoDeliveryWarning
+                                        isDeliverable={isDeliverable}
+                                        city={city}
+                                        guestChosenCity={guestChosenCity}
+                                        nextTime={nextTime}
+                                        availableDays={availableDays}
+                                        setDeliveriesPopupOpen={setDeliveriesPopupOpen}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

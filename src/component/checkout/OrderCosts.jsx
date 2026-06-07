@@ -25,6 +25,7 @@ const OrderCosts = ({
     newsletterOptIn,
     setNewsletterOptIn,
     onFetchShipping,
+    noShipping,
 }) => {
     const t = useTranslations();
     const { thresholdDiscount, appliedOffers } = useCart();
@@ -33,6 +34,7 @@ const OrderCosts = ({
 
     // כשסיכום העלויות מוצג – שולחים בקשה לחישוב משלוח לפי עיר + סכום (כללי אזור). מבטיח שהבקשה עם orderTotal תצא.
     useEffect(() => {
+        if (noShipping) return; // לקוח "ללא משלוח" – אין חישוב דמי משלוח
         if (!onFetchShipping || typeof onFetchShipping !== 'function') return;
         const cityName = typeof city === 'string' ? city : (guestChosenCity?.city_name_he || null);
         if (!cityName || !isDeliverable) return;
@@ -43,7 +45,7 @@ const OrderCosts = ({
             console.log('[סיכום עלויות] שולח חישוב משלוח – עיר:', cityName, 'סכום:', orderTotalAfterDiscounts);
         }
         onFetchShipping(cityName, orderTotalAfterDiscounts);
-    }, [city, guestChosenCity, isDeliverable, orderTotalAfterDiscounts, customCartTotal, onFetchShipping]);
+    }, [city, guestChosenCity, isDeliverable, orderTotalAfterDiscounts, customCartTotal, onFetchShipping, noShipping]);
 
     // מציאת מבצע THRESHOLD_DISCOUNT שחל
     const thresholdDiscountOffer = appliedOffers?.find(o => o.type === 'THRESHOLD_DISCOUNT');
@@ -115,8 +117,8 @@ const OrderCosts = ({
                     )}
                 </div>
 
-                {/* מחיר משלוח - מוצג רק אם יש כתובת נבחרת וזמינה למשלוח */}
-                {((city || guestChosenCity?.city_name_he) && isDeliverable === true) && (
+                {/* מחיר משלוח - מוצג רק אם יש כתובת נבחרת וזמינה למשלוח (מוסתר ללקוח "ללא משלוח") */}
+                {!noShipping && ((city || guestChosenCity?.city_name_he) && isDeliverable === true) && (
                     <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0 gap-1.5">
                         {showingTranslateValue(
                             storeCustomizationSetting?.checkout?.shipping_cost
