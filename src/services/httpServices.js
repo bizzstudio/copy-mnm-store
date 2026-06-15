@@ -3,7 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const instance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "/api",
   timeout: 20000, // 20 שניות – כישלון מהיר במקום המתנה ארוכה
   headers: {
     Accept: 'application/json',
