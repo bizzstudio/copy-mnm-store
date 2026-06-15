@@ -2,8 +2,17 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+// בצד-שרת (getServerSideProps רץ בתוך הקונטיינר) פונים ל-backend דרך רשת הדוקר
+// (INTERNAL_API_BASE_URL=http://backend:3028/api). בצד-לקוח (דפדפן) פונים לכתובת
+// הציבורית (NEXT_PUBLIC_API_BASE_URL). INTERNAL_API_BASE_URL אינו NEXT_PUBLIC ולכן
+// נקרא בזמן ריצה ולא נצרב ל-bundle של הדפדפן.
+const baseURL =
+  (typeof window === "undefined"
+    ? process.env.INTERNAL_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL
+    : process.env.NEXT_PUBLIC_API_BASE_URL) || "/api";
+
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "/api",
+  baseURL,
   timeout: 20000, // 20 שניות – כישלון מהיר במקום המתנה ארוכה
   headers: {
     Accept: 'application/json',
