@@ -55,6 +55,8 @@ const Checkout = () => {
   const [keySequence, setKeySequence] = useState([]);
   const [deliveriesPopupOpen, setDeliveriesPopupOpen] = useState(false);
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
+  const [amountWarnOpen, setAmountWarnOpen] = useState(false);
+  const [amountWarnSeen, setAmountWarnSeen] = useState(false);
 
   const {
     handleSubmit,
@@ -103,6 +105,35 @@ const Checkout = () => {
     minimumOrderAmount,
     guestAddressFormRef,
   } = useCheckoutSubmit(false, newsletterOptIn);
+
+  // מצב מגבלת סכום לפי הגדרת הלקוח (מ-/me): שבועי = התראה (פופאפ), חודשי = חסימה.
+  // alertAmount הוא הסכום היחיד שבודקים מולו; periodTotal הוא הסכום שכבר נצבר בתקופה.
+  const amountLimitInfo = (() => {
+    const alertAmount = Number(userInfo?.alertAmount) || 0;
+    const alertPeriod = userInfo?.alertPeriod;
+    if (!userInfo || !alertAmount || (alertPeriod !== "weekly" && alertPeriod !== "monthly")) {
+      return { blocked: false, warn: false, alertAmount: 0, periodTotal: 0, prospective: 0, period: null };
+    }
+    const periodTotal = Number(userInfo?.periodTotal) || 0;
+    const prospective = periodTotal + Number(total || 0);
+    const exceeded = prospective > alertAmount;
+    return {
+      blocked: exceeded && alertPeriod === "monthly",
+      warn: exceeded && alertPeriod === "weekly",
+      alertAmount,
+      periodTotal,
+      prospective,
+      period: alertPeriod,
+    };
+  })();
+
+  // פתיחת פופאפ אזהרה פעם אחת כשמתגלה חריגה שבועית
+  useEffect(() => {
+    if (amountLimitInfo.warn && !amountWarnSeen) {
+      setAmountWarnOpen(true);
+      setAmountWarnSeen(true);
+    }
+  }, [amountLimitInfo.warn, amountWarnSeen]);
 
   const selectedShippingOption = watch("shippingOption"); // עוקב אחרי הבחירה
   const selectedCallOnArrival = watch("callOnArrival"); // עוקב אחרי בחירת אופן המשלוח
@@ -541,6 +572,34 @@ const Checkout = () => {
           </div>
         </MainModal>
       )}
+      {/* פופאפ אזהרת חריגה מסכום ההתראה השבועי — ההזמנה עדיין מותרת */}
+      {amountWarnOpen && (
+        <MainModal modalOpen={amountWarnOpen} setModalOpen={setAmountWarnOpen}>
+          <div className="px-6 sm:px-10 py-8 max-w-md text-center" dir={currentLang ? "rtl" : "ltr"}>
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-3xl">⚠️</div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              {currentLang ? "חריגה מהסכום השבועי" : "Weekly amount exceeded"}
+            </h3>
+            <p className="text-gray-600 mb-1">
+              {currentLang
+                ? `הזמנה זו תעבור את סכום ההתראה השבועי שהוגדר (${amountLimitInfo.alertAmount.toLocaleString("he-IL")} ₪).`
+                : `This order will exceed the configured weekly alert amount (${amountLimitInfo.alertAmount.toLocaleString("en-US")} ₪).`}
+            </p>
+            <p className="text-gray-500 text-sm mb-6">
+              {currentLang
+                ? `סכום ההזמנות השבועי עד כה: ${Math.round(amountLimitInfo.periodTotal).toLocaleString("he-IL")} ₪. ניתן להמשיך בהזמנה.`
+                : `Weekly orders total so far: ${Math.round(amountLimitInfo.periodTotal).toLocaleString("en-US")} ₪. You may continue.`}
+            </p>
+            <button
+              type="button"
+              onClick={() => setAmountWarnOpen(false)}
+              className="inline-flex items-center justify-center px-8 py-3 rounded-lg bg-mainColor hover:bg-mainColor-dark text-white font-semibold transition-colors"
+            >
+              {currentLang ? "הבנתי, להמשיך" : "Got it, continue"}
+            </button>
+          </div>
+        </MainModal>
+      )}
       <Layout title={t('checkout')} description={t('checkoutDescription')}>
         <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
           <div className="py-0 md:py-10 lg:py-12 px-0 2xl:max-w-screen-2xl w-full xl:max-w-screen-xl flex flex-col items-center gap-8">
@@ -635,6 +694,26 @@ const Checkout = () => {
                               noShipping={noShipping}
                             />
 
+                            {/* באנר חסימה — חריגה מהסכום החודשי המותר */}
+                            {amountLimitInfo.blocked && (
+                              <div
+                                className="border border-red-300 bg-red-50 rounded-xl px-4 sm:px-6 py-4 flex items-start gap-3"
+                                dir={currentLang ? "rtl" : "ltr"}
+                              >
+                                <span className="text-2xl leading-none">🚫</span>
+                                <div>
+                                  <p className="font-bold text-red-700">
+                                    {currentLang ? "ההזמנה חורגת מהסכום החודשי המותר" : "Order exceeds the allowed monthly amount"}
+                                  </p>
+                                  <p className="text-sm text-red-600 mt-0.5">
+                                    {currentLang
+                                      ? `הסכום המותר: ${amountLimitInfo.alertAmount.toLocaleString("he-IL")} ₪ · נצבר החודש עד כה: ${Math.round(amountLimitInfo.periodTotal).toLocaleString("he-IL")} ₪. לא ניתן להשלים את ההזמנה.`
+                                      : `Allowed: ${amountLimitInfo.alertAmount.toLocaleString("en-US")} ₪ · accrued this month: ${Math.round(amountLimitInfo.periodTotal).toLocaleString("en-US")} ₪. The order cannot be completed.`}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+
                             {/* 6. כפתורי אישור וחזרה */}
                             <CheckoutActions
                               isEmpty={isEmpty}
@@ -647,6 +726,7 @@ const Checkout = () => {
                               submitCreditOrder={submitCreditOrder}
                               handleSubmit={handleSubmit}
                               total={total}
+                              amountBlocked={amountLimitInfo.blocked}
                             />
                           </>
                         ) : (

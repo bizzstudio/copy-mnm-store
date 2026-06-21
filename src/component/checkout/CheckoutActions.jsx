@@ -21,6 +21,7 @@ const CheckoutActions = ({
     submitCreditOrder,
     handleSubmit,
     total,
+    amountBlocked = false,
 }) => {
     const t = useTranslations();
 
@@ -42,7 +43,8 @@ const CheckoutActions = ({
         userInfo.customerType !== 'casual' &&
         userInfo.availableCredit > total;
 
-    const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number';
+    // חסימה בחריגה מהסכום החודשי — מונע גם תשלום בכרטיס וגם הזמנה בהקפה (נאכף גם בשרת)
+    const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number' || amountBlocked;
     const isLoading = isCheckoutSubmit;
 
     // כש־תשלום באשראי כבוי – הכפתור היחיד הוא "הזמנה בהקפה"
