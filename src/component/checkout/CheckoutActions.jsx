@@ -43,6 +43,16 @@ const CheckoutActions = ({
         userInfo.customerType !== 'casual' &&
         userInfo.availableCredit > total;
 
+    // לקוח שזכאי עקרונית להקפה (מוסדי/עסקי עם מסגרת) אך אין לו מסגרת פנויה מספקת להזמנה הזו —
+    // במקום שהכפתור פשוט ייעלם בלי הסבר, נציג הודעה עם הפירוט.
+    const creditOverLimit = CARD_PAYMENT_ENABLED && userInfo &&
+        userInfo.customerType !== 'casual' &&
+        Number(userInfo.creditLimit) > 0 &&
+        !showCreditOrderButton && !amountBlocked;
+    const creditLimitValue = Number(userInfo?.creditLimit) || 0;
+    const unpaidBalanceValue = Number(userInfo?.unpaidBalance) || 0;
+    const remainingCredit = Math.max(0, creditLimitValue - unpaidBalanceValue);
+
     // חסימה בחריגה מהסכום החודשי — מונע גם תשלום בכרטיס וגם הזמנה בהקפה (נאכף גם בשרת)
     const isDisabled = isEmpty || isCheckoutSubmit || typeof customCartTotal !== 'number' || amountBlocked;
     const isLoading = isCheckoutSubmit;
@@ -52,6 +62,24 @@ const CheckoutActions = ({
 
     return (
         <div className="border rounded-xl bg-white shadow-sm px-4 sm:px-6 lg:px-8 py-6">
+            {/* הסבר ללקוח: למה אין אפשרות לשלם בהקפה (חריגה ממסגרת האשראי) */}
+            {creditOverLimit && (
+                <div
+                    className="mb-4 border border-amber-300 bg-amber-50 rounded-lg px-4 py-3 text-sm"
+                    dir={currentLang ? "rtl" : "ltr"}
+                >
+                    <p className="font-semibold text-amber-800">
+                        {currentLang
+                            ? "לא ניתן לשלם בהקפה — חריגה ממסגרת האשראי"
+                            : "Credit order unavailable — credit limit exceeded"}
+                    </p>
+                    <p className="text-amber-700 mt-0.5">
+                        {currentLang
+                            ? `מסגרת אשראי: ${creditLimitValue.toLocaleString("he-IL")} ₪ · חוב פתוח: ${Math.round(unpaidBalanceValue).toLocaleString("he-IL")} ₪ · יתרה פנויה: ${Math.round(remainingCredit).toLocaleString("he-IL")} ₪. ניתן לשלם בכרטיס אשראי.`
+                            : `Credit limit: ${creditLimitValue.toLocaleString("en-US")} ₪ · open balance: ${Math.round(unpaidBalanceValue).toLocaleString("en-US")} ₪ · available: ${Math.round(remainingCredit).toLocaleString("en-US")} ₪. You can pay by card.`}
+                    </p>
+                </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-4 items-stretch">
                 {/* כפתור חזרה - מוסתר במסך קטן */}
                 <div className="hidden md:flex md:w-auto">
