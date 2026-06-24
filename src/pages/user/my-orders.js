@@ -78,23 +78,26 @@ const MyOrders = () => {
   const restoreOrder = async (order) => {
     try {
       setLoadingRestore(true);
-      const itemsNotInCartYet = order?.cart?.filter(oldItem => !items.some(item => item.sku === oldItem.sku));
+      // ההזמנות שומרות את שורות העגלה לפי barcode (אין שדה sku) — חובה להשוות לפי barcode
+      const itemsNotInCartYet = order?.cart?.filter(oldItem => !items.some(item => item.barcode === oldItem.barcode));
       setTotalItems(addedItems + itemsNotInCartYet.reduce((acc, item) => acc + item.quantity, 0));
       const missingProducts = [];
 
       // מעבר על כל מוצר בעגלה של ההזמנה הישנה (חוץ מאלו שכבר נמצאים בעגלה הנוכחית)
       for (const item of itemsNotInCartYet) {
-        const productSku = item.sku;
+        // המזהה האמיתי של שורת ההזמנה הוא barcode. הוא נשלח בפרמטר sku של השירות,
+        // אבל ה-backend מתרגם אותו לחיפוש לפי barcode (productController: Product.find({ barcode })).
+        const productBarcode = item.barcode;
 
         // משיכת פרטי המוצר המעודכנים מהדטאבייס
         const [data] = await Promise.all([
           ProductServices.getShowingStoreProducts({
             category: "",
-            sku: productSku,
+            sku: productBarcode,
           }),
         ]);
 
-        const product = data?.products?.find((p) => p.sku === productSku);
+        const product = data?.products?.find((p) => p.barcode === productBarcode);
 
         if (!product) {
           missingProducts.push(item);
