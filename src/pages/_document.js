@@ -6,6 +6,8 @@ class MyDocument extends Document {
     return (
       <Html lang="he" dir="rtl">
         <Head>
+          {/* Block search engines from indexing this store */}
+          <meta name="robots" content="noindex, nofollow" />
           {/* Manifest for PWA - דינמי דרך API */}
           <link rel="manifest" href="/api/manifest" />
         </Head>

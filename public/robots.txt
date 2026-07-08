@@ -1,18 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
-
+# Block all search engines from indexing this store
 User-agent: *
-Allow: /
-
-# Disallow admin and private areas
-Disallow: /admin/
-Disallow: /api/
-Allow: /api/sitemap
-
-# Disallow private user areas
-Disallow: /user/dashboard
-Disallow: /user/my-orders
-Disallow: /user/update-profile
-Disallow: /user/change-password
-
-# Sitemap location
-Sitemap: https://mnm-store.vercel.app/api/sitemap
+Disallow: /

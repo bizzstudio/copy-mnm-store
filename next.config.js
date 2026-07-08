@@ -22,7 +22,19 @@ const baseConfig = {
         permanent: true,
       },
     ];
-  }  
+  },
+
+  // Block all search engines from indexing this store
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = baseConfig;
