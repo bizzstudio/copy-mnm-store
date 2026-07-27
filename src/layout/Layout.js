@@ -152,7 +152,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
     // עמוד מוצר
     if (pathname.startsWith('/product/')) {
-      const productName = title?.replace(` | ${meta_title || "MNM יבוא שיווק והפצה"}`, '') || '';
+      const productName = title?.replace(` | ${meta_title || "BizzExpo"}`, '') || '';
       return {
         productName
       };
@@ -172,7 +172,7 @@ const Layout = ({ title, description, children, cashierPage = false, seo }) => {
 
     // עמוד הזמנה
     if (pathname.startsWith('/order/')) {
-      const orderNumber = title?.replace(` | ${meta_title || "MNM יבוא שיווק והפצה"}`, '') || '';
+      const orderNumber = title?.replace(` | ${meta_title || "BizzExpo"}`, '') || '';
       return {
         orderNumber
       };

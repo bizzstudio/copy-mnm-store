@@ -170,7 +170,7 @@ const contactData = [
     title: "contact-page-box1-title",
     info: "contact-page-box1-info",
     icon: FiMail,
-    contact: "MNM יבוא שיווק והפצה@gmail.com",
+    contact: "BizzExpo@gmail.com",
     className: "bg-mainColor-light",
   },
   {

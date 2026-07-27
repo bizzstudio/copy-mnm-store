@@ -1,7 +1,7 @@
 // src/lib/seo.js
 export function buildSeo({ defaults = {}, page = {} }) {
   const baseUrl = (defaults.meta_url || "").replace(/\/$/, "");
-  const siteName = defaults.meta_title || "MNM יבוא שיווק והפצה";
+  const siteName = defaults.meta_title || "BizzExpo";
   const title = page.title || defaults.meta_title || siteName;
   const description = page.description || defaults.meta_description || "";
   const image = absUrl(baseUrl, page.image || defaults.meta_img || "/logo/logo-color.png");

@@ -589,7 +589,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                         {/* <ul className="flex gap-2 mt-4">
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
                             <FacebookShareButton
-                              url={`https://MNM יבוא שיווק והפצה-store-nine.vercel.app/product/${router.query.slug}`}
+                              url={`https://BizzExpo-store-nine.vercel.app/product/${router.query.slug}`}
                               quote=""
                             >
                               <FacebookIcon size={32} round />
@@ -597,7 +597,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                           </li>
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
                             <TwitterShareButton
-                              url={`https://MNM יבוא שיווק והפצה-store-nine.vercel.app/product/${router.query.slug}`}
+                              url={`https://BizzExpo-store-nine.vercel.app/product/${router.query.slug}`}
                               quote=""
                             >
                               <TwitterIcon size={32} round />
@@ -605,7 +605,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                           </li>
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
                             <RedditShareButton
-                              url={`https://MNM יבוא שיווק והפצה-store-nine.vercel.app/product/${router.query.slug}`}
+                              url={`https://BizzExpo-store-nine.vercel.app/product/${router.query.slug}`}
                               quote=""
                             >
                               <RedditIcon size={32} round />
@@ -613,7 +613,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                           </li>
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
                             <WhatsappShareButton
-                              url={`https://MNM יבוא שיווק והפצה-store-nine.vercel.app/product/${router.query.slug}`}
+                              url={`https://BizzExpo-store-nine.vercel.app/product/${router.query.slug}`}
                               quote=""
                             >
                               <WhatsappIcon size={32} round />
@@ -621,7 +621,7 @@ const ProductScreen = ({ product, relatedProducts }) => {
                           </li>
                           <li className="flex items-center text-center border border-gray-100 rounded-full hover:bg-mainColor transition ease-in-out duration-500">
                             <LinkedinShareButton
-                              url={`https://MNM יבוא שיווק והפצה-store-nine.vercel.app/product/${router.query.slug}`}
+                              url={`https://BizzExpo-store-nine.vercel.app/product/${router.query.slug}`}
                               quote=""
                             >
                               <LinkedinIcon size={32} round />

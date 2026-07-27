@@ -469,7 +469,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="text-mainColor-dark"
             >
-              לMNM יבוא שיווק והפצה
+              ל-BizzExpo
             </Link>
           </span>
           <hr className="sm:h-4 sm:w-px h-px w-7 bg-gray-400" />

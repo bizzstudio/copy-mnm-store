@@ -1,5 +1,5 @@
 ================================================================================
-MNM - יבוא שיווק והפצה (MNM Import, Marketing & Distribution)
+BizzExpo
 SYSTEM README FOR NEW DEVELOPERS
 ================================================================================
 Generated from actual codebase analysis. Do not guess; refer to this document
@@ -26,7 +26,7 @@ WHAT THE SYSTEM DOES
 
 HIGH-LEVEL ARCHITECTURE
 -----------------------
-- Three main codebases under MNM/:
+- Three main codebases under BizzExpo/:
   - mnm-backend   = Node.js (Express 5) API server, entry api/index.js
   - mnm-admin     = React (Vite) SPA, port 4105, admin panel
   - mnm-store     = Next.js 16 SSR/SPA, customer store (Vercel: mnm-store.vercel.app)
