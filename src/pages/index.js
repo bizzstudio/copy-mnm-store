@@ -62,7 +62,6 @@ const Home = ({
   const { isLoading, setIsLoading, offers } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
   const t = useTranslations();
-  const [fakeLoading, setFakeLoading] = useState(false)
 
   const { showingTranslateValue } = useUtilsFunction();
 
@@ -74,19 +73,6 @@ const Home = ({
   const sortedDiscountProducts = Array.isArray(discountedProducts)
     ? [...discountedProducts]
     : [];
-
-  useEffect(() => {
-    const fakeLoadingSession = sessionStorage.getItem('fakeLoading');
-    if (fakeLoadingSession === 'true') {
-      setFakeLoading(true);
-    } else {
-      // שתי שניות של טעינה מזויפת בפעם הראשונה
-      setTimeout(() => {
-        setFakeLoading(true);
-        sessionStorage.setItem('fakeLoading', 'true');
-      }, 2000);
-    }
-  }, []);
 
   //ask moti about this
   useEffect(() => {
@@ -107,26 +93,24 @@ const Home = ({
       }
     };
 
-    if (fakeLoading) {
+    updateCarouselHeight();
+
+    const resizeObserver = new ResizeObserver(() => {
       updateCarouselHeight();
+    });
 
-      const resizeObserver = new ResizeObserver(() => {
-        updateCarouselHeight();
-      });
-
-      if (carouselRef.current) {
-        resizeObserver.observe(carouselRef.current);
-      }
-
-      return () => {
-        if (carouselRef.current) {
-          resizeObserver.unobserve(carouselRef.current);
-        }
-      };
+    if (carouselRef.current) {
+      resizeObserver.observe(carouselRef.current);
     }
-  }, [fakeLoading, carouselRef.current]);
 
-  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && Array.isArray(recentProducts) && Array.isArray(offers) && fakeLoading) {
+    return () => {
+      if (carouselRef.current) {
+        resizeObserver.unobserve(carouselRef.current);
+      }
+    };
+  }, [carouselRef.current]);
+
+  if (storeCustomizationSetting?.home?.popular_products_status && popularProducts && Array.isArray(recentProducts) && Array.isArray(offers)) {
     return (
       <>
         {isLoading ? (
@@ -383,21 +367,7 @@ const Home = ({
   } else {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="m-auto max-w-[400px] w-full overflow-hidden relative">
-          <video 
-            src="/opening.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-auto"
-            style={{ 
-              clipPath: 'inset(11% 0 11% 0)',
-              objectFit: 'cover'
-            }}
-          />
-        </div>
-        {/* <Loading loading={true} /> */}
+        <Loading loading={true} />
       </div>
     );
   }
