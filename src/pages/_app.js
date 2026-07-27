@@ -22,6 +22,7 @@ import { trackPageView as trackFlashyPageView } from "@services/flashy";
 import { trackPageView } from "@services/googleAnalytics";
 import { trackFbPageView } from "@services/facebookPixel";
 import { sanitizeScripts } from "@utils/sanitizeScripts";
+import SplashScreen from "@component/splash/SplashScreen";
 import {
   getTokenFromUserInfoCookieValue,
   isStoreLoginRequired,
@@ -221,6 +222,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      {/* מסך פתיחה — מוצג פעם אחת בכניסה לאתר */}
+      <SplashScreen />
+
       {/* סקריפטים דינמיים ב-HEAD */}
       {dynamicScripts.head && (
         <Head>

@@ -10,7 +10,10 @@ const SESSION_KEY = "splashSeen";
 const HOLD_MS = 1400; // כמה זמן הלוגו נשאר על המסך
 const FADE_MS = 600; // משך ההיעלמות
 
-const SplashScreen = ({ logo, alt = "" }) => {
+// ברירת מחדל: קובץ סטטי מ-public. כך אין הבהוב בזמן שהגדרות החנות עדיין נטענות.
+const DEFAULT_LOGO = "/bizzexpo-logo.svg";
+
+const SplashScreen = ({ logo = DEFAULT_LOGO, alt = "" }) => {
   // מתחילים כמוצג גם בשרת וגם בלקוח, כדי שלא תהיה אי-התאמה בהידרציה
   const [phase, setPhase] = useState("visible"); // visible | leaving | done
   const timers = useRef([]);

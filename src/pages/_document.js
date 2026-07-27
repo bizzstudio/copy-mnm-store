@@ -10,6 +10,10 @@ class MyDocument extends Document {
           <meta name="robots" content="noindex, nofollow" />
           {/* Manifest for PWA - דינמי דרך API */}
           <link rel="manifest" href="/api/manifest" />
+          {/* בלי JS אין מי להסיר את מסך הפתיחה — לכן הוא לא מוצג כלל */}
+          <noscript>
+            <style>{`.splash-screen{display:none!important}`}</style>
+          </noscript>
         </Head>
         <body>
           <Main />

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292 64" width="292" height="64" role="img" aria-label="BizzExpo">
+  <defs>
+    <linearGradient id="bizzexpoMark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b8def"/>
+      <stop offset="1" stop-color="#2f4bb5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- סמל: עמודות מכירות עולות -->
+  <rect x="0" y="0" width="64" height="64" rx="16" fill="url(#bizzexpoMark)"/>
+  <rect x="16" y="36" width="8" height="14" rx="4" fill="#ffffff" opacity="0.75"/>
+  <rect x="28" y="27" width="8" height="23" rx="4" fill="#ffffff" opacity="0.9"/>
+  <rect x="40" y="16" width="8" height="34" rx="4" fill="#ffffff"/>
+
+  <!-- שם המותג -->
+  <text x="78" y="44"
+        font-family="Assistant, Inter, 'Helvetica Neue', Arial, sans-serif"
+        font-size="40" font-weight="700" letter-spacing="-0.8">
+    <tspan fill="#16204a">Bizz</tspan><tspan fill="#3b6fd4">Expo</tspan>
+  </text>
+</svg>
