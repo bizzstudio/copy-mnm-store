@@ -68,8 +68,8 @@ const SplashScreen = ({ logo = DEFAULT_LOGO, alt = "" }) => {
   return (
     <div
       className={`splash-screen ${phase === "leaving" ? "splash-leaving" : ""}`}
-      role="status"
-      aria-live="polite"
+      // מסך דקורטיבי בלבד — מוסתר מקוראי מסך כדי שלא יכריזו שכבה ריקה
+      aria-hidden="true"
     >
       <div className="splash-inner">
         {logo ? (
